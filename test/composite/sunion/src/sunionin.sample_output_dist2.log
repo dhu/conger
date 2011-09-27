@@ -1,0 +1,52 @@
+[7mnotice[0m [QueryMarshal.cc:483] Deployment succeeded
+[7mwarn[0m [sunionin.cc:364] Start failure at iteration 750 --> 15000 msecs
+[7mwarn[0m [sunionin.cc:365] Stop  failure at iteration 1250 --> 25000 msecs
+[7mwarn[0m [sunionin.cc:369] Boundary interval is 1
+[7mwarn[0m [sunionin.cc:370] Boundary every iteration   1 --> 20 msecs
+[7mwarn[0m [sunionin.cc:373] Batch size is 3
+[7mwarn[0m [sunionin.cc:379] Will also send data to replica
+[7mwarn[0m [sunionin.cc:308] Opening input path to: 192.168.1.7:17200
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (0, 168414) for tuple: ( INSERTION,(1139788928, 929238))
+[7mwarn[0m [sunionin.cc:106] Starting FAILURE
+[7mwarn[0m [sunionin.cc:156] Starting FAILURE 2
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (1, 829043) for tuple: ( TENTATIVE,(1139788944, 619684))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 629158) for tuple: ( TENTATIVE,(1139788944, 703672))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 638206) for tuple: ( TENTATIVE,(1139788945, 18618))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 641152) for tuple: ( TENTATIVE,(1139788945, 102614))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 641513) for tuple: ( TENTATIVE,(1139788945, 310592))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 642146) for tuple: ( TENTATIVE,(1139788945, 604520))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 729053) for tuple: ( TENTATIVE,(1139788945, 918466))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 736741) for tuple: ( TENTATIVE,(1139788946, 904327))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 738932) for tuple: ( TENTATIVE,(1139788947, 9285))
+[7mwarn[0m [QueryMarshal.cc:568] Updated max proc time to (3, 744752) for tuple: ( TENTATIVE,(1139788947, 114267))
+[7mwarn[0m [sunionin.cc:112] Stopping FAILURE
+[7mwarn[0m [sunionin.cc:162] Stopping FAILURE 2
+[7mwarn[0m [QueryMarshal.cc:537] Suspending computing proc for insertions
+[7mnotice[0m [QueryMarshal.cc:574]  ( UNDO,(1139788944, 598933)) and proc time is (10, 984225)
+[7mnotice[0m [QueryMarshal.cc:574]  ( RECONCILIATION_DONE,(1139788956, 900000)) and proc time is (0, 140468)
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160625) for tuple: ( INSERTION,(1139788956, 901788))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160610) for tuple: ( INSERTION,(1139788956, 901803))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160595) for tuple: ( INSERTION,(1139788956, 901818))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160511) for tuple: ( INSERTION,(1139788956, 901902))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160496) for tuple: ( INSERTION,(1139788956, 901917))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160481) for tuple: ( INSERTION,(1139788956, 901932))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160443) for tuple: ( INSERTION,(1139788956, 901970))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160429) for tuple: ( INSERTION,(1139788956, 901984))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 160414) for tuple: ( INSERTION,(1139788956, 901999))
+[7mwarn[0m [QueryMarshal.cc:561] Proc time is (0, 139781) for tuple: ( INSERTION,(1139788956, 922632))
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:414] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:256] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:343] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:343] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:171] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [QueryMarshal.cc:256] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler

@@ -1,0 +1,345 @@
+[7mwarn[0m [borealis.cc:229] Starting borealis at address: 192.168.1.7:15000
+[7mnotice[0m [borealis.cc:245] Creating components...
+[7mnotice[0m [borealis.cc:260] Creating RPC proxies...
+[7mnotice[0m [borealis.cc:281] Accepting TCP/RPC connections on 192.168.1.7:15000
+[7mnotice[0m [borealis.cc:293] Accepting XML/RPC connections on 192.168.1.7:15001
+[7mnotice[0m [borealis.cc:296] Don't forget to use "-d 192.168.1.7:15000" in clients
+[7mnotice[0m [BasicComponent.h:50] AvailabilityMonitor starting
+[7mnotice[0m [BasicComponent.h:50] LocalLoadShedder starting
+[7mnotice[0m [BasicComponent.h:50] NHOptimizer starting
+[7mnotice[0m [BasicComponent.h:50] QOSOptimizer starting
+[7mnotice[0m [BasicComponent.h:50] QueryProcessor starting
+[7mnotice[0m [PseudoScheduler.cc:221] Pseudo Scheduler running
+[7mnotice[0m [DataPath.cc:173] Accepting data connections on 192.168.1.7:15002
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mwarn[0m [SUnionQBox.cc:101] Input Sunion is true
+[7mwarn[0m [SUnionQBox.cc:109] Setting actual delay to 1800
+[7mwarn[0m [SUnionQBox.cc:109] Setting actual delay to 1800
+[7mwarn[0m [SUnionQBox.cc:114] Stagger value is 0
+[7mwarn[0m [SUnionQBox.cc:118] Should stagger is now false
+[7mwarn[0m [SUnionQBox.cc:124] Should reconcile is true
+[7mwarn[0m [SUnionQBox.cc:130] Benchmark type identified as all_together_checkpoint_redo_no_move
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controlunion1
+[7minfo[0m [ConsistencyMngr.cc:320] Mapping controlunion1 onto input input1 of size 4
+[7minfo[0m [ConsistencyMngr.cc:288] Initializing last boundary for sunion controlunion1
+[7mdebug[0m [ConsistencyMngr.cc:302] Checkpoint interval is 1000
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controloutput1
+[7minfo[0m [ConsistencyMngr.cc:253] Set of all SOutputs is now {controloutput1}
+[7mwarn[0m [SUnionQBox.cc:101] Input Sunion is true
+[7mwarn[0m [SUnionQBox.cc:109] Setting actual delay to 1800
+[7mwarn[0m [SUnionQBox.cc:114] Stagger value is 0
+[7mwarn[0m [SUnionQBox.cc:118] Should stagger is now false
+[7mwarn[0m [SUnionQBox.cc:124] Should reconcile is true
+[7mwarn[0m [SUnionQBox.cc:130] Benchmark type identified as all_together_checkpoint_redo_no_move
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controlunion2
+[7minfo[0m [ConsistencyMngr.cc:320] Mapping controlunion2 onto input input3 of size 4
+[7minfo[0m [ConsistencyMngr.cc:288] Initializing last boundary for sunion controlunion2
+[7mdebug[0m [ConsistencyMngr.cc:302] Checkpoint interval is 1000
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controloutput2
+[7minfo[0m [ConsistencyMngr.cc:253] Set of all SOutputs is now {controloutput1, controloutput2}
+[7mwarn[0m [SUnionQBox.cc:101] Input Sunion is false
+[7mwarn[0m [SUnionQBox.cc:109] Setting actual delay to 1800
+[7mwarn[0m [SUnionQBox.cc:109] Setting actual delay to 1800
+[7mwarn[0m [SUnionQBox.cc:114] Stagger value is 0
+[7mwarn[0m [SUnionQBox.cc:118] Should stagger is now false
+[7mwarn[0m [SUnionQBox.cc:124] Should reconcile is true
+[7mwarn[0m [SUnionQBox.cc:130] Benchmark type identified as all_together_checkpoint_redo_no_move
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controlunion3
+[7minfo[0m [ConsistencyMngr.cc:320] Mapping controlunion3 onto input union1 of size 4
+[7mdebug[0m [ConsistencyMngr.cc:302] Checkpoint interval is 1000
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [QBox.cc:342] fix:  setSourcePort
+[7mnotice[0m [AuroraNode.cc:187] fix:  adding hash
+[7mnotice[0m [QBox.cc:305] fix:  addDestPort
+[7minfo[0m [ConsistencyMngr.cc:331] Assuming the control output stream is controloutput3
+[7minfo[0m [ConsistencyMngr.cc:253] Set of all SOutputs is now {controloutput1, controloutput2, controloutput3}
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mwarn[0m [DataHandler.cc:72] Not connected yet
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [SUnionQBox.cc:873] State was previously stable so going to tentative... setting start interval to (1139783120, 500000) which is nb 2279566241
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7minfo[0m [ConsistencyMngr.cc:574] Changing state from stable to up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mwarn[0m [SUnionQBox.cc:873] State was previously stable so going to tentative... setting start interval to (1139783120, 500000) which is nb 2279566241
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mwarn[0m [Bucket.cc:517] Using timer-based expiration
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mwarn[0m [Bucket.cc:517] Using timer-based expiration
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mwarn[0m [Bucket.cc:517] Using timer-based expiration
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mwarn[0m [SUnionQBox.cc:873] State was previously stable so going to tentative... setting start interval to (1139783123, 0) which is nb 2279566246
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7minfo[0m [SUnionQBox.cc:529] First tentative bucket is now stable
+[7minfo[0m [SUnionQBox.cc:908] State was previously tentative or undo so it is now converged
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:389] Got reconciliation request from controlunion1
+[7mdebug[0m [ConsistencyMngr.cc:515] SUnion controlunion1 not ready to reconcile false no boundary true
+[7mdebug[0m [ConsistencyMngr.cc:515] SUnion controlunion2 not ready to reconcile true no boundary true
+[7mdebug[0m [ConsistencyMngr.cc:520] Cannot reconcile because controlunion2 is not ready
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7minfo[0m [SUnionQBox.cc:529] First tentative bucket is now stable
+[7minfo[0m [SUnionQBox.cc:908] State was previously tentative or undo so it is now converged
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is up_failure
+[7mdebug[0m [ConsistencyMngr.cc:389] Got reconciliation request from controlunion2
+[7mdebug[0m [ConsistencyMngr.cc:515] SUnion controlunion1 not ready to reconcile false no boundary true
+[7mdebug[0m [ConsistencyMngr.cc:515] SUnion controlunion2 not ready to reconcile false no boundary true
+[7minfo[0m [ConsistencyMngr.cc:393] All failed SUnions ready to reconcile, requesting replica authorization at time (1139783131, 852138)
+[7mdebug[0m [ConsistencyMngr.cc:167] Need to request authorization to reconcile
+[7minfo[0m [ConsistencyMngr.cc:172] No replicas
+[7minfo[0m [ConsistencyMngr.cc:574] Changing state from up_failure to stabilization
+[7minfo[0m [ConsistencyMngr.cc:229] Got authorization to reconcile... launching reconciliation at time (1139783131, 852949)
+[7mnotice[0m [AuroraNode.cc:2988] Now recovering
+[7mwarn[0m [AuroraNode.cc:3003] When restarting from a local checkpoint, we should not touch the input queues of Sunions placed on input streams
+[7minfo[0m [SUnionQBox.cc:1102] Starting recovery
+[7minfo[0m [SUnionQBox.cc:1126] Recovered interval 2279566241
+[7mwarn[0m [AuroraNode.cc:3003] When restarting from a local checkpoint, we should not touch the input queues of Sunions placed on input streams
+[7minfo[0m [SUnionQBox.cc:1102] Starting recovery
+[7minfo[0m [SUnionQBox.cc:1126] Recovered interval 2279566244
+[7minfo[0m [SUnionQBox.cc:1102] Starting recovery
+[7minfo[0m [SUnionQBox.cc:1126] Recovered interval 2279566241
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mwarn[0m [SUnionQBox.cc:619] Current interval nb is 2279566254
+[7mwarn[0m [SUnionQBox.cc:620] Bucket first tuple time is (1139783127, 11729)
+[7mwarn[0m [SUnionQBox.cc:621] Running behind by 4966 msecs
+[7mwarn[0m [SUnionQBox.cc:622] Empty bucket false
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mwarn[0m [SUnionQBox.cc:619] Current interval nb is 2279566264
+[7mwarn[0m [SUnionQBox.cc:620] Bucket first tuple time is (1139783132, 19289)
+[7mwarn[0m [SUnionQBox.cc:621] Running behind by 101 msecs
+[7mwarn[0m [SUnionQBox.cc:622] Empty bucket false
+[7mwarn[0m [SUnionQBox.cc:637] Drained our queues so emiting flow tuple
+[7mwarn[0m [SUnionQBox.cc:650] Producing a REC_DONE for interval 2279566264 so stime (1139783132, 0)
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:401] Got reconciliation done from controlunion2
+[7mdebug[0m [ConsistencyMngr.cc:434] REC_DONE came from an SUnion
+[7mwarn[0m [SOutputQBox.cc:72] Processing a REC_DONE inside SOutput at time(1139783132, 122178)
+[7mwarn[0m [SUnionQBox.cc:257] Got REC_DONE inside SUnion
+[7mwarn[0m [SUnionQBox.cc:291] Received REC_DONE (1139783132, 0) on stream id 1 expected to receive 0 and now we already have 1
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:401] Got reconciliation done from controloutput2
+[7mdebug[0m [ConsistencyMngr.cc:454] REC_DONE came from an SOutput
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mwarn[0m [SUnionQBox.cc:637] Drained our queues so emiting flow tuple
+[7mwarn[0m [SUnionQBox.cc:650] Producing a REC_DONE for interval 2279566264 so stime (1139783132, 0)
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:401] Got reconciliation done from controlunion1
+[7mdebug[0m [ConsistencyMngr.cc:434] REC_DONE came from an SUnion
+[7mdebug[0m [ConsistencyMngr.cc:440] All failed SUnions reconciled
+[7mwarn[0m [SOutputQBox.cc:72] Processing a REC_DONE inside SOutput at time(1139783132, 170175)
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:401] Got reconciliation done from controloutput1
+[7mdebug[0m [ConsistencyMngr.cc:454] REC_DONE came from an SOutput
+[7mwarn[0m [SUnionQBox.cc:257] Got REC_DONE inside SUnion
+[7mwarn[0m [SUnionQBox.cc:291] Received REC_DONE (1139783132, 0) on stream id 0 expected to receive 0 and now we already have 2
+[7minfo[0m [SUnionQBox.cc:298] Forwarding the REC_DONE tuple 0
+[7mwarn[0m [SOutputQBox.cc:72] Processing a REC_DONE inside SOutput at time(1139783132, 210093)
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stabilization
+[7mdebug[0m [ConsistencyMngr.cc:401] Got reconciliation done from controloutput3
+[7mdebug[0m [ConsistencyMngr.cc:454] REC_DONE came from an SOutput
+[7minfo[0m [ConsistencyMngr.cc:574] Changing state from stabilization to stable
+[7minfo[0m [ConsistencyMngr.cc:557] Got ok to finish reconciliation
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mdebug[0m [ConsistencyMngr.cc:378] State of query process is stable
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed

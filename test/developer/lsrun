@@ -1,0 +1,226 @@
+#!/bin/ksh
+
+CVS_SANDBOX=${CVS_SANDBOX:-"${HOME}"}
+echo $CVS_SANDBOX
+
+BOREALIS_HOME=${CVS_SANDBOX}/borealis
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+CLIENT_HOME=${BOREALIS_HOME}/test/developer
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_NMSTL}/lib:${INSTALL_ANTLR}/lib
+PATH=${PATH}:${BOREALIS_SRC_HOME}:${BOREALIS_HOME}/tool/marshal:${BOREALIS_HOME}/tool/head
+
+if [ $# -eq 0 ]
+then
+  what='one'
+else
+  what=$1
+fi
+
+case "${what}" in 
+
+  simple)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+    
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_simple"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_simple 5 2>&1 |tee lstest_simple.log"
+
+    ;;
+
+  one)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest 100 2>&1 |tee lstest.log"
+
+    ;;
+
+  two)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "Borealis N2"
+    xterm -T borealis2@127.0.0.1:20000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:20000 2>&1 |tee borealis2.log" & 
+
+    sleep 5
+
+    echo "LoadShedder"
+    #${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -i 127.0.0.1:15000 -m 1 2>&1 |tee ls.log &
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest2"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+300 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest2 100 2>&1 |tee lstest2.log"
+
+    ;;
+
+  aggregate)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_aggregate"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_aggregate 100 2>&1 |tee lstest_aggregate.log"
+
+    ;;
+
+  simple_aggregate)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_simple_aggregate"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_simple_aggregate 100 2>&1 |tee lstest_simple_aggregate.log"
+
+    ;;
+
+  split)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_split"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_split 100 2>&1 |tee lstest_split.log"
+
+    ;;
+
+  split2)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:15000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:15000 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "Borealis N2"
+    xterm -T borealis2@127.0.0.1:20000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:20000 2>&1 |tee borealis2.log" & 
+
+    sleep 5
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -i 127.0.0.1:15000 -m 1 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_split"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_split2 100 2>&1 |tee lstest_split2.log"
+    ;;
+
+  loadshedder)
+
+    echo "LoadShedder"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -m 1 2>&1 |tee ls.log &
+
+    ;;
+
+  twoserver)
+
+    echo "two_server_test"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+300 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_two_server 2>&1 |tee lstest_two_server.log"
+
+    ;;
+
+  borealis)
+
+    echo "Borealis N1"
+    #xterm -T borealis1@127.0.0.1:31000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:31000 2>&1 |tee borealis1.log" &
+    xterm -T borealis1@127.0.0.1:31000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH libtool --mode=execute gdb ${BOREALIS_SRC_HOME}/borealis 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "Borealis N2"
+    xterm -T borealis2@127.0.0.1:32000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:32000 2>&1 |tee borealis2.log" & 
+
+    ;;
+
+  demo)
+
+    echo "Borealis N1"
+    xterm -T borealis1@127.0.0.1:31000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:31000 2>&1 |tee borealis1.log" &
+    #xterm -T borealis1@127.0.0.1:31000 -geometry 80x5+0+100 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH libtool --mode=execute gdb ${BOREALIS_SRC_HOME}/borealis 2>&1 |tee borealis1.log" &
+
+    sleep 5
+
+    echo "Borealis N2"
+    xterm -T borealis2@127.0.0.1:32000 -geometry 80x5+0+200 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${BOREALIS_SRC_HOME}/borealis -d 127.0.0.1:32000 2>&1 |tee borealis2.log" & 
+
+    sleep 5
+
+    #echo "LoadShedder"
+    #${BOREALIS_HOME}/tool/optimizer/MetaOptimizer -p 10000 -m 1 2>&1 |tee ls.log &
+    echo "MetaOptimizer"
+    ${BOREALIS_HOME}/tool/optimizer/MetaOptimizer 2>&1 |tee ls.log &
+
+    sleep 5
+
+    echo "lstest_two_server"
+    xterm -T client@127.0.0.1:30000 -geometry 80x5+0+300 -e sh -l -c "LD_LIBRARY_PATH=$LD_LIBRARY_PATH PATH=$PATH ./lstest_two_server 2>&1 |tee lstest_two_server.log"
+
+    ;;
+
+  clean)
+    echo "deleting log files..."
+    rm -f *.log
+    rm -f /tmp/catalog*.xml
+    rm -f /tmp/MetaOptimizerInstruction
+    rm -f LoadSheddingProblem.lp
+
+    ;;
+
+  stop)
+    echo "killing them..."
+    killall xterm
+    skill -c borealis
+    skill -c MetaOptimizer
+    skill -c lstest
+    skill -c lstest_simple
+    skill -c lstest2
+    skill -c lstest_aggregate
+    skill -c lstest_simple_aggregate
+    skill -c lstest_split
+    skill -c lstest_split2
+    skill -c lstest_two_server
+esac
+
+

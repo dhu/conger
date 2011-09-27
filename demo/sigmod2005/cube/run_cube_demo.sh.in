@@ -1,0 +1,366 @@
+#!/bin/bash
+
+#export LOG_LEVEL="2 Stats.h:0 QOSOptimizer:0 ContractBasedOptimizer:0 iserial:2 oserial:2 serial:2"
+#export LOG_LEVEL="2 Stats.h:0 QOSOptimizer:0 ContractBasedOptimizer:0 FilterQBox.cc:0 Stream.cc:0 ExprUtil.h:0"
+#export LOG_LEVEL="2 FilterQBox.cc:0 Stats.h:0 QOSOptimizer:0 ContractBasedOptimizer:0"
+export LOG_LEVEL=${LOG_LEVEL:-"-2"}
+#export LOG_LEVEL="-2 QueryProcessor.cc:2"
+#export LOG_LEVEL="0 AdminCatalog.cc:2 QueryProcessor.cc:2 AuroraNode.cc:2 PseudoScheduler.cc:2"
+#export LOG_LEVEL="0 AggregateQBox.cc:2"
+#export LOG_LEVEL="0"
+
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+
+
+# Get the IP address of this machine on its Ethernet connection
+IP=${IP:-`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:##g'`}
+
+# These variables give the top level location of all the source code.
+# If they are not defined, assign them some reasonable defaults
+BOREALIS_ROOT=@BOREALISROOT@
+
+# The IP address where the CentralLookupServer will be running
+CLS_IP=${CLS_IP:-"${IP}"}
+
+# Port numbers that will be used by all the applications
+CLS_PORT=30000
+BOREALIS_DATA_PORT=15000
+BOREALIS_DATA2_PORT=17000
+BOREALIS_DATA3_PORT=19000
+CLIENT_PORT=25000
+
+# Assuming CentralLookupServer will be running at node 1
+export BOREALIS_CLS=${CLS_IP}:${CLS_PORT}
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=10000
+export AURORA_PAGE_SIZE=16384
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+BOREALIS_SRC_HOME=${BOREALIS_ROOT}/src/src
+BOREALIS_TEST_HOME=${BOREALIS_ROOT}/utility/test
+BOREALIS_HEAD_HOME=${BOREALIS_ROOT}/tool/head
+BOREALIS_OPTIMIZER_HOME=${BOREALIS_ROOT}/tool/optimizer
+BOREALIS_CLIENT_HOME=${BOREALIS_ROOT}/utility/client
+BOREALIS_GUI_HOME=${BOREALIS_ROOT}/utility/borealisgui/
+CUBE_SRC_HOME=./bot_src/src
+
+# Library/software configuration.
+LD_LIBRARY_PATH=@NMSTLDIR@/lib:@XERCESCDIR@/lib
+
+export JAVA_HOME=@JAVA_HOME@
+JAVA=@JAVA@
+
+EXEC=`basename $0`
+
+read_game_hosts () {
+    if [ -f $1 ]
+    then
+        HOSTS=`cat $1`
+    else
+        echo "No such file $1"
+        echo "usage: ${EXEC} game <hosts-file>"
+        exit 1
+    fi
+}
+
+print_usage () {
+  if [ $# -lt 1 ]
+  then
+      echo "usage: run-demo.sh game"
+      echo "and when you want to stop: run-demo.sh stop"
+      exit 0
+  fi
+}
+
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+
+    cls)
+        if [ "${IP}" != "${CLS_IP}" ]
+        then
+            eval echo "If you want to run CLS here, then please adjust CLS_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting CLS..."
+        BINDING=${IP}:${CLS_PORT}
+        eval echo "xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e sh -c ${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING}"
+        xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING} 2>&1 |tee cls-${BINDING}.log"  &
+        echo "CLS started."
+        ;;
+
+
+    borealis)
+        echo "Starting Borealis Data"
+        eval echo "Assuming CLS is running at: ${BOREALIS_CLS}"
+        if [ $# -eq 3 ] 
+        then
+            IP=$2
+	    PORT=$3
+        else
+            PORT=${BOREALIS_DATA_PORT}
+        fi
+        BINDING=${IP}:${PORT}
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x30+20+20 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+    
+
+    bdebug)
+        echo "Starting Borealis Data"
+        eval echo "Assuming CLS is running at: ${BOREALIS_CLS}"
+        if [ $# -eq 3 ] 
+        then
+	    IP=$2
+            PORT=$3
+        else
+            PORT=${BOREALIS_DATA_PORT}
+        fi
+        BINDING=${IP}:${PORT}
+	test -f gdb-borealis.args && rm gdb-borealis.args
+	echo "set args -d ${BINDING}" > gdb-borealis.args
+	echo "run" >> gdb-borealis.args
+        xterm -T Borealis@${BINDING} -geometry 80x30+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "libtool --mode=execute gdb ${BOREALIS_SRC_HOME}/borealis 2>&1 | tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+
+     bremote)
+        if [ $# -eq 3 ]
+        then
+	    IP=$2
+            PORT=$3
+        else
+            PORT=${BOREALIS_DATA_PORT}
+        fi
+        BINDING=${IP}:${PORT}
+        CLS_BINDING=${CLS_IP}:${CLS_PORT}
+        echo "Starting Borealis remotely@${BINDING}"
+        echo "Using CLS@${CLS_BINDING}"
+        ssh ${IP} env CLS_IP=${CLS_IP} sh -c "'${EXEC} borealis ${IP} ${PORT}'" &
+        echo "Borealis started."
+        ;;
+
+
+     head)
+        echo "Running BigGiantHead"
+	if [ $# -lt 2 ]
+	then
+	    QUERY_FILE="bot_src/borealis_if/cube.xml"
+	    DEPLOY_FILE="bot_src/borealis_if/cube_deployment.xml"
+	else
+	    QUERY_FILE=$2
+	    DEPLOY_FILE=$3
+	fi
+	xterm -T BigGiantHead -geometry 80x20+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_HEAD_HOME}/BigGiantHead ${QUERY_FILE} ${DEPLOY_FILE} 2>&1 | tee head.log" &
+	echo "Ran BigGiantHead."
+	;;
+
+
+     region)
+        echo "Starting regional server"
+	xterm -T RegionalServer -geometry 80x20+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_TEST_HOME}/unit/Regiontest 2>&1 | tee region.log" &
+        ;;
+	
+
+     metaoptimizer)
+        echo "Starting Borealis optimizers"
+        if [ $# -eq 3 ]
+        then
+	    IP=$2
+            PORT=$3
+        else
+            PORT=${BOREALIS_DATA_PORT}
+        fi
+        IGNORE_BINDING=${IP}:${PORT}
+        xterm -T MetaOptimizer -geometry 80x20+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_OPTIMIZER_HOME}/MetaOptimizer -p 5000 -i${IGNORE_BINDING} 2>&1 | tee optimizer.log" &
+        ;;
+
+
+    optinstruct)
+        if [ $# -gt 1 ]
+	then
+	    INSTRUCTION=$2
+	else
+	    INSTRUCTION="None"
+	fi
+        test -f /tmp/MetaOptimizerInstruction && rm /tmp/MetaOptimizerInstruction
+	echo "${INSTRUCTION}" > /tmp/MetaOptimizerInstruction
+	;;
+
+
+     ha-ps)
+        $0 optinstruct
+        echo "Starting Borealis secondary"
+	if [ $# -gt 2 ]
+	then
+	    SECONDARY_BINDING=$2
+	    PRIMARY_BINDING=$3
+	else
+	    SECONDARY_BINDING=${IP}:${BOREALIS_DATA2_PORT}
+	    PRIMARY_BINDING=${IP}:${BOREALIS_DATA_PORT}
+	fi
+	xterm -T BSecondary@${SECONDARY_BINDING} -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_SRC_HOME}/borealis -d ${SECONDARY_BINDING} -p ${PRIMARY_BINDING} ps secondary 2>&1 |tee borealis-${SECONDARY_BINDING}.log" &
+        ;; 
+
+
+     haremote-ps)
+        $0 optinstruct
+        echo "Starting Borealis secondary remotely"
+        if [ $# -gt 2 ]
+        then
+            SECONDARY_IP=$2
+            SECONDARY_PORT=$3
+            PRIMARY_BINDING=$4
+        else
+            SECONDARY_IP=${IP}
+            SECONDARY_PORT=${BOREALIS_DATA2_PORT}
+            PRIMARY_BINDING=${IP}:${BOREALIS_DATA_PORT}
+        fi
+        SECONDARY_BINDING=${SECONDARY_IP}:${SECONDARY_PORT}
+        ssh ${SECONDARY_IP} env CLS_IP=${CLS_IP} LOG_LEVEL=2 LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "'${EXEC} ha-ps ${SECONDARY_BINDING} ${PRIMARY_BINDING}'"
+        echo "Borealis secondary is running"
+        ;;
+
+     ha-monitor)
+        echo "Starting HA monitor"
+        CLASSPATH="${BOREALIS_MONITOR_HOME}/lib/monitor.jar:${BOREALIS_MONITOR_HOME}/lib/xerces.jar:${BOREALIS_CLIENT_HOME}/java/clientApi/lib/client.jar"
+        xterm -T HA-Monitor -geometry 80x10x20+50 -e sh -c "${JAVA} -classpath ${CLASSPATH} monitor.Monitor 2>&1 | tee monitor.log"
+        echo "Running HA monitor"
+        ;;
+
+     commander)
+        echo "Starting commander"
+	if [ $# -eq 5 ]
+	then
+	    CLIENT_PORT=$2
+	    BOREALIS_BINDING=$3
+	    DEPLOY_BINDING=$4
+	    COMM_EXTRA_ARGS="-o$5"
+        elif [ $# -eq 4 ] 
+        then
+            CLIENT_PORT=$2
+            BOREALIS_BINDING=$3
+            DEPLOY_BINDING=$4
+        else
+	    CLIENT_PORT=25000
+            BOREALIS_BINDING=${IP}:${BOREALIS_DATA_PORT}
+	    DEPLOY_BINDING=${BOREALIS_BINDING}
+        fi
+        CLIENT_BINDING=${IP}:${CLIENT_PORT}
+	xterm -T Commander -geometry 80x10+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${CUBE_SRC_HOME}/cube_client -t -b${BOREALIS_BINDING} -d${DEPLOY_BINDING} -s${CLIENT_BINDING} ${COMM_EXTRA_ARGS} 2>&1 | tee commander-${BOREALIS_BINDING}.log" &
+	echo "Commander started."
+        ;;
+
+     gui-viz)
+       echo "Starting GUI/Visualizer..."
+       QUERY_DEPLOY_FILE="/home/yna/borealis/demo/sigmod2005/cube/bot_src/borealis_if/cube_deployment.xml"
+       CLASSPATH="${BOREALIS_GUI_HOME}/lib/jaxen-core.jar:${BOREALIS_GUI_HOME}/lib/saxpath.jar:${BOREALIS_GUI_HOME}/lib/jaxen-jdom.jar:${BOREALIS_GUI_HOME}/lib/xalan.jar:${BOREALIS_GUI_HOME}/lib/jcommon-1.0.0-pre2.jar:${BOREALIS_GUI_HOME}/lib/xerces.jar:${BOREALIS_GUI_HOME}/lib/jdom.jar:${BOREALIS_GUI_HOME}/lib/xml-apis.jar:${BOREALIS_GUI_HOME}/lib/jfreechart-1.0.0-pre2.jar:${BOREALIS_GUI_HOME}/lib/xmlrpc.jar:${BOREALIS_GUI_HOME}/lib/medusaXmlRpc.jar:${BOREALIS_GUI_HOME}/lib/jgraph.jar:${BOREALIS_GUI_HOME}/lib/jgraphaddons.jar:${BOREALIS_GUI_HOME}:${BOREALIS_GUI_HOME}/classes"
+       xterm -T GUI -geometry 80x10+20+50 -e sh -c "cd ${BOREALIS_GUI_HOME}/ && ${JAVA} -classpath ${CLASSPATH} borgui/client/ClientMain ${QUERY_DEPLOY_FILE} 2>&1 | tee gui_viz.log" &
+       echo "GUI+Visualizer started."
+       ;;
+
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+
+    # --------------------------------------------------
+     server)
+        $0 clean
+        $0 cls
+        sleep 1
+	env LOG_LEVEL=2 $0 metaoptimizer
+	sleep 3
+	$0 borealis
+	sleep 3
+        ;;
+
+     game)
+        if [ $# -lt 2 ]
+        then
+            echo "usage: $0 game <hosts>"
+        exit 1
+        fi
+
+        read_game_hosts $2
+
+        $0 clean
+        $0 cls
+        sleep 1
+	$0 metaoptimizer
+	sleep 3
+	$0 borealis
+	sleep 3
+
+        for ip in ${HOSTS}; do
+            env CLS_IP=${IP} IP="$ip" ${EXEC} bremote
+        done
+        sleep 25
+
+	$0 head
+	sleep 3
+	$0 gui-viz
+	exit 0
+        ;;
+
+     stopgame)
+        if [ $# -lt 2 ]
+        then
+            echo "usage: $0 game <hosts>"
+        exit 1
+        fi
+
+        read_game_hosts $2
+
+	$0 stop
+	for ip in ${HOSTS}; do
+	    ssh $ip ${EXEC} stop
+	done
+	;;
+
+
+       cleangame)
+        if [ $# -lt 2 ]
+        then
+            echo "usage: $0 cleangame <hosts>"
+            exit 1
+        fi
+
+        read_game_hosts $2
+
+        $0 clean
+        for ip in ${HOSTS}; do
+            ssh $ip ${EXEC} clean
+        done
+        ;;
+
+   
+     clean)
+        rm -rf Regiontest.xml *.log tables /tmp/catalog*.xml /tmp/MetaOptimizerInstruction
+	;;
+
+
+     stop)
+	killall xterm
+        exit 0
+        ;;
+
+     *)
+        echo "Invalid target $1"
+	print_usage
+	;;
+
+esac

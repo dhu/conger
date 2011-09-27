@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  upstreamtest3.cc -->
+<!-- CP followed by a Filter box with 2 ports (T and F) -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result1"      schema="OutputTuple" />
+    <output  stream="Result2"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+            <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="time" type="int" />
+        <field name="quote" type="string" size="4" />
+        <field name="price" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="upstreamtest3">
+    <box name="filter" type="revisionfilter" >
+        <in stream="Packet" connection_point_view="view" />
+        <out stream="Result1" />
+        <out stream="Result2" />
+        <parameter name="expression.0" value="price > 8" />
+        <parameter name="pass-on-false-port" value= "1" />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP" />
+    </box>
+    
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+            <order  field="time" />
+        <size   value="250"     />
+        <radius value="0" />
+    </connection_point_view>
+
+    
+</borealis>

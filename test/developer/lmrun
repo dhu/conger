@@ -1,0 +1,77 @@
+#!/bin/ksh
+
+
+SET_LIB_PATH="env LD_LIBRARY_PATH=/pro/borealis/software/nmstl/lib:/pro/borealis/software/bdb/lib:/pro/borealis/software/antlr/lib:/pro/borealis/software/xerces/lib" 
+TERMINAL="xterm"
+RUN_BOREALIS="../../../src/src/borealis"
+RUN_HEAD="../../../tool/head/BigGiantHead"
+RUN_LOAD_MGR="../../../tool/optimizer/loadManager/LoadManager"
+#RUN_LOAD_MGR="../../../tool/optimizer/MetaOptimizer -s 0.4 "
+#RUN_LOAD_MGR="../../../tool/optimizer/MetaOptimizer -m 2 -i 127.0.0.1:15000 "
+RUN_N1="$RUN_BOREALIS" 
+RUN_N2="$RUN_BOREALIS -d 127.0.0.1:16000"
+RUN_LMTEST="./lmtest"
+INPUTGEN="../../../tool/optimizer/loadManager/inputgen"
+LOOP="./loop"
+
+
+
+if [ $# -eq 0 ]
+then
+  what='all'
+else
+  what=$1
+fi
+
+case "${what}" in 
+  all)
+    killall xterm
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN2 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N2" &
+
+    echo "Borealis N2"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+    echo "LoadManager"
+    $TERMINAL -T LoadManager -geometry 80x30+0+400 -e $SET_LIB_PATH sh -c "$RUN_LOAD_MGR -i 1" & 
+
+    sleep 3
+
+    echo "$TERMINAL -T lmtest -e $SET_LIB_PATH sh -c $RUN_LMTEST &"
+    $TERMINAL -T lmtest -geometry 80x5+0+300 -e $SET_LIB_PATH sh -c "$RUN_LMTEST" &
+    ;;
+
+  borealis)
+    killall xterm
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN2 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N2" &
+
+    echo "Borealis N2"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+    ;;
+
+  servers)
+    killall xterm
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN2 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N2" &
+
+    echo "Borealis N2"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+    echo "LoadManager"
+    $RUN_LOAD_MGR & 
+    ;;
+
+  stop)
+    killall xterm
+    skill -c MetaOptimizer
+    skill -c borealis
+    skill -c LoadManager
+    skill -c lmtest
+    skill -c inputgen
+esac
+
+

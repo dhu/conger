@@ -1,0 +1,415 @@
+[7mnotice[0m [BigGiantHead.cc:117] Processing xml:  faulttest.xml
+[7mnotice[0m [DeployDiagram.cc:628] add_xml_string trivialtuple: Success
+[7mnotice[0m [DeployDiagram.cc:576] add_xml_string trivial: Success
+[7mnotice[0m [DeployDiagram.cc:576] add_xml_string trivial2: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_sunion1" type="sunion" node="192.168.1.7:15000" >
+ <in  stream="trivial" />
+ <in  stream="trivial2" />
+ <out  stream="controlunion1"/>
+ <out  stream="union1"/>
+ <parameter  name="interval" value="500"/>
+ <parameter  name="location" value="input"/>
+ <parameter  name="max-delay.0" value="2000"/>
+ <parameter  name="max-delay.1" value="2000"/>
+ <parameter  name="stagger" value="0"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_aggregate" type="aggregate" node="192.168.1.7:15000" >
+ <in  stream="union1" />
+ <out  stream="aggregate"/>
+ <parameter  name="advance" value="1000"/>
+ <parameter  name="aggregate-function-output-name.0" value="join_attribute"/>
+ <parameter  name="aggregate-function.0" value="max(join_attribute)"/>
+ <parameter  name="drop-empty-outputs" value="1"/>
+ <parameter  name="independent-window-alignment" value="1"/>
+ <parameter  name="order-by" value="FIELD"/>
+ <parameter  name="order-on-field" value="time"/>
+ <parameter  name="window-size" value="1000"/>
+ <parameter  name="window-size-by" value="VALUES"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_sunion2" type="sunion" node="192.168.1.7:15000" >
+ <in  stream="trivial" />
+ <in  stream="trivial2" />
+ <out  stream="controlunion2"/>
+ <out  stream="union2"/>
+ <parameter  name="interval" value="500"/>
+ <parameter  name="location" value="input"/>
+ <parameter  name="max-delay.0" value="2000"/>
+ <parameter  name="max-delay.1" value="2000"/>
+ <parameter  name="stagger" value="0"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_filter" type="filter" node="192.168.1.7:15000" >
+ <in  stream="union2" />
+ <out  stream="filter"/>
+ <parameter  name="expression.0" value="time &gt; 0"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_map" type="map" node="192.168.1.7:15000" >
+ <in  stream="filter" />
+ <out  stream="map"/>
+ <parameter  name="expression.0" value="time"/>
+ <parameter  name="expression.1" value="join_attribute"/>
+ <parameter  name="output-field-name.0" value="time"/>
+ <parameter  name="output-field-name.1" value="join_attribute"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_sunion3" type="sunion" node="192.168.1.7:15000" >
+ <in  stream="map" />
+ <in  stream="aggregate" />
+ <out  stream="controlunion3"/>
+ <out  stream="mapb"/>
+ <out  stream="aggregateb"/>
+ <parameter  name="interval" value="500"/>
+ <parameter  name="location" value="middle"/>
+ <parameter  name="max-delay.0" value="2000"/>
+ <parameter  name="max-delay.1" value="2000"/>
+ <parameter  name="stagger" value="0"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_join" type="sjoin" node="192.168.1.7:15000" >
+ <in  stream="aggregateb" />
+ <in  stream="mapb" />
+ <out  stream="join"/>
+ <parameter  name="left-buffer-size" value="1"/>
+ <parameter  name="left-order-by" value="VALUES"/>
+ <parameter  name="left-order-on-field" value="time"/>
+ <parameter  name="out-field-name.0" value="time1"/>
+ <parameter  name="out-field-name.1" value="time2"/>
+ <parameter  name="out-field-name.2" value="join_attribute"/>
+ <parameter  name="out-field.0" value="left.time"/>
+ <parameter  name="out-field.1" value="right.time"/>
+ <parameter  name="out-field.2" value="left.join_attribute"/>
+ <parameter  name="predicate" value="left.join_attribute=right.join_attribute"/>
+ <parameter  name="right-buffer-size" value="1"/>
+ <parameter  name="right-order-by" value="VALUES"/>
+ <parameter  name="right-order-on-field" value="time"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_soutput1" type="soutput" node="192.168.1.7:15000" >
+ <in  stream="aggregate" />
+ <out  stream="controloutput1"/>
+ <out  stream="soutput1"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:866] add_xml_string <box name="my_soutput2" type="soutput" node="192.168.1.7:15000" >
+ <in  stream="join" />
+ <out  stream="controloutput2"/>
+ <out  stream="soutput2"/>
+</box>
+: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string controloutput1: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string controloutput2: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string controlunion1: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string controlunion2: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string controlunion3: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string soutput1: Success
+[7mnotice[0m [DeployDiagram.cc:925] add_xml_string soutput2: Success
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780549, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780549, 397984))
+[7mnotice[0m [faulttest.cc:47] Result body (2000,3013,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780549, 460828))
+[7mnotice[0m [faulttest.cc:47] Result body (2000,3076,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780549, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780549, 985886))
+[7mnotice[0m [faulttest.cc:47] Result body (2000,3601,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780550, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780550, 153721))
+[7mnotice[0m [faulttest.cc:47] Result body (2000,3768,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780550, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780550, 783759))
+[7mnotice[0m [faulttest.cc:47] Result body (3000,4398,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780550, 846747))
+[7mnotice[0m [faulttest.cc:47] Result body (3000,4461,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780551, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 14577))
+[7mnotice[0m [faulttest.cc:47] Result body (3000,4629,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 329669))
+[7mnotice[0m [faulttest.cc:47] Result body (3000,4944,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 350525))
+[7mnotice[0m [faulttest.cc:47] Result body (3000,4965,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 476503))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5091,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 497500))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5112,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780551, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 518495))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5133,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 707465))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5322,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 770455))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5385,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 896435))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5511,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 896577))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5511,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780551, 938428))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5553,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780552, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 190533))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5805,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 316367))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5931,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 379358))
+[7mnotice[0m [faulttest.cc:47] Result body (4000,5994,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 379505))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,5994,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 463343))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,6078,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780552, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780552, 568475))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,6183,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780553, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mwarn[0m [faulttest.cc:101] Starting FAILURE
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780553, 240219))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,6855,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780553, 261216))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,6876,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780553, 345202))
+[7mnotice[0m [faulttest.cc:47] Result body (5000,6960,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780553, 387197))
+[7mnotice[0m [faulttest.cc:47] Result body (6000,7002,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780553, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780554, 227203))
+[7mnotice[0m [faulttest.cc:47] Result body (6000,7842,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780554, 458164))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8073,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780554, 647139))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8262,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780554, 773118))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8388,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780554, 794112))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8409,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780555, 151058))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8766,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780555, 256038))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8871,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780555, 340053))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8955,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780555, 780811))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9395,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780555, 822949))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9438,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780556, 241880))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9857,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780556, 640672))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10255,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780556, 787649))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10402,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780557, 39754))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10654,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780557, 207726))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10822,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780557, 816626))
+[7mnotice[0m [faulttest.cc:47] Result body (10000,11431,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( TENTATIVE,(1139780558, 131576))
+[7mnotice[0m [faulttest.cc:47] Result body (10000,11746,19)
+[7mwarn[0m [faulttest.cc:107] Stopping FAILURE
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( UNDO,(1139780553, 387197))
+[7mnotice[0m [faulttest.cc:47] Result body (6000,7002,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780554, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780554, 227203))
+[7mnotice[0m [faulttest.cc:47] Result body (6000,7842,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780554, 458164))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8073,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780554, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780554, 647139))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8262,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780554, 773118))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8388,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780554, 794112))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8409,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780555, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 151058))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8766,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 256038))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8871,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 340053))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8955,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 381885))
+[7mnotice[0m [faulttest.cc:47] Result body (7000,8997,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 381885))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,8997,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780555, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 780811))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9395,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780555, 822949))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9438,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780556, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780556, 241880))
+[7mnotice[0m [faulttest.cc:47] Result body (8000,9857,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780556, 451702))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10066,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780556, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780556, 640672))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10255,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780556, 787649))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10402,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780557, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780557, 39754))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10654,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780557, 207726))
+[7mnotice[0m [faulttest.cc:47] Result body (9000,10822,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780557, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780557, 816626))
+[7mnotice[0m [faulttest.cc:47] Result body (10000,11431,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780558, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780558, 131576))
+[7mnotice[0m [faulttest.cc:47] Result body (10000,11746,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780558, 488374))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12103,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780558, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780558, 572362))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12187,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780558, 614502))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12229,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780558, 992301))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12607,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780559, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780559, 13436))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12628,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780559, 305527))
+[7mnotice[0m [faulttest.cc:47] Result body (11000,12920,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780559, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( RECONCILIATION_DONE,(1139780559, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780559, 599228))
+[7mnotice[0m [faulttest.cc:47] Result body (12000,13214,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780559, 767311))
+[7mnotice[0m [faulttest.cc:47] Result body (12000,13382,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780560, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780560, 250096))
+[7mnotice[0m [faulttest.cc:47] Result body (12000,13865,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780560, 250249))
+[7mnotice[0m [faulttest.cc:47] Result body (12000,13865,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780560, 334223))
+[7mnotice[0m [faulttest.cc:47] Result body (12000,13949,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780560, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780560, 796143))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14411,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780560, 858992))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14474,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780561, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 174098))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14789,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 321076))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14936,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 362917))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14978,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 383915))
+[7mnotice[0m [faulttest.cc:47] Result body (13000,14999,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 384073))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,14999,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780561, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 572896))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15188,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 615311))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15230,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 635873))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15251,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 720011))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15335,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780561, 741020))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15356,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780562, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780562, 13961))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15629,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780562, 118796))
+[7mnotice[0m [faulttest.cc:47] Result body (14000,15733,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780562, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780562, 746690))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16361,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780562, 809822))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16425,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780562, 872670))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16487,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780563, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 124781))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16739,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 208757))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16823,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 313598))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16928,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 376588))
+[7mnotice[0m [faulttest.cc:47] Result body (15000,16991,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 376732))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,16991,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780563, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 586559))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17201,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 712533))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17327,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 838659))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17453,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 901645))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17516,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780563, 964635))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17579,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780564, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780564, 132620))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17747,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780564, 300584))
+[7mnotice[0m [faulttest.cc:47] Result body (16000,17915,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780564, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780564, 678378))
+[7mnotice[0m [faulttest.cc:47] Result body (17000,18293,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780565, 0))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780565, 119456))
+[7mnotice[0m [faulttest.cc:47] Result body (17000,18734,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( INSERTION,(1139780565, 476249))
+[7mnotice[0m [faulttest.cc:47] Result body (18000,19091,19)
+[7mnotice[0m [FaulttestMarshal.cc:840]   H2 ( BOUNDARY,(1139780565, 500000))
+[7mnotice[0m [faulttest.cc:47] Result body (0,0,0)
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.h:101] Connection closed
+[7mwarn[0m [DataHandler.cc:24] Deleting the data handler
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [FaulttestMarshal.cc:258] Connection closed... stopping event stream
+[7mwarn[0m [DataHandler.cc:78] Already terminated
+[7merror[0m [FaulttestMarshal.cc:367] Connection closed... stopping event stream

@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram. -->
+
+<borealis>
+     <schema name="mono_frame">
+          <field name="frame" type="byte(0...1023, 0...744)"/>   
+          <field name="seq_no" type="int" />
+    </schema>    
+
+	<schema name="tricolor_frame">
+          <field name="tri_frame" type="byte(0...1023, 0...744, 0...2)"/>   
+		  <field name="seq_no" type="int" />
+    </schema>    
+
+	<schema name="scrolling_frame">
+          <field name="scroll_frame" type="byte(0...1023, 0...2788, 0...2)"/>   
+		  <field name="seq_no" type="int" />
+    </schema>    
+
+    <input stream="i_frame" schema="mono_frame"/>
+    <input stream="r_frame" schema="mono_frame"/>
+    <input stream="g_frame" schema="mono_frame"/> 
+    <input stream="o_frame_1" schema="tricolor_frame"/>  
+    <input stream="o_frame_2" schema="tricolor_frame"/>   
+    <output stream="scroller"  schema="scrolling_frame"/>
+
+    <!-- start to just get the data into the system -->
+    <box name="first_join" type="join_fits">
+       <in      stream="i_frame" /> 
+       <in      stream="r_frame" /> 
+       <out     stream="o_frame_1" />
+       <parameter name="predicate" value="left.seq_no == right.seq_no"/>
+       <parameter name="left-buffer-size"     value="2"/>
+       <parameter name="left-order-by"        value="TUPLES"/>
+       <parameter name="right-buffer-size"    value="2"/>
+       <parameter name="right-order-by"       value="TUPLES"/>    
+       <parameter name="first_cascade" value="1"/>
+       <parameter name="i_start_x" value="0"/>
+       <parameter name="i_x_sign" value="0"/> <!-- hack to say "nonnegative number" -->
+       <parameter name="i_start_y" value="0"/>
+       <parameter name="i_y_sign" value="0"/>       
+       <parameter name="r_start_x" value="1"/>
+       <parameter name="r_x_sign" value="1"/>
+       <parameter name="r_start_y" value="2"/>
+       <parameter name="r_y_sign" value="1"/>
+       <parameter name="g_start_x" value="3"/>
+       <parameter name="g_x_sign" value="1"/>
+       <parameter name="g_start_y" value="5"/>
+       <parameter name="g_y_sign" value="0"/>
+       <parameter name="max_x" value="1024"/>
+       <parameter name="max_y" value="745"/>
+   </box>
+
+   <box name="second_join" type="join_fits">
+       <in      stream="o_frame_1" /> 
+       <in      stream="g_frame" /> 
+       <out     stream="o_frame_2" />
+       <parameter name="predicate" value="left.seq_no == right.seq_no"/>
+       <parameter name="left-buffer-size"     value="2"/>
+       <parameter name="left-order-by"        value="TUPLES"/>
+       <parameter name="right-buffer-size"    value="2"/>
+       <parameter name="right-order-by"       value="TUPLES"/>    
+       <parameter name="first_cascade" value="0"/>
+       <parameter name="i_start_x" value="0"/>
+       <parameter name="i_x_sign" value="0"/> <!-- hack to say "nonnegative number" -->
+       <parameter name="i_start_y" value="0"/>
+       <parameter name="i_y_sign" value="0"/>       
+       <parameter name="r_start_x" value="1"/>
+       <parameter name="r_x_sign" value="1"/>
+       <parameter name="r_start_y" value="2"/>
+       <parameter name="r_y_sign" value="1"/>
+       <parameter name="g_start_x" value="3"/>
+       <parameter name="g_x_sign" value="1"/>
+       <parameter name="g_start_y" value="5"/>
+       <parameter name="g_y_sign" value="0"/>
+       <parameter name="max_x" value="1024"/>
+       <parameter name="max_y" value="745"/>
+   </box>
+ 
+      <box name="create_scroller" type="concatenate">
+	   	<in stream="o_frame_2"/>
+   		<out stream="scroller" />
+   		<parameter name="window_size" value="4"/>
+   		<parameter name="slide" value="1"/>
+   		<parameter name="overlap" value="64"/>
+   		<parameter name="real_x" value="1021"/>
+   		<parameter name="real_y" value="738"/>
+   </box>
+  
+</borealis>

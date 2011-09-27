@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!-- Borealis deployment diagram for: lstest_aggregate.xml -->
+
+<deploy>
+    <publish stream="input1" />
+    <publish stream="input2" />
+
+    <subscribe stream="output1"  gap="50" />
+    <subscribe stream="output2"  gap="100" />
+
+    <node endpoint=":15000" query="query1" />
+
+    <region node=":15000"   endpoint=":40000" />
+</deploy>

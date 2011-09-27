@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram. -->
+
+<borealis>
+    <input   stream="Packet"  schema="PacketTuple"  />
+    <output  stream="Result"  schema="PacketTuple"  />
+
+    <schema name="PacketTuple" >
+        <field name="value"  type="byte(0...319, 0...239, 0...2)"/>
+        <field name="time"   type="int" />
+    </schema>
+ 
+    <box  name="box0"  type="filter_array" >
+        <in       stream="Packet"       />
+        <out      stream="Result" /> 
+        <parameter  name="expression.0"  value="1=1" />
+	<parameter  name="threshold" value="600"/>
+    </box>
+
+</borealis>

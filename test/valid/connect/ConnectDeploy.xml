@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Deploy 1/2 nodes and a regional component. -->
+
+<deploy>
+    <publish    stream="Packet"  />
+    <subscribe  stream="Result"  />
+
+    <node   endpoint=":15000"     query="box0" />
+    <node   endpoint=":15100"     query="box1" />
+
+    <region  node=":15000" />
+    <region  node=":15100" />
+</deploy>

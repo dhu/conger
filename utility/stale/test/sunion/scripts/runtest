@@ -1,0 +1,431 @@
+#!/bin/bash
+
+export LOG_LEVEL="0 Bucket.cc:1 suniontest.cc:2 suniontestin.cc:2 suniontestout.cc:2 SUnionQBox.cc:0 SJoinQBox.cc:0"
+#export LOG_LEVEL="0 Admin.cc:1 ConsistencyMngr.cc:1 suniontestout.cc:2" 
+
+#export LOG_LEVEL="0 suniontestout.cc:2"
+
+if [ $# -lt 1 ]
+then
+    echo "usage: runtest move"
+    echo "and when you want to stop: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+
+# Get the IP address of this machine on its Ethernet connection
+IP=`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:##g'`
+IP=${IP:-"127.0.0.1"}
+#IP="127.0.0.1"
+
+# Looking for CLS_IP and BOREALIS_HOME environment variables 
+# These variables give the top
+# level location of all the source code. If they are not
+# defined, assign them some reasonable defaults
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../../../"}
+UTILITIES_HOME="${BOREALIS_HOME}/utility/" # Network monitoring tool
+APPS_HOME="../src/"
+GUI_HOME="../gui/"
+
+# The IP address where the CentralLookupServer will be running
+CLS_IP=${CLS_IP:-"${IP}"}
+
+# Second, we configure the port numbers that will be used by all the 
+# applications
+CLS_PORT=30000 # Port of the CentralLookupServer
+
+BOREALIS_DATA_PORT=17000
+
+PORT_DELTA=100
+PORTS={}
+for i in `seq 1 20`
+do
+    let "BOREALIS_DATA${i}_PORT = BOREALIS_DATA1_PORT+${i}*${PORT_DELTA}"
+    let "PORTS[i] = BOREALIS_DATA_PORT+${i}*${PORT_DELTA}"
+done
+
+CLIENT1_PORT=25000
+CLIENT2_PORT=26000
+CLIENT3_PORT=27000
+
+MONITOR_PORT=50000
+
+# Assuming CentralLookupServer will be running at node 1
+export BOREALIS_CLS=${CLS_IP}:${CLS_PORT}
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=50000
+export AURORA_PAGE_SIZE=16384
+
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+MEDUSAXMLRPC_HOME=${UTILITIES_HOME}/medusaXmlRpc
+MONITOR_HOME=${UTILITIES_HOME}/statsView
+
+CLASSPATH="${CLASSPATH}:${MEDUSAXMLRPC_HOME}/lib/medusaXmlRpc.jar:${MEDUSAXMLRPC_HOME}/lib/xmlrpc.jar:${MONITOR_HOME}/lib/monitor.jar"
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+
+    cls)
+        if [ "${IP}" != "${CLS_IP}" ]
+        then
+            eval echo "If you want to run CLS here, then please adjust CLS_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting CLS..."
+        BINDING=${IP}:${CLS_PORT}
+        eval echo "xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e ${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING} $2"
+        xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e sh -c "${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING} $2 2>&1 |tee cls-${BINDING}.log"  &
+        echo "CLS started."
+        ;;
+
+    cls-silent)
+        BINDING=${IP}:${CLS_PORT}
+        nohup ${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING} $2 noterm > cls-${BINDING}.log 2>&1 &
+        ;;
+
+
+    borealis)
+        echo "Starting Borealis Data"
+        eval echo "Assuming CLS is running at: ${BOREALIS_CLS}"
+        if [ $# -gt 2 ] 
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        else
+            BINDING=${IP}:${PORTS[1]}
+        fi        
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x10+20+200 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+200 -e sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+   borealis-silent)
+        if [ $# -gt 2 ] 
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        else
+            BINDING=${IP}:${PORTS[1]}
+        fi        
+        nohup ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} > borealis-${BINDING}.log 2>&1 &
+        ;;
+    
+     javamonitor)
+        echo "Starting java monitor..."
+        NODE_CAP=$2
+        LIST=$3
+        eval echo "xterm -T JavaMonitor -geometry 80x10+200+300 -e java -classpath ${CLASSPATH} monitor.Monitor ${NODE_CAP} ${LIST} " &
+        xterm -T JavaMonitor -geometry 80x10+200+300 -e sh -c "java -classpath ${CLASSPATH} monitor.Monitor ${NODE_CAP} ${LIST} 2>&1 |tee javamonitor.log" &
+        exit 0
+        ;;
+
+    suniontestin)
+        echo "Starting suniontestin"
+        eval echo "xterm -T suniontestin -geometry 200x30+200+30 -e ${APPS_HOME}/suniontestin $2 2>&1 |tee suniontestout.log" &
+        xterm -T suniontestin -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/suniontestin $2 2>&1 |tee suniontestin.log" &
+        echo "Client-in started"
+        ;;
+
+    suniontestin-silent)
+        nohup ${APPS_HOME}/suniontestin $2 > suniontestin.log  2>&1 &
+        ;;
+
+    suniontestmiddle)
+        echo "Starting suniontestmiddle"
+        eval echo "xterm -T suniontestmiddle -geometry 200x30+200+30 -e ${APPS_HOME}/suniontestmiddle $2 2>&1 |tee suniontestmiddle.log" &
+        xterm -T suniontestmiddle -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/suniontestmiddle $2 2>&1 |tee suniontestmiddle.log" &
+        echo "Client-in started"
+        ;;
+
+    suniontestmiddle-silent)
+        nohup ${APPS_HOME}/suniontestmiddle $2 > suniontestmiddle.log  2>&1 &
+        ;;
+
+    suniontestout)
+        echo "Starting suniontestout"
+        eval echo "xterm -T suniontestout -geometry 200x30+200+60 -e ${APPS_HOME}/suniontestout $2 2>&1 |tee suniontestout.log" &
+        xterm -T suniontestout -geometry 200x30+300+60 -e sh -c "${APPS_HOME}/suniontestout $2 2>&1 |tee suniontestout.log" &
+        echo "Client-out started"
+        ;;
+
+    suniontestout-silent)
+        nohup ${APPS_HOME}/suniontestout $2 > suniontestout.log  2>&1 &
+        ;;
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+    sunion)
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime"
+            exit 0
+        fi
+        $0 cls "-t ${TIME}"
+        sleep 2
+        $0 borealis ${IP}:${PORTS[1]} "-t ${TIME}"
+        sleep 3
+        $0 suniontestin "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} "
+        sleep 5
+        $0 suniontestout "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE}"
+        exit 0
+        ;;
+    
+    suniondebug)
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime"
+            exit 0
+        fi
+        $0 suniontestin "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} "
+        sleep 5
+        $0 suniontestout "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE}"
+        exit 0
+        ;;
+
+    sunionrep)
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime"
+            exit 0
+        fi
+        $0 cls "-t ${TIME}"
+        sleep 1
+        $0 borealis ${IP}:${PORTS[1]}  "amnesia -t ${TIME}" # Upstream
+        sleep 1
+        $0 borealis ${IP}:${PORTS[2]} "amnesia -t ${TIME}" # Replica
+        sleep 3
+        $0 suniontestin "-d ${IP}:${PORTS[1]} -r ${IP}:${PORTS[2]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} "
+        sleep 4 # Give enough time to replicate query
+        $0 suniontestout "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE}"
+        exit 0
+        ;;
+
+    suniondouble)
+        if [ $# -gt 4 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+            NBNODES=$5
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime nb_nodes"
+            exit 0
+        fi    
+        $0 cls "-t ${TIME}"
+        sleep 1
+        $0 borealis ${IP}:${PORTS[1]} "amnesia -t ${TIME}" # All the nodes
+        sleep 1
+        $0 borealis ${IP}:${PORTS[2]} "amnesia -t ${TIME}" # All the nodes
+        sleep 1
+
+        sleep 5
+        $0 suniontestin "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} "
+        sleep 4 
+        $0 suniontestmiddle "-d ${IP}:${PORTS[2]} -a ${IP}:${CLIENT3_PORT} -p ${FILE_LINE} -n ${NBNODES}"
+        sleep 2
+        $0 suniontestout "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE}"
+        exit 0
+        ;;
+
+
+    suniondoublerep)
+        if [ $# -gt 4 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+            NBNODES=$5
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime nb_nodes"
+            exit 0
+        fi    
+        $0 cls "-t ${TIME}"
+        sleep 1
+        $0 borealis ${IP}:${PORTS[1]} "amnesia -t ${TIME}" # First node
+        sleep 3
+        $0 borealis ${IP}:${PORTS[2]} "amnesia -t ${TIME}" # Its replica
+        sleep 3
+        $0 suniontestin "-d ${IP}:${PORTS[1]} -r ${IP}:${PORTS[2]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} -n ${NBNODES} "
+
+        if [ ${NBNODES} -gt 1 ]
+        then
+            for i in `seq 2 ${NBNODES}`
+            do        
+                let "first=(2*i)-1"
+                sleep 1
+                $0 borealis ${IP}:${PORTS[first]} "amnesia -t ${TIME}" # Primary
+                sleep 1
+                let "second = ${first}+1"
+                $0 borealis ${IP}:${PORTS[second]} "amnesia -t ${TIME}" # Replica
+                sleep 3
+                $0 suniontestmiddle "-d ${IP}:${PORTS[first]} -r ${IP}:${PORTS[second]} -a ${IP}:${CLIENT3_PORT} -p ${FILE_LINE} -n ${i}"
+            done
+        fi
+
+        sleep 2
+        $0 suniontestout "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE} -n ${NBNODES}"
+        exit 0
+        ;;
+
+
+     distributed)
+        if [ $# -gt 4 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+            HOSTS_FILE=$5
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime file_with_host_ips"
+            exit 0
+        fi   
+        
+        # First just count the number of nodes
+        let "NBNODES=0"
+        for next_ip in `cat $HOSTS_FILE`
+        do      
+            let "NBNODES=NBNODES+1"
+        done
+
+        # First node is local
+        $0 cls-silent "-t ${TIME}"
+        sleep 1
+        $0 borealis-silent ${IP}:${PORTS[1]} "amnesia -t ${TIME}" # First node
+        sleep 3
+        $0 borealis-silent ${IP}:${PORTS[2]} "amnesia -t ${TIME}" # Its replica
+        sleep 2
+        $0 suniontestin-silent "-d ${IP}:${PORTS[1]} -r ${IP}:${PORTS[2]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE} -n ${NBNODES} "
+        echo "Started first node and input"
+
+        last_ip=${IP}
+
+        # All other nodes are remote
+        let "NODE=0"
+        for next_ip in `cat $HOSTS_FILE`
+        do      
+            let "NODE=NODE+1"
+            if [ ${NODE} -gt 1 ]
+            then                 
+                ssh ${next_ip} "start-nodes $2 $4 ${NODE}"
+                eval echo "Started node $2 $4 ${NODE}"
+            fi
+            last_ip=${next_ip}
+        done            
+
+        # Finally, the final client is either local or remote
+        sleep 3
+        eval echo "... and starting output client at ${last_ip}" 
+        if [ ${NBNODES} -gt 1 ]
+        then
+            ssh ${last_ip} "start-client $2 $3 ${NBNODES}"
+        else
+            eval echo "... and starting output client locally" 
+            $0 endclient $2 $3 ${NBNODES}
+        fi
+        #$0 suniontestout-silent "-d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE} -n ${NBNODES}"
+        eval echo "Started output client"
+        exit 0
+        ;;
+    
+
+     segment)
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2 
+            TIME=$3
+            NUMBER=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime ip:port1 ip:port2"
+            exit 0
+        fi   
+        let "first=(2*${NUMBER})-1"
+        let "second = ${first}+1"
+        IP1=${IP}:${PORTS[first]}
+        IP2=${IP}:${PORTS[second]}
+        #eval echo "$IP1 $IP2 $FILE_LINE $TIME $NUMBER"
+        $0 borealis-silent ${IP1} "amnesia -t ${TIME}" # Primary
+        sleep 1
+        $0 borealis-silent ${IP2} "amnesia -t ${TIME}" # Replica
+        sleep 3
+        $0 suniontestmiddle-silent "-d ${IP1} -r ${IP2} -a ${IP}:${CLIENT3_PORT} -p ${FILE_LINE} -n ${NUMBER}"
+        exit 0
+        ;;
+
+    endclient)
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2 
+            RESULT_FILE=$3
+            NUMBER=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file nbNodes"
+            exit 0
+        fi
+        let "first=(2*${NUMBER})-1"
+        $0 suniontestout-silent "-d ${IP}:${PORTS[first]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE} -n ${NUMBER}"
+        exit 0
+        ;;
+     
+
+     stop)
+        killall xterm.real
+	killall xterm
+        exit 0
+        ;;
+
+
+    mydemo) ## Same as sunionrep but suniontestout start with a gui
+        if [ $# -gt 3 ] 
+        then            
+            FILE_LINE=$2          
+            RESULT_FILE=$3
+            TIME=$4
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime"
+            exit 0
+        fi
+        $0 cls "-t ${TIME}"
+        sleep 1
+        $0 borealis ${IP}:${PORTS[1]}  "amnesia -t ${TIME}" # Upstream
+        sleep 3
+        $0 borealis ${IP}:${PORTS[2]} "amnesia -t ${TIME}" # Its replica
+        sleep 3
+        ln -s ${GUI_HOME}/SimpleGUI.jar
+        $0 suniontestin "gui -d ${IP}:${PORTS[1]} -r ${IP}:${PORTS[2]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE}"
+        #$0 suniontestin "gui -d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT1_PORT} -p ${FILE_LINE}"
+        sleep 4 # Give enough time to replicate query
+        $0 suniontestout "gui -d ${IP}:${PORTS[1]} -a ${IP}:${CLIENT2_PORT} -p ${FILE_LINE} -f ${RESULT_FILE}"
+        exit 0
+        ;;
+
+esac
+

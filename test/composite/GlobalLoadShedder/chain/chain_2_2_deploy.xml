@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<deploy>
+
+    <publish   stream="Input1"  node="128.148.37.48:21000" />
+    <publish   stream="Input2"  node="128.148.37.48:21000" />
+
+    <subscribe stream="Output1" />
+    <subscribe stream="Output2" />
+
+    <node endpoint="128.148.37.48:21000"  query="Server1" />
+    <node endpoint="128.148.37.58:28000"  query="Server8" />
+
+    <region node="128.148.37.48:21000"    endpoint="128.148.37.48:40000" />
+    <region node="128.148.37.58:28000"    endpoint="128.148.37.48:40000" />
+
+</deploy>

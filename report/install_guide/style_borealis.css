@@ -1,0 +1,71 @@
+<HTML><HEAD>
+<TITLE>Borealis Style Sheet</TITLE>
+<LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+
+<STYLE TYPE="text/css">
+<!--
+ BODY {
+        color:#00FF00;
+         link:#FFCC88;
+        vlink:#FFCCFF;
+        alink:#FFFFFF;
+  font-family: Times New Roman, Sans Serif, Arial;
+ }
+ KBD {
+        color: #FFCC88;
+  font-family: Courier New, Courier, Lucinda Console, Terminal;
+   font-style: bold;
+ }
+ PRE {
+        color: #00FF00;
+  font-family: Courier New, Courier, Lucinda Console, Terminal;
+ }
+ H1 {
+        color: #FF6600;
+  font-family: Arial, Times New Roman, Sans Serif;
+ }
+ H2 {
+        color: #FF6600;
+  font-family: Arial, Times New Roman, Sans Serif;
+ }
+ H3 {
+        color: #00FFFF;
+  font-family: Arial, Times New Roman, Sans Serif;
+   font-style: bold;
+ }
+ H4 {
+        color: #FF6600;
+  font-family: Arial, Times New Roman, Sans Serif;
+ }
+ H5 {
+        color: #FFFF00;
+  font-family: Arial, Times New Roman, Sans Serif;
+ }
+ SPAN.red {
+        color:#FF0000;
+ }
+ SPAN.blue {
+        color:#00FFFF;
+ }
+ SPAN.black {
+        color:#000000;
+ }
+ SPAN.yellow {
+        color:#FFFF00;
+ }
+ SPAN.white {
+        color:#FFFFFF ;
+ }
+ UL.bullet {
+  color:#00FFFF;
+  list-style-type: disc
+ }
+ LI.bullet {
+  color:#00FFFF;
+  list-style-type: disc
+ }
+ P.body {
+  color:#FFFF00;
+ }
+ -->
+</STYLE></HEAD>

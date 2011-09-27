@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  two_server_test.cc -->
+
+<deploy>
+    <publish    stream="input"     node=":31000"/>
+
+    <client  endpoint=":60000" >
+        <subscribe  stream="count"     />
+        <subscribe  stream="distance"  />
+    </client>
+
+    <node   endpoint=":31000" query="Query1" />
+    <node   endpoint=":32000" query="Query2" />
+</deploy>

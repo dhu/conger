@@ -1,0 +1,74 @@
+<borealis>
+  <schema name="dmt_schema">
+    <field name="rand" type="double"/>
+  </schema>
+
+  <input  stream="rng"          schema="dmt_schema"/>
+  <output stream="probability"  schema="dmt_schema"/>
+
+  <!-- 9 filters in sequence, 3 per query -->
+
+  <query name="flop">
+    <box name="box_a" type="filter">
+      <in  stream="rng"/>
+      <out stream="a_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.9"/>
+    </box>
+
+    <box name="box_b" type="filter">
+      <in  stream="a_out"/>
+      <out stream="b_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.85"/>
+    </box>
+
+    <box name="box_c" type="filter">
+      <in  stream="b_out"/>
+      <out stream="c_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.8"/>
+    </box>
+
+  </query>
+
+  <query name="turn">
+    <box name="box_d" type="filter">
+      <in  stream="c_out"/>
+      <out stream="d_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.65"/>
+    </box>
+
+    <box name="box_e" type="filter">
+      <in  stream="d_out"/>
+      <out stream="e_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.6"/>
+    </box>
+
+    <box name="box_f" type="filter">
+      <in  stream="e_out"/>
+      <out stream="f_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.5"/>
+    </box>
+
+  </query>
+
+  <query name="river">
+    <box name="box_g" type="filter">
+      <in  stream="f_out"/>
+      <out stream="g_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.45"/>
+    </box>
+
+    <box name="box_h" type="filter">
+      <in  stream="g_out"/>
+      <out stream="h_out"/>
+      <parameter name="expression.0" value="rand &lt; 0.35"/>
+    </box>
+
+    <box name="box_i" type="filter">
+      <in  stream="h_out"/>
+      <out stream="probability"/>
+      <parameter name="expression.0" value="rand &lt; 0.2"/>
+    </box>
+
+  </query>
+
+</borealis>

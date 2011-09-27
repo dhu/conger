@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  maptest.cc -->
+
+<borealis>
+    <input   stream="Packet"  schema="PacketTuple"  />
+    <output  stream="Result"  schema="OutputTuple"  />
+
+    <schema name="PacketTuple" >
+        <field name="type"         type="int" />
+        <field name="key"          type="int" />
+        <field name="revision_id"  type="int" />
+        <field name="time"         type="int" />
+        <field name="protocol"     type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="addten"         type="int" />
+        <field name="multiplyten"    type="int" />
+        <field name="protocol"       type="string" size="4" />
+    </schema>
+ 
+    <query name="SimpleQuery" >
+        <box name="map1" type="map">
+       <in stream="Packet"/>
+       <out stream="Result"/>
+       <parameter name="expression.0"        value="time+10"/>
+       <parameter name="expression.1"	     value="time*10"/>
+       <parameter name="expression.2"	     value="protocol"/>
+       <parameter name="output-field-name.0" value="addten"/>
+       <parameter name="output-field-name.1" value="multiplyten"/>
+       <parameter name="output-field-name.2" value="protocol"/>
+    </box>
+
+    </query>
+
+</borealis>

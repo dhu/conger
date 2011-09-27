@@ -1,0 +1,173 @@
+#!/bin/bash
+
+export LOG_LEVEL="0  AggregateQBox.cc:0 FilterQBox.cc:0 Stats.h:0"
+#export LOG_LEVEL="0 AggregateQBox.cc:2"
+#export LOG_LEVEL="0"
+
+if [ $# -lt 1 ]
+then
+    echo "usage: runtest move"
+    echo "and when you want to stop: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+
+
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/pro/sand/software/nmstl/lib:/pro/borealis/software/bdb/lib:/pro/borealis/software/antlr/lib:/pro/borealis/software/xerces/lib
+
+# Get the IP address of this machine on its Ethernet connection
+#IP=`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:##g'`
+IP=${IP:-"127.0.0.1"}
+#IP="127.0.0.1"
+
+# Looking for CLS_IP and BOREALIS_HOME environment variables 
+# These variables give the top
+# level location of all the source code. If they are not
+# defined, assign them some reasonable defaults
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../"}
+UTILITIES_HOME="${BOREALIS_HOME}/utility/" # Network monitoring tool
+APPS_HOME="./"
+
+# The IP address where the CentralLookupServer will be running
+CLS_IP=${CLS_IP:-"${IP}"}
+
+# Second, we configure the port numbers that will be used by all the 
+# applications
+CLS_PORT=30000 # Port of the CentralLookupServer
+BOREALIS_DATA_PORT=15000
+BOREALIS_DATA2_PORT=17000
+BOREALIS_DATA3_PORT=19000
+
+MONITOR_PORT=50000
+
+# Assuming CentralLookupServer will be running at node 1
+export BOREALIS_CLS=${CLS_IP}:${CLS_PORT}
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=10000
+export AURORA_PAGE_SIZE=16384
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+BOREALIS_TEST_HOME=${UTILITIES_HOME}/test
+MEDUSAXMLRPC_HOME=${UTILITIES_HOME}/medusaXmlRpc
+MONITOR_HOME=${UTILITIES_HOME}/statsView
+
+CLASSPATH="${CLASSPATH}:${MEDUSAXMLRPC_HOME}/lib/medusaXmlRpc.jar:${MEDUSAXMLRPC_HOME}/lib/xmlrpc.jar:${MONITOR_HOME}/lib/monitor.jar"
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+
+    cls)
+        if [ "${IP}" != "${CLS_IP}" ]
+        then
+            eval echo "If you want to run CLS here, then please adjust CLS_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting CLS..."
+        BINDING=${IP}:${CLS_PORT}
+        eval echo "xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e sh -c ${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING}"
+        xterm -T CLS@${BINDING} -geometry 80x10+20+20 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_SRC_HOME}/CentralLookupServer -d ${BINDING} 2>&1 |tee cls-${BINDING}.log"  &
+        echo "CLS started."
+        ;;
+
+    borealis)
+        echo "Starting Borealis Data"
+        eval echo "Assuming CLS is running at: ${BOREALIS_CLS}"
+        if [ $# -gt 1 ] 
+        then
+            BOREALIS_PORT=$2
+            OTHER_OPTIONS=$3 # There might be none
+        else
+            BOREALIS_PORT=${BOREALIS_DATA_PORT}
+        fi
+        BINDING=${IP}:${BOREALIS_PORT}
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x30+20+20 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+    
+    bdebug)
+        echo "Starting Borealis Data"
+        eval echo "Assuming CLS is running at: ${BOREALIS_CLS}"
+        if [ $# -gt 1 ] 
+        then
+            BOREALIS_PORT=$2
+            OTHER_OPTIONS=$3 # There might be none
+        else
+            BOREALIS_PORT=${BOREALIS_DATA_PORT}
+        fi
+        BINDING=${IP}:${BOREALIS_PORT}
+	test -f gdb-borealis.args && rm gdb-borealis.args
+	echo "set args -d ${BINDING}" > gdb-borealis.args
+	echo "run" >> gdb-borealis.args
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x50+20+20 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x50+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "libtool --mode=execute gdb ${BOREALIS_SRC_HOME}/borealis 2>&1 | tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+     region)
+        echo "Starting regional server"
+	xterm -T RegionalServer -geometry 80x20+20+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${BOREALIS_TEST_HOME}/unit/Regiontest 2>&1 | tee region.log" &
+        ;;
+	
+     javamonitor)
+        echo "Starting java monitor..."
+        NODE_CAP=$2
+        LIST=$3
+        eval echo "xterm -T JavaMonitor -geometry 80x10+200+300 -e java -classpath ${CLASSPATH} monitor.Monitor ${NODE_CAP} ${LIST} " &
+        xterm -T JavaMonitor -geometry 80x10+200+300 -e sh -c "java -classpath ${CLASSPATH} monitor.Monitor ${NODE_CAP} ${LIST} 2>&1 |tee javamonitor.log" &
+        exit 0
+        ;;
+
+     moveclient)
+        echo "Starting movebox_test"
+        eval echo "xterm -T movebox_test -geometry 80x10+20+50 -e ${APPS_HOME}/movebox_test" &
+        xterm -T movebox_test -geometry 80x10+250+50 -e env LD_LIBRARY_PATH=${LD_LIBRARY_PATH} sh -c "${APPS_HOME}/movebox_test -d $2 2>&1 |tee movebox_test.log" &
+        echo "Client started"
+        ;;
+
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+
+    # --------------------------------------------------
+    move)
+        $0 cls
+	sleep 1
+	$0 region
+        sleep 3
+        $0 borealis ${BOREALIS_DATA_PORT}
+        sleep 6
+        $0 borealis ${BOREALIS_DATA2_PORT}
+        sleep 6
+        $0 borealis ${BOREALIS_DATA3_PORT}
+        #sleep 6
+        #$0 moveclient ${IP}:${BOREALIS_DATA_PORT}
+        #sleep 2
+        #$0 javamonitor 200 "$IP:${BOREALIS_DATA_PORT} $IP:${BOREALIS_DATA2_PORT}"
+        exit 0
+        ;;
+
+     stop)
+        killall xterm.real
+	killall xterm
+        exit 0
+        ;;
+
+esac
+

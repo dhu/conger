@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  update_queue6.cc -->
+
+<borealis update_queue="1" queue_type="6" key="sensor_id">
+
+    <schema name="SensorTuple">
+        <field name="time"  type="int" />
+        <field name="sensor_id" type="string" size="4" />
+        <field name="value" type="int" />
+    </schema>
+
+    <input  stream="input1"  schema="SensorTuple" />
+    <output stream="output1" schema="SensorTuple" />
+
+    <query name="query1">
+        <box name="box0_1" type = "window_drop">
+            <in stream="input1" update_queue="0"/>
+            <out stream="intermediate1" />
+            <parameter name="window-size-by" value="VALUES"/>
+            <parameter name="window-size" value="1"/>
+            <parameter name="window-slide" value="1"/>
+            <parameter name="order-by" value="FIELD"/>
+            <parameter name="order-on-field" value="time"/>
+            <parameter name="group-by" value="sensor_id"/>
+            <parameter name="drop_rate" value="0"/>
+            <parameter name="max_batch_size" value="1000"/>
+        </box>
+        <box name="box1_1" type = "delay">
+            <in stream="intermediate1" />
+            <out stream="output1" />
+            <parameter name="delay-ms" value="100"/>
+            <parameter name="churn" value="1"/>
+        </box>
+    </query>
+
+</borealis>

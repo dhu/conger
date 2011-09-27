@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Add a second filter. -->
+
+<deploy>
+    <client  prefix="Add"  endpoint=":25100" >
+        <subscribe  stream="Result" />
+    </client>
+
+    <node    endpoint=":15000"     query="box2" />
+</deploy>

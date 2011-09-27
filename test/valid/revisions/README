@@ -1,0 +1,27 @@
+          **********************************
+          *                                *
+          *            README	           *
+          *                                *
+          *        Anurag S. Maskey        *
+          *                                *
+          **********************************
+
+
+The tests in this /borealis/test/valid/revisions/ directory use the
+Revision*QBox.
+
+More details about the Revision* boxes can be found at the application
+programmer's guide. 
+
+There are four tests:
+  1. upstream_filter : RevisionFilter
+  2. upstream_map : RevisionMap
+  3. upstream_aggregate : RevisionAggregate in upstream processing mode
+  4. downstream_aggregate : RevisionAggregate in downstream processing mode
+
+validate_revisions.sh will run all the four tests one after
+another. This script is called from ../validate.go.sh.
+
+
+-----
+Please direct questions/comments to anurag@cs.brandeis.edu.

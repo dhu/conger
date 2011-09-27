@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Example .cshrc File Settings</TITLE>
+   <LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<B><PRE><SPAN class=yellow>
+#########################  login.cshrc  #######################################
+#
+#  Sample login scipt settings for Borealis.
+#  Do not blindly apply these settings.
+#  You need to determine what settings make sense for your environment.
+#..............................................................................
+
+echo  "Do not blindly apply these settings."
+
+
+###############################################################################
+#
+# Handy aliases for Borealis.
+#
+#..............................................................................
+
+
+#  Abbreviations to run the build script.
+#
+alias    bbb     build.borealis.sh
+alias    bbbt    build.borealis.sh -tool.head -tool.marshal
+
+
+#  Copy the BigGiantHead and marshal tools to the local bin directory.
+#  This is run after rebuilding the tools.
+#
+alias    retool  '/bin/cp -f ${HOME}/borealis/tool/head/BigGiantHead ${HOME}/bin; /bin/cp -f ${HOME}/borealis/tool/marshal/marshal ${HOME}/bin'
+
+
+#  Enable and disable run-time debug traces.
+#
+alias    debug   setenv  LOG_LEVEL 2
+alias    debug0  setenv  LOG_LEVEL 0
+
+
+
+###############################################################################
+#
+# Example environment 
+#
+# BOREALIS_SOFTWARE - Set to the directory where external software is installed.
+#
+#..............................................................................
+
+
+# Borealis builds need to know where NMSTL is installed.
+#
+setenv  PATH  ${PATH}:${HOME}/install_nmstl/bin
+
+
+# Needed to run Java for the graphical user interface.
+#
+setenv  CLASS_PATH       .:${CLASS_PATH}
+setenv  JAVA_HOME        /usr/lib/j2se/1.4
+setenv  PATH             ${JAVA_HOME}/bin:${PATH}
+
+
+
+#  First on PATH to override older Debian version.
+#
+setenv  PATH       ${HOME}/bin:${BOREALIS_SOFTWARE}/bin:${PATH}
+
+
+#  First on PATH to override older Brown Debian version.
+#
+setenv  CXX        "ccache  g++"
+ 
+setenv  INSTALL_BDB      ${BOREALIS_SOFTWARE}/bdb
+setenv  INSTALL_GLPK     ${BOREALIS_SOFTWARE}/glpk
+setenv  INSTALL_GSL      ${BOREALIS_SOFTWARE}/gsl
+setenv  INSTALL_ANTLR    ${BOREALIS_SOFTWARE}/antlr
+setenv  INSTALL_XERCESC  ${BOREALIS_SOFTWARE}/xerces
+setenv  INSTALL_NMSTL    ${BOREALIS_SOFTWARE}/nmstl
+
+
+# Needed to run Borealis
+#
+setenv  LD_LIBRARY_PATH  ${INSTALL_ANTLR}/lib
+setenv  LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:${INSTALL_NMSTL}/lib
+setenv  LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:${INSTALL_XERCESC}/lib
+setenv  LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:${INSTALL_GLPK}/lib
+setenv  LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:${INSTALL_GSL}/lib
+setenv  LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:${INSTALL_BDB}/lib
+
+#
+############################ end sample login.cshrc ###########################
+</SPAN></PRE></B></BODY></HTML>

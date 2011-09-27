@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  ls.cc -->
+
+<borealis>
+
+    <schema name="SensorTuple">
+        <field name="time"  type="int" />
+        <field name="sensor_id" type="string" size="4" />
+        <field name="value" type="int" />
+    </schema>
+
+    <input  stream="input1"  schema="SensorTuple" />
+    <output stream="output1" schema="SensorTuple" />
+
+    <query name="query1">
+        <box name="box0_1" type = "random_drop">
+            <in stream="input1" />
+            <out stream="intermediate1" />
+            <parameter name="drop_rate" value="0.7"/> <!-- adjust this !! -->
+            <parameter name="max_batch_size" value="1000"/>
+        </box>
+        <box name="box1_1" type = "delay">
+            <in stream="intermediate1" />
+            <out stream="output1" />
+            <parameter name="delay-ms" value="100"/>
+            <parameter name="churn" value="1"/>
+        </box>
+    </query>
+
+</borealis>

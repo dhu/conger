@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<borealis>
+    <publish  stream="s1"     node="127.0.0.1:15000" />
+    <publish  stream="s4"     node="127.0.0.1:16000" />
+
+    <subscribe stream="s3"     endpoint="127.0.0.1:15000" />
+    <subscribe stream="s6"     endpoint="127.0.0.1:16000" />
+
+
+</borealis>

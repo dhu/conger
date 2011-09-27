@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<borealis>
+
+    <schema name="IntTuple">
+        <field name="f1" type="int" />
+        <field name="f2" type="int" />
+    </schema>
+
+    <input stream="input1" schema="IntTuple" />
+    <input stream="input2" schema="IntTuple" />
+    <output stream="output1" schema="IntTuple" />
+    <output stream="output2" schema="IntTuple" />
+    <output stream="output3" schema="IntTuple" />
+    <output stream="output4" schema="IntTuple" />
+
+    <query name="query1">
+        <box name="box1_1" type = "union">
+            <in stream="input1" />
+            <out stream="intermediate1_1" />
+        </box>
+        <box name="box2_1" type = "union">
+            <in stream="intermediate1_1" />
+            <out stream="intermediate2_1" />
+        </box>
+        <box name="box3_1" type = "union">
+            <in stream="intermediate2_1" />
+            <out stream="intermediate3_1" />
+        </box>
+        <box name="box4_1" type = "union">
+            <in stream="intermediate2_1" />
+            <out stream="intermediate4_1" />
+        </box>
+        <box name="box5_1" type = "union">
+            <in stream="intermediate3_1" />
+            <out stream="output1" />
+        </box>
+        <box name="box6_1" type = "union">
+            <in stream="intermediate4_1" />
+            <out stream="output2" />
+        </box>
+	</query>
+
+    <query name="query2">
+        <box name="box1_2" type = "union">
+            <in stream="input2" />
+            <out stream="intermediate1_2" />
+        </box>
+        <box name="box2_2" type = "union">
+            <in stream="intermediate1_2" />
+            <out stream="intermediate2_2" />
+        </box>
+        <box name="box3_2" type = "union">
+            <in stream="intermediate2_2" />
+            <out stream="intermediate3_2" />
+        </box>
+        <box name="box4_2" type = "union">
+            <in stream="intermediate2_2" />
+            <out stream="intermediate4_2" />
+        </box>
+        <box name="box5_2" type = "union">
+            <in stream="intermediate3_2" />
+            <out stream="output3" />
+        </box>
+        <box name="box6_2" type = "union">
+            <in stream="intermediate4_2" />
+            <out stream="output4" />
+        </box>
+    </query>
+
+</borealis>
+

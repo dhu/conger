@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  upstreamdemo2.cc -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+        <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="quote" type="string" size="4" />
+        <field name="time" type="int" />
+        <field name="agg_0" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="test">
+
+    <box name="agg1" type="revisionaggregate" >
+        <in stream="Packet" />
+        <out stream="interm" />
+        <parameter name="aggregate-function.0" value="sum(price)" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="4"          />
+        <parameter name="advance"              value="2"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="time"       />
+        <parameter name="group-by"             value="quote"      />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+    </box>
+    
+    <box name="agg2" type="revisionaggregate" >
+        <in stream="interm" />
+        <out stream="Result" />
+        <parameter name="aggregate-function.0" value="sum(agg_0)" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="4"          />
+        <parameter name="advance"              value="2"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="time"       />
+        <parameter name="group-by"             value="quote"      />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+    </box>
+    
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+        <order  field="time" />
+        <size   value="250"     />
+        <radius value="12" />
+    </connection_point_view>
+    
+</borealis>

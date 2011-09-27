@@ -1,0 +1,29 @@
+<borealis>
+  <schema name="dmt_schema">
+    <field name="probability" type="double"/>
+  </schema>
+
+  <input  stream="event" schema="dmt_schema"/>
+  <output stream="unlikely" schema="dmt_schema"/>
+
+  <query name="compute_risk">
+    <box name="box_a" type="filter">
+      <in  stream="event"/>
+      <out stream="likely"/>
+      <parameter name="expression.0" value="probability &lt; 0.8"/>
+    </box>
+
+    <box name="box_b" type="filter">
+      <in  stream="likely"/>
+      <out stream="maybe"/>
+      <parameter name="expression.0" value="probability &lt; 0.5"/>
+    </box>
+
+    <box name="box_c" type="filter">
+      <in  stream="maybe"/>
+      <out stream="unlikely"/>
+      <parameter name="expression.0" value="probability &lt; 0.2"/>
+    </box>
+  </query>
+
+</borealis>

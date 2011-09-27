@@ -1,0 +1,1314 @@
+    /**
+     * Represents one node that we are monitoring
+     */
+    class MonitoredNode
+    {
+    public:
+        MonitoredNode(MedusaID id, NodeType t)
+            : _node_id(id), _type(t), _started(false), _recovered(false), _failed_pings(0),
+            _pending_ping(false) {}
+
+        /// Unique ID of this node
+        MedusaID _node_id;
+
+        /// The type of this node (why are we monitoring it)
+        NodeType _type;
+
+        /// Was the monitored node ever up and running
+        bool _started;
+
+        /// Did we recover from the failure of this monitored node
+        bool _recovered;
+
+        /// Number of consecutive failed keep_alives
+        int _failed_pings;
+        // After a few failed pings we consider monitored node to have failed
+        static const int MAX_FAILED_PINGS = 3;
+
+        /// Some keep alives just never return so we need to time them out
+        bool _pending_ping;
+
+        // The stuff below is only used for PROVIDER type of monitored node so
+        // we should probably decouple this
+        // List of streams monitored because of that node and alternates if available
+        typedef vector< ptr<StreamDef> > AltStreams; // Includes the StreamDef of main stream
+        typedef map< StreamID, AltStreams > MonitoredStreams;
+        MonitoredStreams _streams;
+
+        // The stuff below is only used for PRIMARY type of monitored node so
+        // we should probably decouple this
+        /// The list of queries that we are replicating on behalf of this node
+        vector<Query> _queries;
+        /// The list of subscriptions that we are replicating on behalf of this node
+        vector<Subscription> _subs;
+
+        string as_string() const
+        {
+            return "Monitored {id=" + to_string(_node_id) + ",type=" + _type + "}";
+        }
+    };
+
+    typedef map<MedusaID, ptr<MonitoredNode> > MonitoredNodes;
+
+
+    /**
+     * Replicate locally the given queries and subscriptions that are
+     * running at the primary
+     */
+    AsyncRPC<void> replicate(vector<Query> queries, vector<Subscription> subs);
+
+    /**
+     * Replicate locally the given queries and subscriptions that are
+     * running at the primary
+     */
+    // yna create_query Async@remove@RPC<void> replicate_query(MedusaID primary, Query query);
+
+    /**
+     * Replicate locally the given subscriptions from primary
+     */
+    AsyncRPC<void> replicate_subs(MedusaID primary, vector<Subscription> subs);
+
+    /**
+     * Invoked by backup HA component on the monitored nodes
+     * to determine their state (up or down)
+     */
+    RPC<void> keep_alive();
+
+    /**
+     * Notification that a monitored node is down. Includes the time
+     * of the notification and the identifier of the failed node
+     */
+    RPC<void> failure_notification(MedusaID failed_node, Time time_failure_detected);
+
+    /**
+     * Determines if this HA component is for a primary engine.
+     * @return true if this HA component is for a primary engine.
+     */
+    RPC<bool> is_primary();
+
+    /**
+     * Returns the recovery method being used.
+     * @return the recovery method being used.
+     */
+    RPC<int> get_recovery_method();
+
+    /**
+     * Returns the partner.
+     * @return the partner.
+     */
+    RPC<string> get_partner();
+
+    AsyncRPC<void> start_as_primary(int recovery_method, MedusaID secondary);
+
+    /**
+     * Inform QueryProcessor about the type of recovery method and
+     * whether we are primary or not
+     */
+    void inform_qp();
+
+    void inform_qp_response(RPC<void> result);
+
+    void init_ha_response(HAMethod previous_method, RPC<void> result);
+
+    void set_ha_response(HAMethod previous_method, RPC<void> result);
+
+    /**
+     * Inform the partner.
+     */
+    void inform_partner();
+
+    /**
+     * replicate queries and subscriptions to the partner.
+     */
+    void replicate_to_partner();
+
+    /**
+     * replicate queries and subscriptions from the partner.
+     */
+    bool replicate_from_partner();
+
+    /**
+     * Inform the partner that it is primary.
+     */
+    bool inform_partner_primary();
+
+    /**
+     * Initializes all configuration parameters by readling file configFileName
+     * If some nodes are assigned as primaries or as replicas
+     * for this.m_id then adds them to the list of nodes that should
+     * be monitored.
+     */
+    void init_config();
+    void init_global(const DOMElement* ha_config);
+    void init_process_pairs(const DOMElement* ha_config);
+    void init_replicas(const DOMElement* ha_config);
+
+    /**
+     * Updates the global catalog to indicate the bindings
+     * between this node and its primaries
+     */
+    void register_primaries();
+    void register_primaries_2(MedusaID primary, RPC<void> result);
+
+    /**
+     * Handle response from replication request
+     */
+    void replicate_response(MedusaID secondary, RPC<void> result);
+
+    void replicate_res(vector<Query> queries, vector<Subscription> subs, RPC<void> result);
+
+    /**
+     * Contacts all primaries by invoking keep-alive on them
+     */
+    void monitor_nodes();
+
+    /**
+     * Handles responses from keep-alive invocations. Starts recovery
+     * if necessary.
+     */
+    void monitor_nodes_2(MedusaID primary,RPC<void> result);
+
+    /**
+     * Failures can be detected by other means than explicit keep-alive messages.
+     * When this happens, any node can lookup the backup of a failed node
+     * and notify that backup about the condition
+     */
+    void failure_notification_2(MedusaID failed_node, Time time_failure_detected, RPC<MedusaID> result);
+    void failure_notification_3(MedusaID failed_node, MedusaID secondary_node, RPC<void> result);
+
+    /**
+     * First step of recovery: lookup in the global catalog,
+     * the queries and subscriptions that were running at the failed primary
+     */
+    void primary_failure(MedusaID failed_node);
+
+    /**
+     * Check result from local setup of queries and subscriptions
+     */
+    void primary_failure_2(RPC<void> result);
+
+
+    /**
+     * Register to monitor the Admin module
+     */
+    void monitor_admin();
+
+    /**
+     * Receive notifications from Admin module that an input stream changed
+     */
+    void admin_stream_notification(RPC<InputStreamInfo> changed_input);
+    void local_admin_notification(StreamDef changed_input, MonitoredNode::AltStreams& alt_streams);
+
+    /**
+     * Receives notification from Admin that a new query has been setup
+     */
+    void admin_query_notification(RPC<Query> new_query);
+
+    /**
+     * Receives notification from Admin that ew subscriptions have been setup
+     */
+    void admin_sub_notification(RPC< vector<Subscription> > new_subs);
+
+    /**
+     * Handle failure of a node that was providing content
+     */
+    void provider_failure(MedusaID failed_node, Time failure_time);
+
+    /**
+     * Handles QP response to an update_stream command
+     * Just logs an error message in case of error
+     */
+    void update_stream_resp(RPC<void> result);
+
+    /**
+     * Handles QP response to various messages
+     * that change the HA settings (is_primary or recovery_method)
+     */
+    void generic_qp_resp(RPC<void> result);
+
+    /**
+     * @return the monitored node in m_monitored_nodes or NULL if
+     * this node is not known
+     */
+    ptr<MonitoredNode> get_monitored_node(MedusaID node);
+
+    /**
+     * The monitored nodes
+     */
+    MonitoredNodes _monitored_nodes;
+
+    /// If we use replication, we let the QP know about our replicas
+    vector<MedusaID> _replica_ids;
+
+    MedusaID _secondary;
+
+    // File with load management and HA config information
+    string _config_file_name;
+
+    int _ping_interval;
+
+    int _ping_start;
+
+    /**
+     * true if HA is currently enabled
+     */
+    bool _enabled;
+
+    /**
+     * What kind of recovery method should we use
+     */
+    HAMethod _recovery_method;
+
+    /**
+     * Whether this guy is a primary or a secondary. The default is primary.
+     * When active-standby is used, secondaries do not forward tuples downstream.
+     */
+    bool _is_primary;
+
+    /**
+     * The partner.
+     */
+    string _partner;
+
+NMSTL_TO_STRING(NodeType);
+NMSTL_TO_STRING(HA::MonitoredNode);
+
+    
+
+
+
+
+
+// --------------------------------------------------
+HA::HA(string id, string config_file_name, HAMethod recovery_method, string ha_partner, bool is_primary)
+    : BasicComponent(id, "HA"),
+      _config_file_name(config_file_name),
+      _ping_interval(DEFAULT_NODE_MONITOR_INTERVAL),
+      _ping_start(DEFAULT_NODE_MONITOR_START),
+      _enabled(false),
+      _recovery_method(recovery_method),
+      _is_primary(is_primary),
+      _partner(ha_partner)
+{
+
+    if (_is_primary)       // HA doesn't use the configuration file anymore.
+    {   MedusaID scnd(_partner);
+        _secondary = scnd; // Just to QueryProcessor can get these more easily
+    } else
+    {
+        MedusaID prim(_partner);
+        _monitored_nodes[prim].set(new HA::MonitoredNode(prim,NodeType::PRIMARY));
+    }
+
+    // Xerces is NOT thread safe so we must perform this init in
+    // the constructor before starting our own thread
+    init_config();
+
+}
+
+
+
+// --------------------------------------------------
+void HA::in_thread_init()
+{
+
+    if ( _recovery_method != NO_HA)
+    {
+        register_primaries();
+        start();
+        monitor_admin();
+    }
+
+    // At this point, the other components might still not exist... so
+    // can not configure query processor
+    // So we will wait 500msec before doing so
+    (new CallbackTimer(_my_loop,wrap(this,&HA::inform_qp)))->arm(Time::now() + Time::msecs(500));
+}
+
+// --------------------------------------------------
+RPC<void> HA::start()
+{
+
+    if ( !_enabled)
+    {
+        _enabled = true;
+
+        // Prepare to monitor primaries
+        INFO << "Will ping primaries every " << _ping_interval
+             << "msec starting in " << _ping_start << "msec";
+//        (new CallbackTimer(m_my_loop,wrap(this,&HA::inform_partner)))->arm(Time::now() + Time::msecs(m_ping_start));
+        (new CallbackTimer(_my_loop,wrap(this,&HA::monitor_nodes)))->arm(Time::now() + Time::msecs(_ping_start));
+    }
+
+    return true;
+
+}
+
+
+// --------------------------------------------------
+RPC<void> HA::stop()
+{
+    _enabled = false;
+    return true;
+}
+
+// --------------------------------------------------
+void HA::inform_qp()
+{
+    _qp.init_ha(wrap(this,&HA::inform_qp_response), _recovery_method, _is_primary, _secondary, _partner, _replica_ids);
+//    inform_partner();
+}
+
+void HA::inform_qp_response(RPC<void> result)
+{
+    if ( !result.valid() )
+    {
+        ERROR << "Failure during setting up ha in qp " << result.stat();
+    }
+    else
+    {
+        DEBUG << "successfully contacted the partner!";
+    }
+}
+
+AsyncRPC<void> HA::start_as_primary(int recovery_method, MedusaID secondary)
+{
+    NOTICE << "Node " << _id << " is reset as a primary";
+    HAMethod previous_method = _recovery_method;
+    _recovery_method = hamethod_t[recovery_method];
+    _is_primary = true;
+    _secondary = secondary;
+
+    _qp.set_ha(wrap(this,&HA::set_ha_response, previous_method), _recovery_method, _is_primary, _secondary);
+
+    return true;
+}
+
+
+void HA::set_ha_response(HAMethod previous_method, RPC<void> result)
+{
+    if ( !result.valid() )
+    {
+        ERROR << "Failure during setting up ha in qp " << result.stat();
+    }
+    else
+    {
+        if (previous_method == NO_HA && _recovery_method != NO_HA)
+        {
+    //        register_primaries();
+    //        start();
+            monitor_admin();
+        }
+        replicate_to_partner();
+    }
+}
+
+void HA::replicate_to_partner()
+{
+    /**************************************** yna create_query
+    RPC<vector<Query> > queries = _qp.get_queries();
+    RPC<vector<Subscription> > subs = _qp.get_subs();
+    *****************************************/
+    Remote<HA> remote_ha = ha_for(_secondary);
+    if (!remote_ha)
+        INFO << "No ha component for " << _secondary << "!";
+    else
+    {
+        INFO << "Replicating to " << _secondary;
+        /**************************************** yna create_query
+        remote_ha.replicate(wrap(this,&HA::replicate_response, _secondary), *queries, *subs);
+        *****************************************/
+//        remote_ha.replicate(wrap(this,&HA::replicate_res, *queries, *subs), *queries, *subs);
+    }
+}
+
+
+/*
+AsyncRPC<void> HA::replicate(vector<Query> queries, vector<Subscription> subs)
+{
+    if (queries.size() > 0)
+    {
+        return replicate_query(m_partner, queries[0]);
+    }
+    else
+    {
+        return replicate_subs(m_partner, subs);
+    }
+}
+*/
+
+
+
+AsyncRPC<void> HA::replicate(vector<Query> queries, vector<Subscription> subs)
+{
+    NOTICE << "replicating queries and subscriptions from " << _partner;
+
+    // Return to our client the result of the local setup command
+    AsyncRPC<void> completion;
+
+    // Make sure this query is set to process upstream history when it starts
+    if ( _recovery_method == UPSTREAM_BACKUP || _recovery_method == PASSIVE_STANDBY)
+    {
+        for(vector<Query>::iterator i = queries.begin(); i != queries.end(); i++)
+        {
+            i->process_history(); // The recovered query should process the history
+        }
+    }
+
+    /************************************* yna create_query
+    // Setup the query locally
+    if ( _recovery_method == UPSTREAM_BACKUP)
+    {
+        _qp.queries_and_subscriptions(completion.propagate(),queries, subs, Subscription::ADD, false);
+    } else if ( ( _recovery_method == PASSIVE_STANDBY) || ( _recovery_method == AMNESIA) )
+    {
+        _qp.queries_and_subscriptions(completion.propagate(),queries, subs, Subscription::ADD, false);
+    } else if ( _recovery_method == ACTIVE_STANDBY)
+    {
+        _qp.queries_and_subscriptions(completion.propagate(),queries, subs, Subscription::ADD, true);
+    } else
+    {
+        WARN << "In current recovery mode... there is no replication";
+    }
+    **********************************************************/
+
+    // Remember the new query that we have for this primary
+    ptr<MonitoredNode> prim = get_monitored_node(_partner);
+    if ( prim )
+    {
+        for(vector<Query>::iterator i = queries.begin(); i != queries.end(); i++)
+        {
+            prim->_queries.push_back(*i);
+        }
+        prim->_subs.insert(prim->_subs.end(),subs.begin(),subs.end());
+    } else
+    {
+        ERROR << "MonitoredNode " << _partner << " is not known";
+    }
+
+    return completion;
+}
+
+// --------------------------------------------------
+void HA::replicate_response(MedusaID secondary, RPC<void> result)
+{
+    if ( !result.valid())
+        ERROR << "Failed replication at " << secondary;
+}
+
+void HA::replicate_res(vector<Query> queries, vector<Subscription> subs, RPC<void> result)
+{
+    if (queries.size() > 0)
+    {
+        queries.erase(queries.begin());
+        Remote<HA> remote_ha = ha_for(_secondary);
+        if (!remote_ha)
+            INFO << "No ha component for " << _secondary << "!";
+        else
+        {
+            INFO << "Replicating to " << _secondary;
+            remote_ha.replicate(wrap(this,&HA::replicate_res, queries, subs), queries, subs);
+        }
+    }
+}
+
+// --------------------------------------------------
+/*********************************  yna create_query
+AsyncRPC<void> HA::replicate_query(MedusaID primary, Query query)
+{
+
+    INFO << "Should replicate locally query" << query
+         << " that was setup on primary " << primary;
+
+    // Return to our client the result of the local setup command
+    AsyncRPC<void> completion;
+
+    // Make sure this query is set to process upstream history when it starts
+    if ( _recovery_method == UPSTREAM_BACKUP || _recovery_method == PASSIVE_STANDBY)
+    {
+        query.process_history(); // The recovered query should process the history
+    }
+
+    // Setup the query locally
+    if ( _recovery_method == UPSTREAM_BACKUP)
+    {
+        _qp.create_query(completion.propagate(),query);
+    } else if ( ( _recovery_method == PASSIVE_STANDBY) || ( _recovery_method == AMNESIA) )
+    {
+        _qp.create_query(completion.propagate(),query);
+    } else if ( _recovery_method == ACTIVE_STANDBY)
+    {
+        vector<Query> queries(1,query);
+        _qp.create_queries(completion.propagate(),queries, true);
+    } else
+    {
+        WARN << "In current recovery mode... there is no replication";
+    }
+
+    // Remember the new query that we have for this primary
+    ptr<MonitoredNode> prim = get_monitored_node(primary);
+    if ( prim )
+    {
+        prim->_queries.push_back(query);
+    } else
+    {
+        ERROR << "MonitoredNode " << primary << " is not known";
+    }
+
+    return completion;
+}
+**************************************/
+
+// --------------------------------------------------
+AsyncRPC<void> HA::replicate_subs(MedusaID primary, vector<Subscription> subs)
+{
+
+    DEBUG << "Should replicate subscriptions" << subs
+         << " that were setup on primary " << primary;
+
+    // Return to our client the result of the local setup command
+    AsyncRPC<void> completion;
+
+    /************************************** yna create_query
+    _qp.subscribe_many(completion.propagate(),subs,Subscription::ADD);
+    ***************************************/
+
+    ptr<MonitoredNode> prim = get_monitored_node(primary);
+    if ( prim )
+    {
+        prim->_subs.insert(prim->_subs.end(),subs.begin(),subs.end());
+    } else
+    {
+        ERROR << "MonitoredNode " << primary << " is not known";
+    }
+    return completion;
+
+}
+
+
+
+/*
+    Remote<QueryProcessor> remote_qp = qp_for(MedusaID(m_partner));
+    if (!remote_qp)
+    {
+        ERROR << "Wasn't able to contact the partner " << m_partner;
+        return false;
+    }
+    else
+    {
+        RPC< vector<Query> > queries = remote_qp.get_queries();
+        if (queries.valid())
+        {
+            for (vector<Query>::iterator i = (*queries).begin(); i != (*queries).end(); i++)
+            {
+                NOTICE << *i;
+                replicate_query(m_partner, *i);
+            }
+        }
+        else
+        {
+            ERROR << "Wasn't able to get queries from primary";
+            return false;
+        }
+        RPC< vector<Subscription> > subs = remote_qp.get_subs();
+        if (subs.valid())
+        {
+            replicate_subs(m_partner, *subs);
+        }
+        else
+        {
+            ERROR << "Wasn't able to get subscriptions from primary";
+           return false;
+        }
+    }
+    m_qp.set_ready_for_checkpoint(true);
+*/
+
+// --------------------------------------------------
+//void HA::replicate_response(MedusaID secondary, RPC<void> result)
+//{
+//void HA::start_as_primary_response(MedusaID secondary, RPC<void> result)
+//{
+
+// --------------------------------------------------
+void HA::generic_qp_resp(RPC<void> result)
+{
+
+    if ( !result.valid() )
+    {
+        ERROR << "Failure while initializing ha data in qp " << result.stat();
+    }
+
+}
+
+
+// --------------------------------------------------
+void HA::register_primaries()
+{
+
+    MonitoredNodes::iterator i;
+    for ( i = _monitored_nodes.begin(); i != _monitored_nodes.end(); ++i )
+    {
+
+        MedusaID node_id = i->first;
+        ptr<MonitoredNode> node = i->second;
+        if ( node->_type == NodeType::PRIMARY)
+        {
+            INFO << "Node " << _id << " will serve as backup for node: " << node_id;
+            _lookup.set_backup_pair(wrap(this,&HA::register_primaries_2,node_id), node_id, _id);
+        }
+    }
+
+}
+
+// --------------------------------------------------
+void
+HA::register_primaries_2(MedusaID primary, RPC<void> result)
+{
+
+    if ( !result.valid())
+        INFO << "Registering as backup of " << primary << " failed.";
+    else
+        INFO << "Registered as backup of " << primary;
+}
+
+
+
+// --------------------------------------------------
+RPC<void>
+HA::keep_alive()
+{
+    DEBUG << "*** Got keep alive message *** ";
+    return true;
+}
+
+
+
+// --------------------------------------------------
+ptr<HA::MonitoredNode> HA::get_monitored_node(MedusaID primary)
+{
+
+    ptr<HA::MonitoredNode> prim;
+
+    MonitoredNodes::iterator i = _monitored_nodes.find(primary);
+    if ( i != _monitored_nodes.end())
+    {
+        prim = i->second;
+    }
+    return prim;
+}
+
+
+
+// --------------------------------------------------
+void
+HA::monitor_nodes()
+{
+
+    // Check if we're supposed to be stopped
+    if ( !_enabled)
+        return;
+
+    // We don't want to handle failures within the loop
+    // because iterator will get invalidates
+    vector< ptr<HA::MonitoredNode> > failed_nodes;
+
+    MonitoredNodes::iterator i;
+    for ( i = _monitored_nodes.begin(); i != _monitored_nodes.end(); ++i )
+    {
+
+        ptr<HA::MonitoredNode> node = i->second;
+        MedusaID node_id = i->first;
+
+        DEBUG << "Monitoring node " << node_id;
+
+        // If there was already a pending ping, increase nb failed pings
+        // And declare a node failure when we reach a few consecutive ping failures
+        if ( node->_pending_ping)
+        {
+            node->_failed_pings++;
+            if ( node->_failed_pings > HA::MonitoredNode::MAX_FAILED_PINGS)
+            {
+                failed_nodes.push_back(node);
+                INFO << "Failed primary " << node_id;
+            }
+        }
+
+        // Otherwise send a ping
+        else
+        {
+            node->_pending_ping = true;
+
+            // Until the HA starts, we need to try and get a new endpoint every time
+            if ( !node->_started )
+            {
+                clear_endpoints_for(i->first);
+            }
+
+            Remote<HA> remote_ha = ha_for(i->first);
+            if (!remote_ha)
+                INFO << "No ha component for " << i->first << "!";
+            else
+            {
+                remote_ha.keep_alive(wrap(this,&HA::monitor_nodes_2,node_id));
+            }
+        }
+    }
+
+    vector< ptr<HA::MonitoredNode> >::iterator j;
+    for ( j = failed_nodes.begin(); j != failed_nodes.end(); ++j) { // for each failed primaries
+        failure_notification((*j)->_node_id,Time::now());
+    }
+
+    DEBUG << "*** Re-scheduling monitoring";
+    (new CallbackTimer(_my_loop,wrap(this,&HA::monitor_nodes)))->arm(Time::now() + Time::msecs(_ping_interval));
+
+}
+
+// --------------------------------------------------
+void
+HA::monitor_nodes_2(MedusaID node_id, RPC<void> result)
+{
+
+    ptr<HA::MonitoredNode> node = get_monitored_node(node_id);
+    if ( node == NULL)
+    {
+        ERROR << "Got ping response for unknown primary";
+        return;
+    }
+
+    node->_pending_ping = false;
+
+    if ( result.valid() )
+    {
+        node->_started = true;
+        node->_failed_pings = 0;
+        node->_recovered = false;
+        DEBUG << "Keep alive response: alive ";
+    } else if ( node->_started)
+    {
+        INFO << "Keep alive response: failed " << result.stat();
+        node->_failed_pings +=1;
+        if ( node->_failed_pings > HA::MonitoredNode::MAX_FAILED_PINGS)
+        {
+            node->_failed_pings = 0;
+            failure_notification(node_id,Time::now());
+        }
+    }
+
+}
+
+// --------------------------------------------------
+/**
+ * Handles the failure of an PRIMARY primary. Requires
+ * the primary given in parameter to be of type PRIMARY..
+ */
+RPC< void >
+HA::failure_notification(MedusaID failed_node, Time time_failure_detected)
+{
+
+    INFO << "Received failure  notification for " << failed_node;
+
+    // If HA is stopped then we cannot handle this failure
+    if ( !_enabled )
+        return false;
+
+    ptr<HA::MonitoredNode> node = get_monitored_node(failed_node);
+    if ( node == NULL)
+    {
+        INFO << "I'm not in charge, needs to find who is";
+        _lookup.get_backup(wrap(this,&HA::failure_notification_2,failed_node,time_failure_detected),
+                            failed_node);
+    } else
+    {
+
+        // If we are simply dependant on the failed node, then we don't start a recovery
+        if ( node->_type == NodeType::PROVIDER )
+        {
+            INFO << "My provider failed. Need to find a new one.";
+            provider_failure(failed_node,time_failure_detected);
+        } else if ( node->_type == NodeType::PRIMARY )
+        {
+            INFO << "I'm in charge. Do I need to recover?";
+            // Unless already recovered for that node, start recovery
+            if ( ! node->_recovered )
+            {
+                node->_recovered = true;
+                primary_failure(failed_node);
+            } else
+            {
+                INFO << "Already recovered for " << failed_node << " or primary never started";
+            }
+        } else
+        {
+            ERROR << "Don't know what to do for failed " << node;
+        }
+    }
+
+    // Acknowledge reception of the notification without delaying
+    return true;
+}
+
+RPC<bool> HA::is_primary()
+{
+    return _is_primary;
+};
+
+RPC<int> HA::get_recovery_method()
+{
+    return _recovery_method;
+};
+
+RPC<string> HA::get_partner()
+{
+    return _partner;
+};
+
+// --------------------------------------------------
+void
+HA::failure_notification_2(MedusaID failed_node, Time time_failure_detected, RPC<MedusaID> secondary)
+{
+
+    if (!secondary.valid())
+        INFO << "No secondary for failed node " << failed_node;
+    else
+    {
+        INFO << "Backup for " << failed_node << " is " << *secondary;
+        Remote<HA> remote_ha = ha_for(*secondary);
+        if (!remote_ha)
+            INFO << "No admin for " << *secondary << "!";
+        else
+            remote_ha.failure_notification(wrap(this,&HA::failure_notification_3,
+                                                failed_node,*secondary),
+                                           failed_node,time_failure_detected);
+    }
+
+}
+
+// --------------------------------------------------
+void
+HA::failure_notification_3(MedusaID failed_node, MedusaID secondary, RPC<void> result)
+{
+
+    if (!result.valid())
+        INFO << "Failure notification to secondary " << secondary << " failed";
+
+}
+
+/**
+ * Takes over the failed on.
+ */
+void
+HA::primary_failure(MedusaID failed_node)
+{
+
+    INFO << "Starting recovery for " << failed_node;
+
+    ptr<MonitoredNode> node = get_monitored_node(failed_node);
+    if ( node )
+    {
+        if ( _recovery_method == UPSTREAM_BACKUP)
+        {
+            _is_primary = true;
+            /************************************* yna create_query
+            // Start all replicated queries
+            for ( vector<Query>::iterator i = node->_queries.begin(); i != node->_queries.end(); ++i)
+            {
+                _qp.set_query_status(wrap(this,&HA::primary_failure_2),i->get_name(),QueryStatus::RUNNING);
+            }
+            ***************************************/
+        } else if ( (_recovery_method == PASSIVE_STANDBY) || (_recovery_method == AMNESIA) )
+        {
+            /************************************* yna create_query
+            // Start all replicated queries
+            for ( vector<Query>::iterator i = node->_queries.begin(); i != node->_queries.end(); ++i)
+            {
+                _qp.set_query_status(wrap(this,&HA::primary_failure_2),i->get_name(),QueryStatus::RUNNING);
+            }
+            **************************************/
+            _is_primary = true;
+            // Let the QueryProcessor know whether we are primary or secondary
+            _qp.set_primary_status(wrap(this,&HA::generic_qp_resp),_is_primary);
+        } else if ( _recovery_method == ACTIVE_STANDBY)
+        {
+            _is_primary = true;
+            // Let the QueryProcessor know whether we are primary or secondary
+            _qp.set_primary_status(wrap(this,&HA::generic_qp_resp),_is_primary);
+        }
+        _qp.notify_takeover();
+    } else
+    {
+        ERROR << "Nothing known about primary " << failed_node;
+    }
+}
+
+// --------------------------------------------------
+void
+HA::primary_failure_2(RPC<void> result)
+{
+
+    if ( !result.valid())
+        INFO << "Failed setting up new subscriptions";
+    else
+    {
+        INFO << "Done taking over all responsabilities";
+    }
+}
+
+
+// --------------------------------------------------
+void HA::monitor_admin()
+{
+
+    if ( _recovery_method != NO_HA)
+    {
+        INFO << "Subscribing as observer";
+        _qp.add_stream_observer(wrap(this,&HA::admin_stream_notification));
+        /********************** yna create_query
+        INFO << "Subscribing as query observer";
+        _qp.add_query_observer(wrap(this,&HA::admin_query_notification));
+        **********************/
+        INFO << "Subscribing as sub observer";
+        _qp.add_sub_observer(wrap(this,&HA::admin_sub_notification));
+    }
+
+}
+
+// --------------------------------------------------
+void HA::admin_stream_notification(RPC< InputStreamInfo > changed_input)
+{
+
+    if ( !changed_input.valid() )
+    {
+        ERROR << "RPC failure while HA module was monitoring the Admin module";
+    } else
+    {
+        vector< ptr<StreamDef> > alts;
+        InputStreamInfo info = *changed_input;
+        StreamDef current = info.first;
+
+        // Create vector of alternate streams. Remove current stream if it's in the set
+        for ( vector < ptr<Object> >::iterator i = info.second.begin();
+              i != info.second.end(); ++i)
+              {
+            ptr<StreamDef> alt = (*i).dynamic_cast_to<StreamDef>();
+            if ( (*alt) != current)
+                alts.push_back(alt);
+        }
+        local_admin_notification(current,alts);
+    }
+
+}
+
+// --------------------------------------------------
+void HA::local_admin_notification(StreamDef changed_input, MonitoredNode::AltStreams& alt_streams)
+{
+
+    INFO << "We've got a new input stream or an input stream definition changed:\n"
+         << changed_input << " nb alternates is " << alt_streams.size();
+    // Lookup the input stream and check if we already had a primary for it
+    // if not then we have a new primary to monitor
+    MedusaID owner = changed_input.get_partition().get_owner();
+    if ( (owner != _id) )
+    {
+        if (_monitored_nodes.find(owner) == _monitored_nodes.end())
+        {
+            _monitored_nodes[owner].set(new HA::MonitoredNode(owner,NodeType::PROVIDER));
+            INFO << "Will start monitoring << " << owner;
+        }
+        MonitoredNode::MonitoredStreams& monitored_streams = (_monitored_nodes[owner])->_streams;
+        MonitoredNode::AltStreams& streams = monitored_streams[changed_input.get_id()];
+        if ( streams.size() == 0)
+        {
+            // First add the new stream
+            streams.push_back( ptr<StreamDef>(new StreamDef(changed_input)) );
+            // Then the alternates
+            streams.insert(streams.end(),alt_streams.begin(),alt_streams.end());
+        } else
+        {
+            WARN << "Don't know what to do for a changed definition?";
+        }
+    }
+
+}
+
+
+// --------------------------------------------------
+/**
+ * @requires failed_node be in the set of monitored primaries
+ */
+void
+HA::provider_failure(MedusaID failed_node, Time failure_time)
+{
+
+    // XXX SHOULD BE CLEANED-UP. NO LONGER USING THIS.
+    INFO << "Content provider: " << failed_node
+         << " is down or disconnected... need to find another replica";
+
+    ptr<MonitoredNode> node = get_monitored_node(failed_node);
+    if ( !node)
+    {
+        ERROR << "Don't know anything about provider " << failed_node;
+        return;
+    }
+
+    // Find alternate provider FOR EACH STREAM coming from this provider
+    MonitoredNode::MonitoredStreams& monitored_streams = node->_streams;
+    for( MonitoredNode::MonitoredStreams::iterator i = monitored_streams.begin();
+         i != monitored_streams.end(); ++i)
+         {
+
+        // For this stream find an alternate. We currently just pick the last one in the list
+        MonitoredNode::AltStreams& alt_inputs = i->second;
+
+        // If there exists an alternate:
+        if ( alt_inputs.size() > 1 )
+        {
+
+            ptr<StreamDef> current_sd = *(alt_inputs.begin());
+            ptr<StreamDef> alt_sd = *(--alt_inputs.end());
+            INFO << "Current steam def is " << current_sd << "  and alternate is " << alt_sd;
+
+            if ( alt_sd->get_partition().get_owner() != node->_node_id)
+            {
+                
+                // Tell the Admin/QP to update
+                //_qp.update_stream(wrap(this, &HA::update_stream_resp),*current_sd,*alt_sd);
+
+                // We are now going to monitor one or more new providers
+                MonitoredNode::AltStreams new_alt_streams(1,alt_sd);
+                new_alt_streams.insert(new_alt_streams.end(),alt_inputs.begin(),--alt_inputs.end());
+                local_admin_notification(*alt_sd,new_alt_streams);
+                node->_node_id = current_sd->get_partition().get_owner();
+
+                INFO << "Switched to new provider";
+            }
+        }
+    }
+
+    // Remove this node from list of primaries
+    _monitored_nodes.erase(node->_node_id);
+
+}
+
+// --------------------------------------------------
+void HA::update_stream_resp(RPC<void> result)
+{
+
+    if (!result.valid())
+    {
+        ERROR << "Failed swapping input streams " << result.stat();
+    }
+
+}
+
+// --------------------------------------------------
+/******************************** yna create_query
+void HA::admin_query_notification(RPC< Query > query)
+{
+
+    if (_secondary) {  // if secondary exists
+        Remote<HA> remote_ha = ha_for(_secondary);
+        if (!remote_ha)
+            INFO << "No ha component for " << _secondary << "!";
+        else
+        {
+            INFO << "Replicating query " << *query << " at " << _secondary;
+            remote_ha.replicate_query(wrap(this,&HA::replicate_response,_secondary),_id,*query);
+        }
+    }
+}
+*********************************/
+
+// --------------------------------------------------
+void HA::admin_sub_notification(RPC< vector<Subscription> > subs)
+{
+
+    // Independently of the recovery method replicate these subs at our secondaries:
+    if (_secondary)
+    {
+        Remote<HA> remote_ha = ha_for(_secondary);
+        if (!remote_ha)
+            DEBUG << "No ha component for " << _secondary << "!";
+        else
+        {
+            DEBUG << "Replicating subscriptions " << *subs << " at " << _secondary;
+            remote_ha.replicate_subs(wrap(this,&HA::replicate_response,_secondary),_id,*subs);
+        }
+    }
+}
+
+// --------------------------------------------------
+void HA::init_config()
+{
+
+    DEBUG << "Initializing primaries";
+    try
+    {
+
+        ptr<DOMDocument> doc = parse_xml_file(_config_file_name);
+        const DOMElement *root = doc->getDocumentElement();
+
+        xml_expect_tag(root,"medusaconfig");
+
+        vector<DOMElement*> ha_list;
+        vector<DOMElement*>::iterator i;
+
+        // Find all elements tagged ha
+        xml_child_elements(ha_list,root,"ha");
+
+        for (i = ha_list.begin(); i != ha_list.end(); ++i)
+        {
+
+            // Read general config info
+            init_global(*i);
+
+            // Read all pairs of primary/backp
+//             init_process_pairs(*i); // Now I don't use this feature: Jeong-Hyon
+
+            // Read list or replicas
+            init_replicas(*i);
+        }
+    } catch (  AuroraException& e)
+    {
+        NOTICE <<  e.what();
+    }
+
+}
+
+
+// --------------------------------------------------
+void
+HA::init_global(const DOMElement* ha_list)
+{
+    vector<DOMElement*> general_config;
+    xml_child_elements(general_config,ha_list,"config");
+    vector<DOMElement*>::iterator k = general_config.begin();
+    if ( k != general_config.end())
+    {
+        get_dom_attribute((**k),"interval",_ping_interval);
+        get_dom_attribute((**k),"start",_ping_start);
+    } else
+    {
+        _ping_interval = DEFAULT_NODE_MONITOR_INTERVAL;
+        _ping_start = DEFAULT_NODE_MONITOR_START;
+    }
+}
+
+// --------------------------------------------------
+void
+HA::init_process_pairs(const DOMElement* ha_config)
+{
+
+    vector<DOMElement*> pairs;
+    vector<DOMElement*>::iterator j;
+
+    xml_child_elements(pairs,ha_config,"pair");
+    for (j = pairs.begin(); j != pairs.end(); ++j)
+    {
+        string primary, secondary;
+        get_dom_attribute((**j),"secondary",secondary);
+        get_dom_attribute((**j),"primary",primary);
+        if ( secondary == to_string(_id) ) { // if this borealis engine is a secondary
+            _is_primary = false;
+            MedusaID prim(primary);
+            _monitored_nodes[prim].set(new HA::MonitoredNode(prim,NodeType::PRIMARY));
+            _partner = primary;
+        }
+        if (primary == to_string(_id) ) { // if this borealis engine is a primary
+            _is_primary = true; // Well that's the default anyways
+            MedusaID scnd(secondary);
+            _secondary = scnd; // Just to QueryProcessor can get these more easily
+            _partner = secondary;
+        }
+    }
+
+}
+
+// --------------------------------------------------
+/// Assumes that each Borealis node appears in a single replica set
+void
+HA::init_replicas(const DOMElement* ha_config)
+{
+    vector<string> my_replicas;
+
+    vector<DOMElement*> replica_sets;
+    vector<DOMElement*>::iterator j;
+
+    xml_child_elements(replica_sets,ha_config,"replica_set");
+
+    // Get all replicas in the set and check if we are part of the set
+    bool my_set = false;
+
+    // For each set of replicas
+    for (j = replica_sets.begin(); (!my_set) && (j != replica_sets.end()); ++j)
+    {
+
+        my_replicas.clear();
+        vector<DOMElement*> replicas;
+        vector<DOMElement*>::iterator k;
+        xml_child_elements(replicas,*j,"replica");
+        for (k = replicas.begin(); k != replicas.end(); ++k)
+        {
+            string replica_name;
+            get_dom_attribute((**k),"name",replica_name);
+            DEBUG << "Replica name is " << replica_name;
+            if ( replica_name == to_string(_id))
+            { my_set = true;
+            } else
+            { my_replicas.push_back(replica_name);
+            }
+        }
+    }
+
+    if ( my_set )
+    {
+
+        DEBUG << "We belong to a replica set";
+        for ( vector<string>::iterator s = my_replicas.begin(); s != my_replicas.end(); ++s)
+        {
+            MedusaID replica(*s);
+            _monitored_nodes[replica].set(new HA::MonitoredNode(replica,NodeType::REPLICA));
+            _replica_ids.push_back(replica); // Just to QueryProcessor can get these more easily
+        }
+    }
+
+}
+
+void HA::inform_partner()
+{
+    if (_is_primary)
+    {
+    }
+    else if (!_is_primary) { // if secondary
+        inform_partner_primary();
+    }
+}
+
+bool HA::inform_partner_primary()
+{
+    NOTICE << "Inform partner " << _partner << " that it is now primary";
+    Remote<HA> remote_ha = ha_for(MedusaID(_partner));
+    if (!remote_ha)
+    {
+        ERROR << "Wasn't able to contact the partner " << _partner;
+        return false;
+    }
+    else
+    {
+        remote_ha.start_as_primary(_recovery_method, MedusaID(_id));
+    }
+    _qp.set_ready_for_checkpoint(true);
+    return true;
+}
+
+
+
+
+BOREALIS_NAMESPACE_END
+
+//--- Added by nmstl-rpcgen; do not modify.  Leave at end of file!
+#define NMSTL_RPC_DEFINE
+#include "rpc_HA.h"
+#undef NMSTL_RPC_DEFINE
+//---

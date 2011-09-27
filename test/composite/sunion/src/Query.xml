@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<borealis>
+
+  <input   stream="Input1"    schema="TrivialTuple"/>
+  <input   stream="Input2"    schema="TrivialTuple"/>
+  <input   stream="Input3"    schema="TrivialTuple"/>
+  <output  stream="Output"    schema="TrivialTuple"/>
+  <output  stream="Output2"   schema="TrivialTuple"/>
+  <output  stream="ControlUnion"  schema="EmptyTuple"  />
+  <output  stream="ControlOutput" schema="EmptyTuple"  />
+
+  <schema name="EmptyTuple">
+  </schema>
+
+  <schema name="TrivialTuple">
+    <field  name="value"        type="int" />
+  </schema>
+
+  <!-- The actual replicated query diagram -->
+
+  <query name="my_query1">
+
+    <box name="my_sunion1"   type="sunion" >
+      <in   stream="Input1"    />
+      <in   stream="Input2"    />
+      <in   stream="Input3"    />
+      <parameter name="location" value="input"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <parameter name="max-delay.2" value="2000"/>
+      <out  stream="ControlUnion" />
+      <out  stream="Union" />
+    </box>
+
+    <box name="my_soutput" type="soutput">
+      <in  stream="Union" />
+      <out stream="ControlOutput"/>
+      <out  stream="SOutput" />
+    </box>
+  </query>
+
+  <!-- A proxy node for client applications -->
+  <query name="my_query2">
+    <box name="fwd_filter"   type="filter" >
+      <in   stream="SOutput" />
+      <out  stream="Output" />
+      <parameter name="expression.0" value="true"/>
+    </box>   
+  </query>
+
+  <query name="my_query3">
+    <box name="fwd_filter2"  type="filter" >
+      <in   stream="SOutput" />
+      <out  stream="Output2" />
+      <parameter name="expression.0" value="true"/>
+    </box>   
+  </query>
+
+</borealis>

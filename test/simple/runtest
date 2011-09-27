@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Modify this variable to 1 or 2 if you want to see more debug messages
+export LOG_LEVEL="0"
+
+if [ $# -lt 1 ]
+then
+    echo "To run the single site application type: runtest mytest"
+    echo "To run the distributed application type: runtest mytestdist"
+    echo "... and when you want to stop everything type: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+IP="127.0.0.1"
+
+# Looking for BOREALIS_HOME environment variables 
+# These variables give the top level location of all the source code. If they are not
+# defined, assign them some reasonable defaults
+BOREALIS_HOME=${BOREALIS_HOME:-"../../"}
+APPS_HOME="./"
+
+# Set the port numbers 
+HEAD_PORT=35000
+BOREALIS_PORT1=15000
+BOREALIS_PORT2=17000
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+    head)
+        echo "Starting the global catalog (Head)..."
+        BINDING=${IP}:${HEAD_PORT}
+        eval echo "xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e ${BOREALIS_HOME}/tool/head/BigGiantHead"
+        xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e sh -c "${BOREALIS_HOME}/tool/head/BigGiantHead 2>&1 |tee head-${BINDING}.log"  &
+        echo "Global catalog (Head) started."
+        ;;
+
+    borealis)
+        echo "Starting one processing node (Borealis)"
+        BINDING=${IP}:${BOREALIS_PORT1}
+        if [ $# -gt 1 ]
+        then
+            BINDING=$2       # Some other IP:port combination
+            OTHER_OPTIONS=$3 # There might be no other options
+        fi
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "One processing node (Borealis) started."
+        ;;
+
+    mytestapp)
+        echo "Starting mytest"
+        eval echo "xterm -T mytest -geometry 200x30+200+30 -e ${APPS_HOME}/mytest 2>&1 |tee mytestout.log" &
+        xterm -T mytest -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/mytest 2>&1 |tee mytest.log" &
+        echo "Mytest started"
+        ;;
+
+    mytestdistapp)
+        echo "Starting mytestdist"
+        eval echo "xterm -T mytestdist -geometry 200x30+200+30 -e ${APPS_HOME}/mytestdist 2>&1 |tee mytestdistout.log" &
+        xterm -T mytestdist -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/mytestdist 2>&1 |tee mytestdist.log" &
+        echo "Mytestdist started"
+        ;;
+
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+    mytest)
+        $0 borealis ${IP}:${BOREALIS_PORT1}
+        sleep 2
+        $0 mytestapp
+        exit 0
+        ;;
+
+    mytestdist)
+        $0 head 
+        sleep 2
+        $0 borealis ${IP}:${BOREALIS_PORT1}
+        sleep 2
+        $0 borealis ${IP}:${BOREALIS_PORT2}
+        sleep 2
+        $0 mytestdistapp
+        exit 0
+        ;;
+
+
+   stop)
+        killall xterm.real
+        killall xterm
+        exit 0
+        ;;
+
+
+esac
+

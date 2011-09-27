@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<deploy>
+
+  <!-- mit + harvard -->
+  <publish  stream="mit_cpu_load"     node="128.31.1.15" />
+  <publish  stream="mit_mem_used"     node="128.31.1.15" />
+  <publish  stream="harv_cpu_load"    node="128.31.1.15" />
+  <publish  stream="harv_mem_used"    node="128.31.1.15" />
+
+  <!-- cambridge + bristol -->
+  <publish  stream="cam_cpu_load"     node="192.6.10.50:15000"/>
+  <publish  stream="cam_mem_used"     node="192.6.10.50:15000"/>
+  <publish  stream="bris_cpu_load"    node="192.6.10.50:15000"/>
+  <publish  stream="bris_mem_used"    node="192.6.10.50:15000"/>
+
+  <!-- sics + hut --> 
+  <publish  stream="sics_cpu_load"    node="193.10.64.35:15000"/>
+  <publish  stream="sics_mem_used"    node="193.10.64.35:15000"/>
+  <publish  stream="hut_cpu_load"     node="193.10.64.35:15000"/>
+  <publish  stream="hut_mem_used"     node="193.10.64.35:15000"/>
+
+  <!-- cmu + upenn --> 
+  <publish  stream="cmu_cpu_load"     node="158.130.6.253:15000"/>
+  <publish  stream="cmu_mem_used"     node="158.130.6.253:15000"/>
+  <publish  stream="upenn_cpu_load"   node="158.130.6.253:15000"/>
+  <publish  stream="upenn_mem_used"   node="158.130.6.253:15000"/>
+
+  <client  endpoint="132.239.17.224:25000">
+      <subscribe  stream="union_heavily_used" />
+  </client>
+
+  <!-- mit + harvard -->
+  <!-- node = planetlab5.csail.mit.edu -->
+  <node endpoint="128.31.1.15"   query="group1" />
+
+
+  <!-- cambridge + bristol -->
+  <!-- node = pli1-br-2.hpl.hp.com -->
+  <node endpoint="192.6.10.50"   query="group2" />
+
+
+  <!-- sics + hut -->
+  <!-- node = planetlab1.sics.se -->
+  <node endpoint="193.10.64.35"  query="group3" />
+
+
+  <!-- cmu + upenn -->
+  <!-- node = planetlab2.cis.upenn.edu -->
+  <node endpoint="158.130.6.253" query="group4" />
+
+
+  <!-- union all the sites together -->
+  <!-- planetlab1.ucsd.edu -->
+  <node endpoint="132.239.17.224" query="union_sites" />
+
+</deploy>

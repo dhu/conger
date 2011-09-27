@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  upstreamtest2.cc -->
+<!-- CP followed by Map -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+            <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="quote" type="string" size="4" />
+        <field name="time" type="int" />
+        <field name="price" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="upstreamtest2">
+    <box  name="map"     type="revisionmap" >
+        <in      stream="Packet"  connection_point_view="view" />
+        <out     stream="Result" />
+        <parameter name="expression.0" value="quote" />
+        <parameter name="output-field-name.0" value="quote" />
+        <parameter name="expression.1" value="time" />
+        <parameter name="output-field-name.1" value="time" />
+        <parameter name="expression.2" value="price * 10" />
+        <parameter name="output-field-name.2" value="price" />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP"/>
+    </box>
+
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+        <order  field="time" />
+        <size   value="250"     />
+        <radius value="0" />
+    </connection_point_view>
+    
+</borealis>

@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for: faulttest.cc -->
+
+<borealis>
+   
+  <input   stream="Trivial"    schema="TrivialTuple"/>
+  <input   stream="Trivial2"   schema="TrivialTuple"/>
+  <output  stream="SOutput1"    schema="AggregateTuple"  />
+  <output  stream="SOutput2"    schema="JoinTuple"  />
+  <output  stream="ControlUnion1"  schema="EmptyTuple"  />
+  <output  stream="ControlUnion2"  schema="EmptyTuple"  />
+  <output  stream="ControlUnion3"  schema="EmptyTuple"  />
+  <output  stream="ControlOutput1" schema="EmptyTuple"  />
+  <output  stream="ControlOutput2" schema="EmptyTuple"  />
+
+  <schema name="EmptyTuple">
+  </schema>
+
+  <schema name="TrivialTuple">
+    <field  name="time"                  type="int" />
+    <field  name="join_attribute"        type="int" />
+  </schema>
+  
+  <schema name="JoinTuple">
+    <field  name="time1"            type="int" />
+    <field  name="time2"            type="int" />
+    <field  name="join_attribute"  type="int" />
+  </schema>
+  
+  <schema name="AggregateTuple">
+    <field  name="time"            type="int" />
+    <field  name="join_attribute"  type="int" />
+  </schema>
+
+
+  <query name="my_test_query">
+
+    
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion1"   type="sunion" >
+      <in   stream="Trivial"    />
+      <in   stream="Trivial2"    />
+      <parameter name="location" value="input"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion1" />
+      <out  stream="Union1" />
+    </box>
+
+    <box name="my_aggregate"   type="aggregate" >
+      <in   stream="Union1"    />
+      <out  stream="Aggregate" />
+      <parameter   name="aggregate-function.0"  value="max(join_attribute)"  />
+      <parameter   name="aggregate-function-output-name.0" value="join_attribute"  />
+      <parameter   name="window-size-by"        value="VALUES"   />
+      <parameter   name="window-size"           value="1000"      />
+      <parameter   name="advance"               value="1000"      />
+      <parameter   name="independent-window-alignment" value="1" />
+      <parameter   name="drop-empty-outputs"    value="1"   />
+      <parameter   name="order-by"              value="FIELD"    />
+      <parameter   name="order-on-field"        value="time"     />
+    </box>
+
+   
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion2"   type="sunion" >
+      <in   stream="Trivial"    />
+      <in   stream="Trivial2"    />
+      <parameter name="location" value="input"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion2" />
+      <out  stream="Union2" />
+    </box>
+
+    <box name="my_filter"   type="filter" >
+      <in   stream="Union2"    />
+      <out  stream="Filter" />
+      <parameter name="expression.0" value="time > 0"/>
+    </box>
+
+    <box name="my_map"   type="map" >
+      <in   stream="Filter"/>
+      <out  stream="Map" />
+      <parameter name="expression.0" value="time" />
+      <parameter name="output-field-name.0" value="time" />
+      <parameter name="expression.1" value="join_attribute" />
+      <parameter name="output-field-name.1" value="join_attribute" />
+    </box>
+  
+
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion3"   type="sunion" >
+      <in   stream="Map"    />
+      <in   stream="Aggregate"    />
+      <parameter name="location" value="middle"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion3" />
+      <out  stream="MapB" />
+      <out  stream="AggregateB" />
+    </box>
+
+    <box name="my_join"   type="sjoin" >
+      <in   stream="AggregateB" />
+      <in   stream="MapB" />
+      <out  stream="Join" />
+      <parameter name="predicate" value="left.join_attribute=right.join_attribute"/>
+      <parameter name="left-order-by" value="VALUES"/>
+      <parameter name="right-order-by" value="VALUES"/>
+      <parameter name="left-order-on-field" value="time"/>
+      <parameter name="right-order-on-field" value="time"/>
+      <parameter name="left-buffer-size" value="1"/>
+      <parameter name="right-buffer-size" value="1"/>
+      <parameter name="out-field.0" value="left.time" />
+      <parameter name="out-field-name.0" value="time1" />
+      <parameter name="out-field.1" value="right.time" />
+      <parameter name="out-field-name.1" value="time2" />
+      <parameter name="out-field.2" value="left.join_attribute" />
+      <parameter name="out-field-name.2" value="join_attribute" />
+    </box>
+
+
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->  
+
+    <box name="my_soutput1" type="soutput">
+      <in  stream="Aggregate" />
+      <out stream="ControlOutput1"/>
+      <out  stream="SOutput1" />
+    </box>
+
+
+    <box name="my_soutput2" type="soutput">
+      <in  stream="Join" />
+      <out stream="ControlOutput2"/>
+      <out  stream="SOutput2" />
+    </box>
+  
+
+  </query>
+
+</borealis>

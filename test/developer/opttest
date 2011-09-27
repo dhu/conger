@@ -1,0 +1,51 @@
+#!/bin/ksh
+
+if [ $# -gt 1 ]
+then
+    echo "usage: opttest [opt/lm]"
+    echo "and when you want to stop: optrun stop"
+    exit 0
+fi
+
+
+if [ $# -eq 0 ]
+then
+   what='opt'
+else
+   what=$1
+fi
+
+SET_LIB_PATH="env LD_LIBRARY_PATH=/pro/borealis/software/nmstl/lib:/pro/borealis/software/bdb/lib:/pro/borealis/software/antlr/lib:/pro/borealis/software/xerces/lib:/pro/sand/software/antlr-2.7.2/lib:/pro/sand/software/bdb-4.0.14/lib:/home/bb/in_nmstl/lib:/pro/sand/software/xerces-c.2.3.0/lib:/pro/aurora/tools/linux/built_with_gcc3.2/BerkeleyDB.4.0/lib/:/pro/aurora/tools/linux/built_with_gcc3.2/xerces-c-src2_1_0/lib/:/usr/lib/kde2:/u/alexr/Aurora/qt-x11-free-3.0.5/lib:/usr:/pro/aurora/linux/BerkeleyDB.4.0/lib::/pro/sand/software/nmstl/lib:/pro/sand/software/bdb-4.0.14/lib:/pro/sand/software/antlr-2.7.2/lib:/pro/sand/software/xerces-c.2.3.0/lib" 
+
+RUN_CLS="../../../src/src/CentralLookupServer -d 127.0.0.1:30000 2"
+RUN_BOREALIS="../../../src/src/borealis"
+RUN_OPT="../../../tool/optimizer/MetaOptimizer"
+RUN_LoadManager="../../../tool/optimizer/loadManager/LoadManager"
+RUN_QUERY="./lmtest"
+
+case "${what}" in 
+   opt)
+      xterm -T CentralLookupServer -e $SET_LIB_PATH sh -c $RUN_CLS &
+      xterm -T Borealis -e $SET_LIB_PATH sh -c $RUN_BOREALIS &
+      sleep 1
+      xterm -T MetaOptimizer -e $SET_LIB_PATH sh -c $RUN_OPT &
+      sleep 1
+      xterm -T lmtest -e $SET_LIB_PATH sh -c $RUN_QUERY &
+      ;;
+
+   lm)
+      xterm -T CentralLookupServer -e $SET_LIB_PATH sh -c $RUN_CLS &
+      xterm -T Borealis -e $SET_LIB_PATH sh -c $RUN_BOREALIS &
+      sleep 1
+      xterm -T LoadManager -e $SET_LIB_PATH sh -c $RUN_LoadManager &
+      sleep 1
+      xterm -T lmtest -e $SET_LIB_PATH sh -c $RUN_QUERY &
+      ;;
+
+   stop)
+      killall xterm
+      exit 0
+      ;;
+esac
+
+

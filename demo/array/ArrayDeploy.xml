@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Sample Borealis deployment diagram. -->
+
+<deploy>
+    <publish    stream="Packet"  />
+    <subscribe  stream="Result"  />
+
+    <node   endpoint=":15000"     query="box0" />
+</deploy>

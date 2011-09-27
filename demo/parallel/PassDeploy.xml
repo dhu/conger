@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Deploy a client, 2 workers, and a node. -->
+
+<deploy>
+    <client  endpoint=":25000">
+        <publish    stream="frame_in"  />
+        <subscribe  stream="frame_out" />
+    </client>
+
+    <client  prefix="Worker"  endpoint=":25100">
+        <subscribe  stream="scatter1"  />
+        <publish    stream="gather1"   />
+    </client>
+
+    <client  prefix="Worker2"  endpoint="xyellow:25100">
+        <subscribe  stream="scatter2"  />
+        <publish    stream="gather2"   />
+    </client>
+
+    <node   endpoint=":15000"     query="dispatch rendezvous" />
+</deploy>

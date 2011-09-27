@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis deployment diagram for: update_queue*.xml -->
+
+<deploy>
+
+    <publish stream="input1" node=":15000" />
+
+    <subscribe stream="output1"  gap="10" />
+
+    <node endpoint=":15000" query="query1" />
+
+</deploy>

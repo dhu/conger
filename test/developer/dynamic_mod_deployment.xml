@@ -1,0 +1,6 @@
+<deploy>
+  <publish    stream="event"    />
+  <subscribe  stream="unlikely" />
+
+  <node   endpoint="localhost" query="compute_risk"/>
+</deploy>

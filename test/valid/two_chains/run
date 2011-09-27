@@ -1,0 +1,56 @@
+#!/bin/ksh
+
+
+SET_LIB_PATH="env LD_LIBRARY_PATH=/pro/borealis/software/nmstl/lib:/pro/borealis/software/bdb/lib:/pro/borealis/software/antlr/lib:/pro/borealis/software/xerces/lib" 
+TERMINAL="xterm"
+BOREALIS_DIR="../../../.."
+
+RUN_BOREALIS="$BOREALIS_DIR/src/src/borealis"
+RUN_HEAD="$BOREALIS_DIR/tool/head/BigGiantHead"
+RUN_N1="$RUN_BOREALIS" 
+RUN_N2="$RUN_BOREALIS -d 127.0.0.1:15100"
+RUN_EXE="./validate_two_chains"
+LOOP="./loop"
+
+
+
+if [ $# -eq 0 ]
+then
+  what='all'
+else
+  what=$1
+fi
+
+case "${what}" in 
+  all)
+    killall xterm
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+    echo "Borealis N2"
+    $TERMINAL -T BorealisN2 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N2" &
+
+    sleep 3
+    $RUN_EXE
+
+    killall xterm
+
+    ;;
+
+  borealis)
+    killall xterm
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN2 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N2" &
+
+    echo "Borealis N2"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+    ;;
+
+
+  stop)
+    killall xterm
+esac
+
+

@@ -1,0 +1,80 @@
+Borealis FPS Game
+Peter Sibley , Anjali Jhingran, and Redha Elminyawi
+
+Adapted from the cube video game code at (http://www.cubeengine.com)
+
+Platform:
+	Linux 2.6x or 2.4x kernels with gcc-3.2 or higher.
+
+Dependencies:
+	
+	(1) Borealis
+	(2) NMSTL (/pro/sand/software/NMSTL)
+	(3) SDL 1.2.7
+	(4) SDL-mixer 1.2.5
+	(5) SDL-image 1.2.3
+	(6) xercesc 2.3.0
+	(7) OpenGL, GLU
+
+Compiling:
+	(1) Setup and compile borealis includeing the tests, we use the version in subversion repository 
+	here: file:///pro/sand/games/svn/borealis/trunk borealis
+
+	(2) Get the cube source code from subversion (file:///pro/sand/games/svn/cube/trunk) or get the tarfile.
+
+	(3) cd cube/source/src
+
+	(4) run ./setup
+	(5) run configure e.g., 
+	export SANDSOFT=/pro/sand/software
+	./configure --with-sdl-mixer=$SANDSOFT/SDL_mixer-1.2.5 --with-sdl-image=$SANDSOFT/SDL_image-1.2.3 --with-sdl-prefix=$SANDSOFT/SDL-1.2.7 --with-nmstl=$SANDSOFT/nmstl --with-xercesc=$SANDSOFT/xerces-c.2.3.0 --with-borealis=/ home/pgs/borealis/src
+	(5.4) edit netio.cpp, in set_netio_default_state, line 55 there is a address of the borealis server that the cube will connect to, change as needed. Also if you want to run two copies of the cube client on the same machine you need to compile two seperate binaries with the local_data_port set to different numbers. (we didn't get around to adding a text file config which we should have done)
+	(5.5) Run make
+	(6) setup LD_LIBRARY_PATHS to include borealis shared libraries (e.g. libborealiscommon.so)
+	(7) setup LD_LIBRARY_PATHS to include SDL mixer and SDL image (e.g.,
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/pro/sand/software/SDL-1.2.7/lib:/pro/sand/software/SDL_image-1.2.3/lib:/pro/sand/software/SDL_mixer-1.2.5/lib
+
+	
+
+Running (an example session)
+On the machine you specified in netio.cpp, run the following:
+
+cd $HOME/borealis/src/src		# Change to borealis source dir
+rm -rf tables					# Remove any tables form the prior session
+export IP=`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:    ##g'`  # get our IP
+./runtest cls					# start the central lookup server
+sleep 1
+./runtest borealis				# start borealis, note runtest should have LOG_LEVEL="-2" in it for reasonable performace
+sleep 3
+export LOG_LEVEL="2"
+../../utility/test/composite/loadnetwork/load_network_test -d $IP:15000 -f  ~/  cube/source/borealis_if/cube-2.xml # Load up cube tuple schema and basic query
+
+Now borealis is running on a client machine :
+cd cube
+./source/src/cubeclient -t #omit -t for full screen mode
+It will take aboiut 2 seconds to load perhaps a bit longer.
+If the screen appears all white for a long time, hit f1, this will toggle the tuple stream. There is a weird condition in borealos where the scheduler sleeps before it should.
+
+now after that client is connected (ie a map appears)
+(if you haven't hit f1 yet do so now)
+
+go to another client machine and run
+./source/src/cubeclient -t
+wiat for it to get connected and the scene load, you'll need to hit f1 at some point during the start up.
+
+
+Functionality:
+Now the two players can run around and shoot each other.  Rename themselves, change teams and text message.
+	
+
+Features not implemented/ bugs etc:
+	-Proper map loading is still up in the air and untested 
+	-Item pickups, the schema is setup but untested 
+	-In weapons.cpp we simplified the hit function so it only computed ray intersects with players.  
+	-A third player appears in the list, but not in the map, this is because the code has a special
+	player1 variable that holds the local player and a players array which hold
+	all other players, the interaction between the two is not always clear and
+	we obvoiusly are adding an entry to players that shouldn't be there.
+	-In game editing is not well supported nor is the serverbased map distribution.
+
+	

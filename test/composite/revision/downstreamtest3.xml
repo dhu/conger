@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  downstreamtest3.cc -->
+<!-- Filter box with 2 ports (T and F) each port followed by a CP -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result1"      schema="OutputTuple" />
+    <output  stream="Result2"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+            <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="time" type="int" />
+        <field name="quote" type="string" size="4" />
+        <field name="price" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="downstreamtest3">
+    <box name="filter" type="revisionfilter" >
+        <in stream="Packet" />
+        <out stream="Result1" />
+        <out stream="Result2" />
+        <parameter name="expression.0" value="price > 8" />
+        <parameter name="pass-on-false-port" value= "1" />
+        <parameter name="processing-mode" value="DOWNSTREAM"/>
+        <parameter name="anchor" value="Result1CP, Result2CP" />
+    </box>
+    
+    </query>
+        
+    <connection_point_view  name="view1"  stream="Result1" >
+    <order  field="time" />
+        <size   value="250"     />
+        <radius value="6" />
+    </connection_point_view>
+
+    <connection_point_view  name="view2"  stream="Result2" >
+            <order  field="time" />
+        <size   value="250"     />
+        <radius value="6" />
+    </connection_point_view>
+
+    
+</borealis>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram. -->
+
+<borealis>
+    <schema name="ccd_schema" >
+	<field name="frame"  type="byte(0...319, 0...239, 0...2)"  />   
+	<field name="final_bit" type="int" />
+    </schema>
+	
+    <input  stream="CcdStream"  schema="ccd_schema"  />
+    <input  stream="CcdChunked"  schema="ccd_schema"  /> 
+    <output stream="CcdDeltas"  schema="ccd_schema" /> 
+
+   <box name="DeltaDetector" type="delta_detect">
+       <in      stream="CcdStream" /> 
+       <out     stream="CcdChunked" />
+       <parameter name="chunks_in_dimension.0" value="8"/>
+       <parameter name="chunks_in_dimension.1" value="6"/>
+       <parameter name="chunks_in_dimension.2" value="1"/>
+       <parameter  name="delta_threshold" value="0.075" />
+   </box>
+
+   <box name="ChunkAssembler" type="face_detect_chunk">
+       <in      stream="CcdChunked" /> 
+       <out     stream="CcdDeltas" />
+       <parameter name="chunks_in_dimension.0" value="8"/>
+       <parameter name="chunks_in_dimension.1" value="6"/>
+       <parameter name="chunks_in_dimension.2" value="1"/>
+   </box>
+
+</borealis>

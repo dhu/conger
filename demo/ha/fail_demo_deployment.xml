@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  mitre_demo.cc -->
+
+<deploy>
+   <publish    stream="input"   node=":31000" />
+
+   <subscribe  stream="output1" />
+   <subscribe  stream="output2" />
+
+    <node   endpoint=":31000" query="Query1" />
+    <node   endpoint=":32000" query="Query2" />
+    <node   endpoint=":33000" query="Query3" />
+</deploy>

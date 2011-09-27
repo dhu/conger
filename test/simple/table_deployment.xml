@@ -1,0 +1,12 @@
+<deploy>
+  <publish    stream="Insert" />
+  <publish    stream="Update" />
+  <publish    stream="Read1"  />
+  <subscribe  stream="Select" />
+
+  <node   endpoint= ":15000" query="tableQuery"/>
+  <node   endpoint= ":15000" query="writeQuery"/>
+  <node   endpoint= ":15000" query="readQuery"/>
+
+  <region  />
+</deploy>

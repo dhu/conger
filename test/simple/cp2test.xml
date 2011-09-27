@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  cp2test.cc -->
+
+<borealis>
+    <input   stream="Packet"  schema="PacketTuple" />
+    <output  stream="Result"  schema="PacketTuple" />
+
+    <schema name="PacketTuple" >
+        <field name="time"         type="int" />
+        <field name="protocol"     type="string" size="4" />
+    </schema>
+ 
+    <query name="SimpleQuery" >
+        <box  name="box1"  type="filter" >
+            <in       stream="Packet"       />
+            <out      stream="Intermediate" /> 
+            <parameter  name="expression.0"  value="1=1" />
+        </box>
+
+        <box  name="box2"  type="filter" >
+            <in       stream="Intermediate" />
+            <out      stream="Result"       /> 
+            <parameter  name="expression.0"  value="1=1" />
+        </box>
+    </query>
+
+    <connection_point_view  name="view1"  stream="Intermediate" >
+        <order  field="time" />
+        <size   value="5"     />
+    </connection_point_view>
+
+    <connection_point_view  name="view2"  stream="Intermediate" >
+        <order  field="time" />
+        <size   value="7"     />
+    </connection_point_view>
+</borealis>

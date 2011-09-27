@@ -1,0 +1,77 @@
+Dependencies:
+- gcc-3.3
+- antlr-2.7.2
+- berkeleyDB.4.0.14
+- xerces-c-src2_3_0
+- libcrypto (libopenssl provides this)
+- j2sdk1.4 (Java)
+
+// --------------------------------------------
+Directory structure
+
+The directory structure is as follows:
+configure.ac
+Makefile.am
+config/          // Contains a bunch of automatically generated configuration files
+src/             // Contains the main "borealis" exectuable and the main catalog: "CentralLookupServer"
+apps/            // For all client apps such as the network intrusion detection app
+test/		 // For everyone to put their test applications there
+doc/             // Doesn't work yet but should contain the auto-generated apidoc and other documentation
+modules/         // All the modules that can form a Borealis node (not all are mandatory)
+modules/queryProcessor/
+modules/queryProcessor/boxes
+modules/queryProcessor/expr
+modules/queryProcessor/plugin
+modules/queryProcessor/runtime
+modules/queryProcessor/store
+modules/admin/
+modules/ha/
+modules/nhopt/
+modules/lookup/
+modules/rpc/        // Auto-generated RPC stubs for the modules
+modules/common/     // TupleDescription.h, StreamDef.h (a mix of files from Aurora and Medusa that are used by pretty much all the modules)
+modules/util/       // The util subdirectory of the original Aurora
+
+
+// --------------------------------------------
+Installation
+
+1 If you haven't done so, check out and install nmstl
+
+> cvs -d yourlogin@nms.lcs.mit.edu:/var/cvs co nmstl
+> cd nmstl
+> autoconf
+> ./configure
+> make
+> make install
+
+If you don't have root permission on your machine, install nmstl in your home directory:
+>./configure --prefix=/some/ok/location/
+Then use the "/some/ok/location" path as argument when configuring borealis (below)
+
+2 Borealis requires a few libraries. If you don't have them on your machine, you need to install the packages listed at the beginning of this document. 
+
+3 Now you're ready to build borealis:
+
+> cd src
+> ./setup
+> wtf ./configure --enable-shared --disable-static --with-antlr=/opt/antrl/ [--with-db4=/usr/] [--with-nmstl=/usr/local/]
+
+Explanation:
+- "wtf" comes with nmstl and pretty-prints all gcc error messages (great tool!)
+- There are reasonable defaults for all packages (the ones listed in the example above) so you might be able to run only:
+> wtf configure --enable-shared --disable-static
+- The "--enable-shared --disable-static" flags should prevent the compiler from generating static libraries.
+
+4 Finally, you can compile and run borealis
+
+> make
+> go get a coffee
+In 3 separate windows run:
+> src/CentralLookupServer
+> src/borealis
+> test/mytest
+
+If it's not working, email me at: borealis-support@list.cs.brown.edu
+
+Magda

@@ -1,0 +1,11 @@
+<deploy>
+    <client  endpoint=":40001">
+         <publish    stream="Pre_long_packet_header" />
+         <subscribe  stream="SuspiciousConnections"  />
+         <subscribe  stream="SuspiciousPorts"        />
+    </client>
+
+    <node  endpoint=":"         query="Forwarder_query"        />
+    <node  endpoint=":17500"    query="Many_connections_query" />
+    <node  endpoint=":17600"    query="Many_ports_query"       />
+</deploy>

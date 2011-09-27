@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<borealis>
+	
+
+	<schema name="aShipRecord">
+    	<field name="lat" type="single"/>
+	    <field name="lon" type="single"/>
+	    <field name="id" type="int"/>
+	</schema>
+	
+
+	<schema name="shipArray">
+    	  <field name="ships" type="aShipRecord(0...*)"/>
+	  	 <field name="time"  type="int"/> <!-- one time stamp for all ships -->
+	</schema>
+	
+	<schema name="rendered_map">
+    	  <field name="map" type="byte(0...639, 0...479, 0...2)"/>
+	  	 <field name="time"  type="int"/> <!-- one time stamp for all ships -->
+	</schema>
+	
+	<input stream="incoming_east" schema="shipArray"/>
+	<input stream="incoming_west" schema="shipArray"/>
+	 <input stream="deltas_east" schema="shipArray"/>
+	<input stream="deltas_west" schema="shipArray"/>  
+	<input stream="mapped_east" schema="shipArray"/> 
+	<input stream="mapped_west" schema="shipArray"/> 
+	<input stream="time_snapshot" schema="shipArray"/> 
+	<output stream="us_map" schema="rendered_map"/>
+ 
+    <box name="delta_detect_west" type="delta_ais">
+		<in  stream="incoming_west"/>
+		<out stream="deltas_west"/>
+		<parameter name="x_field"   value="lat"/>
+		<parameter name="y_field"   value="lon"/>
+		<parameter name="distance_to_update" value="15.0"/>
+		<parameter name="distance_to_compress" value="15.0"/>
+	</box>
+
+   <box name="delta_detect_east" type="delta_ais">
+		<in  stream="incoming_east"/>
+		<out stream="deltas_east"/>
+		<parameter name="x_field"   value="lat"/>
+		<parameter name="y_field"   value="lon"/>
+		<parameter name="distance_to_update" value="15.0"/>
+		<parameter name="distance_to_compress" value="15.0"/>
+	</box>
+	
+	<box name="convert_to_cartesian_west" type="regrid">
+		<in  stream="deltas_west"/>
+		<out stream="mapped_west"/>
+		<parameter name="start_lat" value="56.25"/>   
+		<parameter name="start_lon" value="-130.4"/> 
+		<parameter name="x_field"   value="lat"/>
+		<parameter name="y_field"   value="lon"/>
+		<parameter name="rhs"       value="0"/>
+		<parameter name="miles_per_pixel" value="5.4"/>
+	</box>
+
+	<box name="convert_to_cartesian_east" type="regrid">
+		<in  stream="deltas_east"/>
+		<out stream="mapped_east"/>
+		<parameter name="start_lat" value="56.25"/>
+        <parameter name="start_lon" value="-61.55"/>
+		<parameter name="x_field"   value="lat"/>
+		<parameter name="y_field"   value="lon"/>
+		<parameter name="rhs"       value="1"/>
+		<parameter name="miles_per_pixel" value="5.4"/>
+	</box>
+	
+	<box name="group_time_matches" type="merge">
+      <in stream="mapped_east"/>
+      <in stream="mapped_west"/>
+      <out stream="time_snapshot"/>
+      <parameter name="predicate"            value="left.time == right.time"/>
+      <parameter name="left-buffer-size"     value="8"/>
+      <parameter name="left-order-by"        value="TUPLES"/>
+      <parameter name="right-buffer-size"    value="8"/>
+      <parameter name="right-order-by"       value="TUPLES"/>
+      <parameter name="x_field"   value="lat"/>
+      <parameter name="y_field"   value="lon"/>
+ 	  <parameter name="id_field"   value="id"/>
+      <parameter name="array_name" value="ships"/>
+    </box>
+	
+	
+	<box name="render_map" type="render_deltas">
+	  <in stream="time_snapshot"/>
+      <out stream="us_map"/>
+      <parameter name="array_name" value="ships"/>
+      <parameter name="x_chunks"  value="8"/> <!-- 80x80 -->
+      <parameter name="y_chunks"  value="6"/>
+      <parameter name="cluster"  value="0"/>
+      <parameter name="cluster_threshold"  value="10"/>
+	  <parameter name="out_array"  value="map"/>
+    </box>
+</borealis>

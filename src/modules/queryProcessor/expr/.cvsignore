@@ -1,0 +1,5 @@
+# hpp and cpp are generated files
+*.hpp
+*.cpp
+.makeparser
+*.txt

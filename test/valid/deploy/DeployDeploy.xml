@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Initally pass a stream through a box. -->
+
+<deploy>
+    <client  endpoint=":25000">
+        <publish    stream="Packet"  />
+        <subscribe  stream="Result"  />
+    </client>
+
+    <node    endpoint=":15000"     query="box1" />
+</deploy>

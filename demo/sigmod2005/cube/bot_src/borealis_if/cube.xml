@@ -1,0 +1,481 @@
+<borealis>
+
+  <!-- stream schemas -->
+  <schema name="cube_init">
+    <field name="clientnum"       type="int"/>
+    <field name="source_ip"       type="string"  size="16"/>
+    <field name="player_name"     type="string"  size="32"/>
+    <field name="team_name"       type="string"  size="32"/>
+    <field name="lifesequence"    type="int"/>
+    <field name="to_server_map"   type="string"  size="128"/>
+    <field name="next_mode"       type="int"/>
+  </schema>
+
+  <schema name="cube_disconnect">
+    <field name="clientnum"       type="int"/>
+    <field name="isbot"           type="int"/>
+  </schema>
+
+  <schema name="cube_position">
+    <field name="clientnum"       type="int"/>
+    <field name="team_name"       type="string" size="32"/>
+    <field name="position_x"      type="single"/>
+    <field name="position_y"      type="single"/>
+    <field name="position_z"      type="single"/>
+    <field name="yaw"             type="single"/>
+    <field name="pitch"           type="single"/>
+    <field name="roll"            type="single"/>
+    <field name="velocity_x"      type="single"/>
+    <field name="velocity_y"      type="single"/>
+    <field name="velocity_z"      type="single"/>
+    <field name="rest_info"       type="int"/>
+    <field name="isbot"           type="int"/>
+    <field name="seq_no"          type="int"/>
+  </schema>
+
+  <schema name="cube_inventory_item">
+    <field name="clientnum"       type="int"/>
+    <field name="item_index"      type="int"/>
+    <field name="total_items"     type="int"/>
+  </schema>
+
+  <schema name="cube_item_pickup">
+    <field name="clientnum"       type="int"/>
+    <field name="item_index"      type="int"/>
+    <field name="spawn_secs"      type="double"/>
+    <field name="client_pickup"   type="int"/>
+  </schema>
+
+  <schema name="cube_item_acc">
+    <field name="clientnum"       type="int"/>
+    <field name="item_index"      type="int"/>
+  </schema>
+
+  <schema name="cube_item_spawn">
+    <field name="clientnum"       type="int"/>
+    <field name="item_index"     type="int"/>
+  </schema>
+
+  <schema name="cube_map_change">
+    <field name="clientnum"       type="int"/>
+    <field name="to_server_map"   type="string"  size="128"/>
+    <field name="next_mode"       type="int"/>
+  </schema>
+
+  <schema name="cube_map_reload">
+    <field name="clientnum"      type="int"/>
+  </schema>
+
+  <schema name="cube_mode">
+    <field name="clientnum"      type="int"/>
+    <field name="next_node"      type="int"/>
+  </schema>
+
+  <schema name="cube_timeup">
+    <field name="time_remain"    type="int"/>
+  </schema>
+
+  <schema name="cube_shot">
+    <field name="clientnum"      type="int"/>
+    <field name="gun_number"     type="int"/>
+    <field name="from_x"         type="single"/>
+    <field name="from_y"         type="single"/>
+    <field name="from_z"         type="single"/>
+    <field name="to_x"           type="single"/>
+    <field name="to_y"           type="single"/>
+    <field name="to_z"           type="single"/>
+  </schema>
+
+  <schema name="cube_damage">
+    <field name="clientnum"      type="int"/>
+    <field name="target"         type="int"/>
+    <field name="damage"         type="int"/>
+    <field name="lifesequence"   type="int"/>
+    <field name="client_isbot"   type="int"/>
+    <field name="target_isbot"   type="int"/>
+  </schema>
+
+  <schema name="cube_frags">
+    <field name="clientnum"      type="int"/>
+    <field name="frags"          type="int"/>
+    <field name="isbot"          type="int"/>
+  </schema>
+
+  <schema name="cube_death">
+    <field name="clientnum"      type="int"/>
+    <field name="client_isbot"   type="int"/>
+    <field name="actor"          type="int"/>
+    <field name="actor_isbot"    type="int"/>
+  </schema>
+
+  <schema name="cube_sound">
+    <field name="clientnum"        type="int"/>
+    <field name="playsound_n"      type="int"/>
+    <field name="isbot"            type="int"/>
+  </schema>
+
+  <schema name="cube_chat">
+    <field name="clientnum"        type="int"/>
+    <field name="chat_text"        type="string"  size="1024"/>
+  </schema>
+
+  <schema name="cube_server_msg">
+    <field name="server_msg"       type="string" size="1024"/>
+  </schema>
+
+  <schema name="cube_ping">
+    <field name="clientnum"        type="int"/>
+    <field name="ping_type"        type="int"/>
+    <field name="last_millis"      type="int"/>
+  </schema>
+
+  <schema name="cube_edit">
+    <field name="edit_type"        type="int"/>
+    <field name="amount"           type="int"/>
+    <field name="lasttex"          type="int"/>
+    <field name="selection_x"      type="int"/>
+    <field name="selection_y"      type="int"/>
+    <field name="selection_xs"     type="int"/>
+    <field name="selection_ys"     type="int"/>
+    <field name="selection_type"   type="int"/>
+  </schema>
+
+  <schema name="cube_edit_ent">
+    <field name="entity_length"        type="int"/>
+    <field name="entity_type"          type="int"/>
+    <field name="entity_x"             type="int"/>
+    <field name="entity_y"             type="int"/>
+    <field name="entity_z"             type="int"/>
+    <field name="entity_attribute1"    type="int"/>
+    <field name="entity_attribute2"    type="int"/>
+    <field name="entity_attribute3"    type="int"/>
+    <field name="message"              type="int"/>
+  </schema>
+
+  <schema name="cube_add_bot">
+    <field name="host_clientnum"       type="int"/>
+    <field name="clientnum"            type="int"/>
+    <field name="player_name"          type="string"  size="32"/>
+    <field name="team_name"            type="string"  size="32"/>
+    <field name="lifesequence"         type="int"/>
+  </schema>
+
+  <schema name="cube_valid_bot">
+    <field name="host_clientnum"       type="int"/>
+    <field name="clientnum"            type="int"/>
+    <field name="pending_clientnum"    type="int"/>
+  </schema>
+
+  <!-- table schemas -->
+  <schema name="cube_map_table">
+    <field name="to_server_map"        type="string"  size="128"/>
+    <field name="game_mode"            type="int"/>
+  </schema>
+
+  <schema name="cube_items_table">
+    <field name="item_index"           type="int"/>
+    <field name="spawned"              type="int"/>
+    <field name="spawn_secs"           type="double"/>
+  </schema>
+
+  <!-- input streams -->
+  <input stream="player_inits"     schema="cube_init"/>
+
+  <input stream="player_positions" schema="cube_position"/>
+
+  <input stream="player_items"     schema="cube_inventory_item"/>
+  <input stream="item_pickups"     schema="cube_item_pickup"/>
+
+  <input stream="player_shots"     schema="cube_shot"/>
+  <input stream="player_damage"    schema="cube_damage"/>
+  <input stream="player_frags"     schema="cube_frags"/>
+  <input stream="player_deaths"    schema="cube_death"/>
+
+  <input stream="map_change"       schema="cube_map_change"/>
+  <input stream="mode_change"      schema="cube_mode"/>
+
+  <input stream="sound"            schema="cube_sound"/>
+  <input stream="chat"             schema="cube_chat"/>
+
+  <input stream="player_ping"      schema="cube_ping"/>
+
+  <input stream="world_edit"       schema="cube_edit"/>
+  <input stream="entity_edit"      schema="cube_edit_ent"/>
+
+  <!-- bot streams -->
+  <input stream="new_bots"         schema="cube_add_bot"/>
+
+  <!-- server streams -->
+  <!-- TODO: these should probably be outputs -->
+  <input stream="client_disconnect"  schema="cube_disconnect"/>
+  <input stream="reload_map"         schema="cube_map_reload"/>
+  <input stream="map_timeup"         schema="cube_timeup"/>
+  <input stream="server_msgs"        schema="cube_server_msg"/>
+
+  <!-- server generated output streams -->
+  <output stream="item_spawns"      schema="cube_item_spawn"/>
+
+  <output stream="valid_bots"       schema="cube_valid_bot"/>
+
+  <!-- main game query -->
+  <query name="game_query" node="127.0.0.1:15000">
+
+    <table name="server_map_table"  schema="cube_map_table">
+      <key field="to_server_map"/>
+      <parameter name="truncate"        value="0"/>
+      <parameter name="create"          value="1"/>
+    </table>
+
+    <table name="server_items_table"  schema="cube_items_table">
+      <key field="item_index"/>
+      <parameter name="truncate"          value="0"/>
+      <parameter name="create"            value="1"/>
+    </table>
+
+
+    <!-- Game initialization logic -->
+
+    <!-- handle sign on
+         + get current valid  map.
+         + output map to new player.
+         + notify other players of new player.
+     -->
+
+    <box name="check_clientnum" type="filter">
+      <in stream="player_inits"/>
+      <out stream="invalid_clientnum"/>
+      <out stream="valid_clientnum"/>
+      <parameter name="expression.0"           value="clientnum = -1"/>
+      <parameter name="pass-on-false-port"     value="1"/>
+    </box>
+
+    <box name="generate_clientnum" type="map">
+      <in stream="invalid_clientnum"/>
+      <out stream="new_players"/>
+      <parameter name="output-field-name.0"    value="clientnum"/>
+      <parameter name="expression.0"           value="sequence()"/>
+      <parameter name="output-field-name.1"    value="source_ip"/>
+      <parameter name="expression.1"           value="source_ip"/>
+      <parameter name="output-field-name.2"    value="player_name"/>
+      <parameter name="expression.2"           value="player_name"/>
+      <parameter name="output-field-name.3"    value="team_name"/>
+      <parameter name="expression.3"           value="team_name"/>
+      <parameter name="output-field-name.4"    value="lifesequence"/>
+      <parameter name="expression.4"           value="lifesequence"/>
+      <parameter name="output-field-name.5"    value="to_server_map"/>
+      <parameter name="expression.5"           value="to_server_map"/>
+      <parameter name="output-field-name.6"    value="next_mode"/>
+      <parameter name="expression.6"           value="next_mode"/>
+    </box>
+
+
+    <box name="new_player_map_select" type="select">
+      <in stream="new_players"/>
+      <out stream="player_and_map"/>
+      <out stream="player_and_empty_map"/>
+      <access table="server_map_table"/>
+      <parameter name="pass-on-no-results" value="1"/>
+      <parameter name="sql"
+          value="select clientnum, source_ip, player_name, team_name, lifesequence,
+                   server_map_table.to_server_map as to_server_map, server_map_table.game_mode as next_mode from server_map_table
+                   where server_map_table.to_server_map != 'DUMMYSTRING'"/>
+    </box>
+
+
+    <box name="set_map_from_player" type="insert">
+      <in stream="player_and_empty_map"/>
+      <out stream="player_and_valid_map"/>
+      <access table="server_map_table"/>
+      <parameter name="pass-input" value="1"/>
+      <parameter name="sql" value="insert into server_map_table values(to_server_map, next_mode)"/>
+    </box>
+
+    <box name="generate_valid_player" type="union">
+      <in stream="player_and_map"/>
+      <in stream="player_and_valid_map"/>
+      <in stream="valid_clientnum"/>
+      <out stream="valid_player"/>
+    </box>
+    
+    <box name="generate_botnum" type="map">
+      <in stream="new_bots"/>
+      <out stream="valid_bots"/>
+      <parameter name="output-field-name.0"    value="host_clientnum"/>
+      <parameter name="expression.0"           value="host_clientnum"/>
+      <parameter name="output-field-name.1"    value="clientnum"/>
+      <parameter name="expression.1"           value="sequence()"/>
+      <parameter name="output-field-name.2"    value="pending_clientnum"/>
+      <parameter name="expression.2"           value="clientnum"/>
+    </box>
+
+
+    <!-- Game map logic -->
+
+    <!-- TODO: implement voting -->
+
+    <!-- handle map update
+         + for now only update if no valid map exists
+     -->
+    <box name="change_map" type="select">
+      <in stream="map_change"/>
+      <out stream="valid_map"/>
+      <out stream="empty_map"/>
+      <access table="server_map_table"/>
+      <parameter name="pass-on-no-results" value="1"/>
+      <parameter name="sql"
+           value="select clientnum, server_map_table.to_server_map as to_server_map, server_map_table.game_mode as next_mode
+                    from server_map_table
+                    where server_map_table.to_server_map != 'DUMMYSTRING'"/>
+    </box>
+
+    <box name="set_valid_map" type="insert">
+      <in stream="empty_map"/>
+      <out stream="inserted_map"/>
+      <access table="server_map_table"/>
+      <parameter name="pass-input" value="1"/>
+      <parameter name="sql" value="insert into server_map_table values(to_server_map, next_mode)"/>
+    </box>
+
+    <box name="union_valid_maps" type="union">
+      <in stream="valid_map"/>
+      <in stream="inserted_map"/>
+      <out stream="new_map"/>
+    </box>
+
+
+    <!-- Game entities logic -->
+
+    <!-- add items from players to map -->
+    <box name="check_items" type="select">
+      <in stream="player_items"/>
+      <out stream="existing_items"/>
+      <out stream="new_items"/>
+      <access table="server_items_table"/>
+      <parameter name="pass-on-no-results" value="1"/>
+      <parameter name="sql"
+          value="select server_items_table.item_index, server_items_table.spawned, server_items_table.spawn_secs 
+                   from server_items_table where server_items_table.item_index = input.item_index"/>
+    </box>
+
+    <box name="add_item" type="insert">
+      <in stream="new_items"/>
+      <access table="server_items_table"/>
+      <parameter name="sql" value="insert into server_items_table values(item_index, 1, 0.0)"/>
+    </box>
+
+
+    <!-- handle item pickups
+         + update items table
+         + acknowledge pickup to one player
+         + notify pickup to remaining players
+     -->
+    <!-- TODO: what about bot pickups? -->
+    <box name="record_pickup" type="update">
+      <in stream="item_pickups"/>
+      <out stream="successful_pickup"/>
+      <access table="server_items_table"/>
+      <parameter name="sql"
+          value="update server_items_table
+                   set server_items_table.spawned = 0, server_items_table.spawn_secs = input.spawn_secs
+                   where server_items_table.item_index = input.item_index and server_items_table.spawned > 0"/>
+      <parameter name="output-field-name.0" value="clientnum"/>
+      <parameter name="output-expression.0" value="input.clientnum"/>
+      <parameter name="output-field-name.1" value="item_index"/>
+      <parameter name="output-expression.1" value="new.item_index"/>
+      <parameter name="output-field-name.2" value="spawn_secs"/>
+      <parameter name="output-expression.2" value="new.spawn_secs"/>
+      <parameter name="output-field-name.3" value="client_pickup"/>
+      <parameter name="output-expression.3" value="client_pickup"/>
+    </box>
+
+    <!-- TODO: redundant box, simply change item_acc tuple type to be the same as pickup,
+          and match clientnums at the game client. -->
+    <box name="acknowledge_pickup" type="map">
+      <in stream="successful_pickup"/>
+      <out stream="ack_pickup"/>
+      <parameter name="output-field-name.0" value="clientnum"/>
+      <parameter name="expression.0"        value="clientnum"/>
+      <parameter name="output-field-name.1" value="item_index"/>
+      <parameter name="expression.1"        value="item_index"/>
+    </box>
+
+
+    <!-- handle item spawns
+         + update items table
+         + notify players of item
+     -->
+    <!-- TODO: need a box to emit a tuple at a given time instance, ie after spawn_secs.
+         Timers are tricky because they need scheduler interaction to ensure they can
+	 run after xxx period of time.
+         Note: could syphon timestamps off other (high frequency) streams...
+	       This is essentially a special kind of join ... and implemented by a WaitForQBox
+    -->
+    <box name="respawn_control_gen" type="map">
+      <in  stream="player_positions"/>
+      <out stream="item_spawn_control"/>
+      <parameter name="output-field-name.0" value="current"/>
+      <parameter name="expression.0"        value="now()"/>
+    </box>
+    
+    <box name="respawn_buffer_gen" type="map">
+      <in  stream="successful_pickup"/>
+      <out stream="new_pickup"/>
+      <parameter name="output-field-name.0" value="clientnum"/>
+      <parameter name="expression.0"        value="clientnum"/>
+      <parameter name="output-field-name.1" value="item_index"/>
+      <parameter name="expression.1"        value="item_index"/>
+      <parameter name="output-field-name.2" value="delay_until"/>
+      <parameter name="expression.2"        value="now(spawn_secs)"/>
+    </box>
+    
+    <box name="detect_respawn" type="waitfor">
+      <in  stream="new_pickup"/>
+      <in  stream="item_spawn_control"/>
+      <out stream="trigger_respawn"/>
+      <parameter name="predicate" value="buffered.delay_until &lt; enabler.current"/>
+      <parameter name="timeout"   value="300"/>
+    </box>
+
+    <box name="respawn_item" type="update">
+      <in  stream="trigger_respawn"/>
+      <out stream="item_spawns"/>
+      <access table="server_items_table"/>
+      <parameter name="sql"
+          value="update server_items_table
+	         set server_items_table.spawned = 1, server_items_table.spawn_secs = 0.0
+	         where server_items_table.item_index = input.item_index"/>
+      <parameter name="output-field-name.0"   value="clientnum"/>
+      <parameter name="output-expression.0"   value="input.clientnum"/>
+      <parameter name="output-field-name.1"   value="item_index"/>
+      <parameter name="output-expression.1"   value="new.item_index"/>
+    </box>
+
+
+    <!-- Introspection logic -->
+
+    <!-- handle client ping requests
+         + pings generate pongs.
+         + clientpings are simply forwarded.
+     -->
+    <box name="split_pings" type="filter">
+      <in stream="player_ping"/>
+      <out stream="ping"/>
+      <out stream="player_clientping"/>
+      <parameter name="expression.0" value="ping_type = 19"/>
+      <parameter name="expression.1" value="ping_type = 21"/>
+    </box> 
+
+    <box name="ping_pong" type="map">
+      <in stream="ping"/>
+      <out stream="player_pong"/>
+      <parameter name="output-field-name.0" value="clientnum"/>
+      <parameter name="expression.0"        value="clientnum"/>
+      <parameter name="output-field-name.1" value="ping_type"/>
+      <parameter name="expression.1"        value="20"/>
+      <parameter name="output-field-name.2" value="last_millis"/>
+      <parameter name="expression.2"        value="last_millis"/>
+    </box>
+
+  </query>
+
+</borealis>

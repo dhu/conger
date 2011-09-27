@@ -1,0 +1,293 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Notes on Installing Select Packages</TITLE>
+   <LINK REV="made" HREF="borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<PRE><H3><CENTER>INSTALLING SELECT PACKAGES</CENTER></H3></PRE>
+
+<H4><CENTER><SPAN class=white>Example Installation Of:</SPAN></CENTER>
+<BR>
+<CENTER>
+   <A HREF="#gcc">GNU Gcc,</A>
+   <A HREF="#ccache">CCache,</A>
+   <A HREF="#antlr">Antlr,</A>
+   <A HREF="#xerces">Xerces,</A>
+   <A HREF="#libtool_automake">Libtool / Autoconf / Automake,</A>
+   <A HREF="#berkeley_db">Berkeley-Db,</A>
+   <A HREF="#glpk">Glpk,</A>
+   <A HREF="#gsl">Gsl,</A>
+   <A HREF="#ocv">Ocv,</A>
+   <A HREF="#doxygen">and Doxygen.</A>
+</CENTER></H4>
+
+<P CLASS="body">
+These notes were made while installing versions of select external packages.
+The packages themselves contain the actual installation instructions.
+These notes should only serve as examples.
+You'll have to make the appropriate substitutions for your site.
+</P>
+
+<P CLASS="body">
+In these examples the BOREALIS_SOFTWARE environment variable is set to a
+directory where the packages will be installed.  If you want to install a
+package in the default system directories omit the --prefix argument and
+run the <KBD>make install</KBD> command as a super user.  Note that you can
+not intall packages in a temporary directory and then copy them elsewhere.
+</P>
+
+
+    <A NAME="gcc"></A><BR><H4>GNU Gcc</H4>
+
+<UL><P CLASS="body">
+Download <KBD>gcc-4.1.1.tar.gz</KBD> or earlier through
+<KBD>gcc-3.3.5.tar.gz</KBD> from
+<A HREF="http://gcc.gnu.org/releases.html">gcc.gnu.org/releases.html</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; gunzip gcc-4.1.1.tar.gz
+&gt; tar  xvf  gcc-4.1.1.tar
+&gt; mkdir  gcc_obj
+&gt; cd     gcc_obj/
+&gt; ../gcc4.1.1/configure --program-suffix=-4.1.1  --prefix=${BOREALIS_SOFTWARE}/gcc
+&gt; make bootstrap
+&gt; make install
+</B></PRE></UL></UL>
+
+
+    <A NAME="ccache"></A><BR><H4>CCache</H4>
+
+<UL><P CLASS="body">
+Download <KBD>ccache-2.4.tar.gz</KBD> from
+<A HREF="http://www.samba.org/ftp/ccache/">www.samba.org/ftp/ccache/</A>
+and unroll it in a temporary directory.  Note that this is installed in
+a <KBD>common</KBD> subdirectory that can be shared with other build tools.
+</P>
+
+<UL><PRE><B>ccache-2.4&gt; configure --prefix=${BOREALIS_SOFTWARE}/common
+ccache-2.4&gt; make
+ccache-2.4&gt; make install
+</B></PRE></UL>
+
+<P CLASS="body">
+In many cases if a version comes with the operating system it will work.
+The default version is usually at:  <KBD>/usr/bin/ccache</KBD>
+</P></UL>
+
+
+    <A NAME="antlr"></A><BR><H4>Antlr</H4>
+
+<UL><P CLASS="body">
+Download <KBD>antlr-2.7.6.tar.gz</KBD> from
+<A HREF="http://www.antlr.org">www.antlr.org</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>#  First on PATH to override older Debian version.
+&gt; setenv  PATH  /.../java/linux/jdk1.5/bin:${PATH}
+
+# Make sure the directory containing configure is in the CLASSPATH.
+&gt; setenv  CLASSPATH                                    \
+   /.../java/linux/jdk1.5/lib/jre/javaws/:&lt;temporary&gt;/antlr/antlr-2.7.6/
+
+&gt; mkdir  ${BOREALIS_SOFTWARE}/antlr
+antlr-2.7.6&gt; configure  --disable-csharp  --prefix=${BOREALIS_SOFTWARE}/antlr
+antlr-2.7.6&gt; make
+antlr-2.7.6&gt; make  install
+
+# The borealis/src/configure.ac file accesses the jar file here:
+${BOREALIS_SOFTWARE}/antlr&gt; cp  share/antlr-2.7.6/antlr.jar  lib/antlr.jar
+</B></PRE></UL>
+
+<P CLASS="body">
+You will want to modify your login script to ensure the PATH and CLASSPATH
+variables are properly set.
+</P></UL>
+
+
+    <A NAME="xerces"></A><BR><H4>Xerces</H4>
+
+<UL><P CLASS="body">
+Depending on availability you can download and install the binary
+distribution.  With gcc 3.3.5 the binary distribution
+<KBD>xerces-c_2_6_0-redhat_80-gcc_32.tar.gz</KBD> can be downloaded from
+<A HREF="http://xml.apache.org/xerces-c/download.cgi">
+xml.apache.org/xerces-c/download.cgi</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mv xerces-c_2_6_0-redhat_80-gcc_32 ${BOREALIS_SOFTWARE}/xerces
+</B></PRE></UL></UL>
+
+
+<UL><P CLASS="body">
+If no binary distribution is available you can build it from source.
+For gcc 4.0.4 and 4.1.1 you can download  <KBD>xerces-c-current.tar</KBD>
+from <A HREF="http://xml.apache.org/xerces-c/build.html">
+xml.apache.org/xerces-c/build.html</A> and unroll it a temporary directory.
+
+<UL><PRE><B>xerces-c-src_2_7_0/src/xercesc&gt setenv XERCESCROOT &ltkit location&gt/xerces-c-src_2_7_0
+xerces-c-src_2_7_0/src/xercesc&gt runConfigure -p linux  -c gcc  -x g++  -P ${BOREALIS_SOFTWARE}/xerces
+xerces-c-src_2_7_0/src/xercesc&gt make
+xerces-c-src_2_7_0/src/xercesc&gt make install
+</B></PRE></UL></UL>
+
+
+    <A NAME="libtool_automake"></A><BR><H4>Libtool, Autoconf and Automake</H4>
+
+<UL><P CLASS="body">
+Download <KBD>libtool-1.5.22.tar.gz</KBD> from
+<A HREF="http://www.gnu.org/software/libtool/libtool.html">www.gnu.org/software/libtool/libtool.html</A>
+and unroll it in a temporary directory.  This procedure will install
+<KBD>bin/libtool</KBD> and <KBD>bin/libtoolize</KBD>.   Note that this is
+installed in a <KBD>common</KBD> subdirectory that can be shared with other
+build tools.
+</P>
+
+<UL><PRE><B>libtool-1.5.22&gt; configure --prefix=${BOREALIS_SOFTWARE}/common
+libtool-1.5.22&gt; make
+libtool-1.5.22&gt; make  install
+</B></PRE></UL>
+
+<P CLASS="body">
+Download <KBD>autoconf-2.60.tar.gz</KBD> from
+<A HREF="http://www.gnu.org/software/autoconf/">www.gnu.org/software/autoconf/</A>
+and unroll it in a temporary directory.  This procedure will install
+<KBD>bin/autoconf</KBD>, <KBD>bin/autoheader</KBD>, <KBD>bin/autom4te</KBD>,
+<KBD>bin/autoreconf</KBD>, <KBD>bin/autoscan</KBD>, <KBD>bin/autoupdate</KBD>
+and <KBD>bin/ifnames</KBD>.   Note that this is installed in a <KBD>common</KBD>
+subdirectory that can be shared with other build tools.
+</P>
+
+<UL><PRE><B>autoconf-2.60&gt; configure --prefix=${BOREALIS_SOFTWARE}/common
+autoconf-2.60&gt; make
+autoconf-2.60&gt; make  install
+</B></PRE></UL>
+
+<P CLASS="body">
+Download <KBD>automake-1.9.2.tar.gz</KBD> from
+<A HREF="http://www.gnu.org/software/automake/">www.gnu.org/software/automake/</A>
+and unroll it in a temporary directory.  This procedure will install
+<KBD>bin/aclocal</KBD> and <KBD>bin/automake</KBD>.   Note that this is
+installed in a <KBD>common</KBD> subdirectory that can be shared with other
+build tools.
+</P>
+
+<UL><PRE><B>automake-1.9.6&gt; configure --prefix=${BOREALIS_SOFTWARE}/common
+automake-1.9.6&gt; make
+automake-1.9.6&gt; make  install
+</B></PRE></UL>
+
+<P CLASS="body">
+Automake, Autoconf and Libtool need to be installed in the same directory.
+</P>
+
+<UL>&lt;&lt;&lt; begin web geek &gt;&gt;&gt;<BR>
+This is certainly because AC_PROG_LIBTOOL is not defined in aclocal.m4.<BR>
+This is probably because aclocal does not see libtool.m4 in its search path.<BR>
+This is might be because Automake and Libtool are installed with different<BR>
+<KBD>--prefix</KBD>; for instance Libtool in <KBD>/usr</KBD>
+and Automake in <KBD>/usr/local</KBD>.<BR>
+<BR>
+If that is your case, you can add <KBD>/usr/share/aclocal</KBD> to the search
+path of the new aclocal using:
+
+<UL><PRE><B>&gt; echo /usr/share/aclocal &gt; /usr/local/share/aclocal/dirlist
+</B></PRE></UL>
+
+See the Automake manual's "Macro search path" section for more
+discussion about dirlist.<BR>
+&lt;&lt;&lt; end web geek &gt;&gt;&gt;
+</UL></UL>
+
+
+    <A NAME="berkeley_db"></A><BR><H4>Berkeley-Db</H4>
+
+<UL><P CLASS="body">
+Download <KBD>db-4.4.20.tar.gz</KBD> from
+<A HREF="http://www.sleepycat.com">www.sleepycat.com</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mkdir  ${BOREALIS_SOFTWARE}/bdb
+db-4.4.20/build_unix&gt; ../dist/configure  --enable-cxx   \
+                                         --prefix=${BOREALIS_SOFTWARE}/bdb
+db-4.4.20/build_unix&gt; make
+db-4.4.20/build_unix&gt; make  install
+</B></PRE></UL>
+
+<P CLASS="body">
+If you configure Berkeley-Db without the <KBD>--enable-cxx</KBD> flag
+the <KBD>lib_cxx.a</KBD> will not be created.  When you build Borealis
+you'll get the message "<KBD>cannot find -ldb_cxx</KBD>".
+</P></UL>
+
+    <A NAME="glpk"></A><BR><H4>Glpk</H4>
+
+<UL><P CLASS="body">
+Download <KBD>glpk-4.8-src-11.11.tar.gz</KBD>, from
+<A HREF="http://www.gnu.org/software/glpk/glpk.html">www.gnu.org/software/glpk/glpk.html</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mkdir  ${BOREALIS_SOFTWARE}/glpk
+glpk-4.8&gt; configure  --prefix=${BOREALIS_SOFTWARE}/glpk
+glpk-4.8&gt; make
+glpk-4.8&gt; make  install
+</B></PRE></UL></UL>
+
+
+    <A NAME="gsl"></A><BR><H4>Gsl</H4>
+
+<UL><P CLASS="body">
+Download <KBD>gsl-1.7.tar.gz</KBD>, from
+<A HREF="http://www.gnu.org/software/gsl/">www.gnu.org/software/gsl/</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mkdir  ${BOREALIS_SOFTWARE}/gsl
+gsl-1.7&gt; configure  --prefix=${BOREALIS_SOFTWARE}/gsl
+gsl-1.7&gt; make
+gsl-1.7&gt; make  install
+</B></PRE></UL></UL>
+
+
+    <A NAME="ocv"></A><BR><H4>Open Computer Vision</H4>
+
+<UL><P CLASS="body">
+Download <KBD>opencv-1.0.0.tar.gz</KBD>, from
+<A HREF="http://downloads.sourceforge.net/opencvlibrary/">http://downloads.sourceforge.net/opencvlibrary/
+</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mkdir  ${BOREALIS_SOFTWARE}/ocv
+opencv-1.0.0&gt; configure  --prefix=${BOREALIS_SOFTWARE}/ocv
+opencv-1.0.0&gt; make
+opencv-1.0.0&gt; make  install
+</B></PRE></UL></UL>
+
+
+    <A NAME="doxygen"></A><BR><H4>Doxygen</H4>
+
+<UL><P CLASS="body">
+Download <KBD>doxygen-1.4.7.src.tar.gz</KBD>, from
+<A HREF="http://www.stack.nl/~dimitri/doxygen/index.html">www.stack.nl/~dimitri/doxygen/index.html</A>
+and unroll it in a temporary directory.
+</P>
+
+<UL><PRE><B>&gt; mkdir  ${BOREALIS_SOFTWARE}/doxygen
+doxygen-1.4.7&gt; configure  --prefix ${BOREALIS_SOFTWARE}/doxygen
+doxygen-1.4.7&gt; make
+doxygen-1.4.7&gt; make  install
+</B></PRE></UL></UL>
+
+
+<BR>
+<H3><CENTER><A HREF="install.borealis.html">Back to the installation page</A></CENTER></H3>
+</BODY></HTML>

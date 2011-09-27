@@ -1,0 +1,22 @@
+If the /tmp/MetaOptimizerInstruction file exist, the MetaOptimizer
+will read instructions from it.
+
+The MetaOptimizerInstruction file should only contain 1 line of 
+instruction. It can be any one of the following instructions:
+
+HA
+LoadShedder
+LoadManager
+None
+
+Here is the meanning of the commands:
+HA: run HA only
+LoadShedder: run LoadShedder and LoadManager is in passive mode
+LoadManager: run LoadManager and LoadShedder is in passive mode
+None: Both LoadShedder and LoadManager runs in passive mode  
+
+If the instxpurction contains nothing or anything else or the file
+does not exist, then either load manager and load shedder will run 
+in active mode depending on the load level.
+
+

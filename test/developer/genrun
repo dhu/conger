@@ -1,0 +1,136 @@
+#!/bin/ksh
+
+
+SET_LIB_PATH="env LD_LIBRARY_PATH=/pro/borealis/software/nmstl/lib:/pro/borealis/software/bdb/lib:/pro/borealis/software/antlr/lib:/pro/borealis/software/xerces/lib" 
+TERMINAL="xterm"
+#RUN_CLS="../../../src/src/CentralLookupServer -d 127.0.0.1:30000 2"
+RUN_BOREALIS="../../../src/src/borealis"
+RUN_HEAD="../../../tool/head/BigGiantHead"
+RUN_GENERATOR="../../../tool/loadGenerator/wlgen/workloadGenerator"
+#RUN_LOAD_MGR="../../../tool/optimizer/MetaOptimizer -s 0.4 "
+#RUN_LOAD_MGR="../../../tool/optimizer/MetaOptimizer -m 2 -i 127.0.0.1:15000 "
+RUN_N1="$RUN_BOREALIS" 
+#RUN_N2="$RUN_BOREALIS -d 127.0.0.1:20000"
+#RUN_2N_QUERY="$RUN_HEAD lmtest2n.xml lmtest2n_deploy.xml"
+RUN_1N_QUERY="$RUN_HEAD gentest.xml gentest_deploy.xml"
+#RUN_GENTEST="./gentest"
+#INPUTGEN="../../../tool/optimizer/loadManager/inputgen"
+#LOOP="./loop"
+
+
+
+if [ $# -eq 0 ]
+then
+  what='all'
+else
+  what=$1
+fi
+
+case "${what}" in 
+  all)
+    killall xterm
+
+#    echo "CentralLookupServer"
+#   $TERMINAL -T CentralLookupServer -geometry 80x5+0+0 -e $SET_LIB_PATH sh -c $RUN_CLS &
+#    sleep 4
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N1" &
+
+#   echo "Borealis N2"
+#    $TERMINAL -T BorealisN2 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+#   $RUN_GENERATOR & 
+
+#   sleep 10
+#    echo "$RUN_2N_QUERY" 
+#    $TERMINAL -T Head -geometry 80x5+0+400 -e $SET_LIB_PATH sh -c "$RUN_2N_QUERY & loop" &
+
+    sleep 8
+        
+$RUN_1N_QUERY 
+     
+    sleep 8
+
+    echo "Generator"
+    $TERMINAL -T Generator -geometry 80x30+0+400 -e $SET_LIB_PATH sh -c "$RUN_GENERATOR" & 
+
+#    echo "$TERMINAL -T gentest -e $SET_LIB_PATH sh -c $RUN_GENTEST &"
+#    $TERMINAL -T gentest -geometry 80x5+0+300 -e $SET_LIB_PATH sh -c "$RUN_GENTEST" &
+    ;;
+
+  borealis)
+    killall xterm
+#   echo "CentralLookupServer"
+#   $TERMINAL -T CentralLookupServer -geometry 80x5+0+0 -e $SET_LIB_PATH sh -c $RUN_CLS &
+#    sleep 4
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N1" &
+
+#    echo "Borealis N2"
+#    $TERMINAL -T BorealisN2 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N2 &
+    ;;
+
+  servers)
+    killall xterm
+#    echo "CentralLookupServer"
+#    $TERMINAL -T CentralLookupServer -geometry 80x5+0+0 -e $SET_LIB_PATH sh -c $RUN_CLS &
+   
+#   sleep 4
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N1" &
+
+#   echo "Borealis N2"
+#   $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+    echo "Generator"
+#    $TERMINAL -T Generator -geometry 80x5+0+400 -e $SET_LIB_PATH sh -c
+    $RUN_GENERATOR & 
+    $RUN_GENERATOR & 
+    ;;
+
+  2n)
+#    echo "CentralLookupServer"
+#    $TERMINAL -T CentralLookupServer -geometry 80x5+0+0 -e $SET_LIB_PATH sh -c $RUN_CLS &
+#    sleep 15
+
+    echo "Generator"
+    $RUN_GENERATOR &
+
+    echo "Borealis N1"
+    $TERMINAL -T BorealisN1 -geometry 80x5+0+100 -e $SET_LIB_PATH sh -c "$RUN_N1" &
+
+#    echo "Borealis N2"
+#    $TERMINAL -T BorealisN1 -geometry 80x5+0+200 -e $SET_LIB_PATH sh -c $RUN_N1 &
+
+#    sleep 5
+#    echo "$RUN_2N_QUERY" 
+#    $RUN_2N_QUERY 
+
+#    echo "$TERMINAL -T inputgen -e $SET_LIB_PATH sh -c $INPUTGEN &"
+#    $TERMINAL -T inputgen -e $SET_LIB_PATH sh -c "$INPUTGEN" &
+    ;;
+
+  1nq)
+    echo $RUN_1N_QUERY
+    $RUN_1N_QUERY
+    ;;
+
+#  2nq)
+#    echo "$RUN_2N_QUERY"
+#    $RUN_2N_QUERY 
+#    ;;
+  
+  stop)
+    killall xterm
+#    skill -c CentralLookupServer
+    skill -c MetaOptimizer
+    skill -c borealis
+    skill -c Generator
+#    skill -c gentest
+#    skill -c inputgen
+esac
+
+

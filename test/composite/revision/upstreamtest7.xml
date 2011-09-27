@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  upstreamtest7.cc -->
+<!-- CP followed by Aggregate box followed by a Filter with true and false ports -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result1"      schema="OutputTuple" />
+    <output  stream="Result2"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+        <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="quote" type="string" size="4" />
+        <field name="time" type="int" />
+        <field name="agg_0" type="int" />
+        <field name="agg_1" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="upstreamtest7">    
+    <box name="agg1" type="revisionaggregate" >
+        <in stream="Packet" connection_point_view="view" />
+        <out stream="agg_out" />
+        <parameter name="aggregate-function.0" value="sum(price)" />
+        <parameter name="aggregate-function.1" value="count()" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="5"          />
+        <parameter name="advance"              value="3"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="time"       />
+        <parameter name="group-by"             value="quote"      />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP"/>
+    </box>
+
+    <box name="filter" type="revisionfilter" >
+        <in stream="agg_out" />
+        <out stream="Result1" />
+        <out stream="Result2" />
+        <parameter name="expression.0" value="agg_0 > 45" />
+        <parameter name="pass-on-false-port" value="1" />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP" />
+    </box>
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+            <order  field="time" />
+        <size   value="250"     />
+        <radius value="4" />
+    </connection_point_view>
+
+</borealis>

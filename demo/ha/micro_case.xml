@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+<!-- Borealis query diagram for:  ha_demo.cc -->
+<borealis>
+
+    <input  stream="input1" schema="PacketSchema" />
+    <input  stream="input2" schema="PacketSchema" />
+    <output stream="output" schema="CountSchema"/>
+
+    <schema name="PacketSchema">
+        <field name="timestamp" type="int"/>
+        <field name="source" type="int"/>
+    </schema>
+
+    <schema name="CountSchema">
+        <field name="source" type="int"/>
+        <field name="timestamp" type="int"/>
+        <field name="agg_id" type="int"/>
+        <field name="count" type="int"/>
+    </schema>
+
+    <query name="QueryU">
+        <box name="union.u101" type="union">
+            <in  stream="input1"/>
+            <out stream="101"/>
+        </box>
+        <box name="union.u201" type="union">
+            <in  stream="input2"/>
+            <out stream="201"/>
+        </box>
+    </query>
+
+     <query name="Query1">
+        <box name="11011" type="aggregate">
+            <in  stream="101"/>
+            <out stream="11011"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(11011)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="11012" type="aggregate">
+            <in  stream="101"/>
+            <out stream="11012"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(11012)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="11013" type="aggregate">
+            <in  stream="101"/>
+            <out stream="11013"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(11013)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="11014" type="aggregate">
+            <in  stream="101"/>
+            <out stream="11014"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(11014)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="12011" type="aggregate">
+            <in  stream="201"/>
+            <out stream="12011"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(12011)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="12012" type="aggregate">
+            <in  stream="201"/>
+            <out stream="12012"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(12012)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="12013" type="aggregate">
+            <in  stream="201"/>
+            <out stream="12013"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(12013)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="12014" type="aggregate">
+            <in  stream="201"/>
+            <out stream="12014"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(12014)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+     </query>
+
+     <query name="Query2">
+        <box name="21011" type="aggregate">
+            <in  stream="101"/>
+            <out stream="21011"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(21011)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="21012" type="aggregate">
+            <in  stream="101"/>
+            <out stream="21012"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(21012)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="21013" type="aggregate">
+            <in  stream="101"/>
+            <out stream="21013"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(21013)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="21014" type="aggregate">
+            <in  stream="101"/>
+            <out stream="21014"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(21014)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="22011" type="aggregate">
+            <in  stream="201"/>
+            <out stream="22011"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(22011)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="22012" type="aggregate">
+            <in  stream="201"/>
+            <out stream="22012"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(22012)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="22013" type="aggregate">
+            <in  stream="201"/>
+            <out stream="22013"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(22013)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+        <box name="22014" type="aggregate">
+            <in  stream="201"/>
+            <out stream="22014"/>
+            <parameter   name="advance"               value="1"        />
+            <parameter   name="aggregate-function.0"  value="avg(22014)"  />
+            <parameter   name="aggregate-function-output-name.0"  value="agg_id"  />
+            <parameter   name="aggregate-function.1"  value="count()"  />
+            <parameter   name="aggregate-function-output-name.1"  value="count"  />
+            <parameter   name="order-by"              value="FIELD"    />
+            <parameter   name="order-on-field"        value="timestamp"    />
+            <parameter   name="group-by"              value="source"    />
+            <parameter   name="window-size"           value="10"        />
+            <parameter   name="window-size-by"        value="VALUES"   />
+            <parameter   name="drop-empty-outputs"    value="1"   />
+        </box>
+     </query>
+
+    <query name="QueryD">
+        <box name="union.output" type="union">
+            <in  stream="12011"/>
+            <in  stream="22011"/>
+            <out stream="output"/>
+        </box>
+    </query>
+
+</borealis>

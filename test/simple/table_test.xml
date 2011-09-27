@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  table_test.cc -->
+
+<borealis>
+   <input   stream="Insert" schema="TableTuple"/>
+   <input   stream="Update" schema="TableTuple"/>
+   <input   stream="Read1"  schema="KeyTuple"/>
+
+   <output  stream="Select"  schema="TableTuple"/>
+
+   <schema name="TableTuple" >
+       <field  name="f1"       type="int" />
+       <field  name="f2"       type="int" />
+       <field  name="f3"       type="int" />
+       <field  name="f4"       type="int" />
+       <field  name="f5"       type="int" />
+   </schema>
+
+   <schema name="KeyTuple" >
+       <field  name="k1"       type="int" />
+       <field  name="k2"       type="int" />
+       <field  name="k3"       type="int" />
+   </schema>
+
+   <query name="tableQuery">
+       <table name="testTable"  schema="TableTuple" >
+           <key       field="f1"/>
+           <index     field="f4" />
+           <parameter  name="truncate"  value="0" />
+           <parameter  name="create"    value="1" />
+       </table>
+   </query>
+
+   <query name="writeQuery">
+       <box name="insertBox"  type="insert" >
+           <in      stream="Insert" />
+           <access  table="testTable"/>
+           <parameter name="sql" 
+               value="insert into testTable
+                             values (f1, f2, f3, f4, f5)"/>
+       </box>
+
+       <box name="updateBox"  type="update" >
+           <in   stream="Update" />
+           <access  table="testTable"/>
+           <parameter name="sql"
+               value="update testTable
+                             set testTable.f2 = input.f2 
+                             where testTable.f1 = input.f1"/>
+       </box>
+   </query>
+
+   <query name="readQuery">
+       <box name="selectBox"  type="select" >
+           <in      stream="Read1" />
+           <out     stream="Select" />
+           <access  table="testTable"/>
+           <parameter name="sql"
+                      value="select * from testTable
+                               where testTable.f1 == input.k1"/>
+       </box>
+   </query>
+
+</borealis>

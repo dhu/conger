@@ -1,0 +1,188 @@
+================================================================
+Compiling
+================================================================
+
+To compile the sample applications, follow these steps:
+
+> cd borealis/test/
+> ./setup
+> wtf configure --with-antlr=/wherever/you/untarred/antlr/ [--with-nmstl=/where/you/installed/nmstl]
+> make
+
+
+================================================================
+Running example 1: mytest
+================================================================
+
+mytest is a simple single-site application. This sample application
+demonstrates:
+1 - Using the "marshal" tool to generate a simple application from an xml description
+2 - Submitting a query diagram to Borealis
+3 - Sending data to Borealis and receiving data from Borealis
+
+
+Inside the file: mytest.xml, you can find the description of the
+query diagram corresponding to this application. The description 
+includes the input streams, output streams, and the operators.
+
+As you can see, the query diagram takes a stream called "Packet" as
+input and it produces a stream called "Aggregate" as output. 
+The query diagram contains a single operator that counts the number 
+of tuples that have the same value in their "time" field.
+
+Input and output streams are associated with schemas. Each tuple on a
+stream has the same set of attributes, although with different
+values. The schema defines the names and types of these attributes.
+
+Detailed information:
+--> Examine the files mytest.cc, MytestMarshal.h, and MytestMarshal.cc
+to see the details of the application logic.
+--> Examine the file Makefile.am to see which files are generated
+automatically by the marshaling tool: "marshal".
+
+
+To run the application, simply invoke the following script:
+
+./runtest mytest
+
+You should see two windows:
+1 - First,  a Borealis nodes starts in a window called: Borealis"
+2 - Second, mytest starts in a window called: mytest"
+
+In the mytest window, you should see the following output:
+
+notice [BigGiantHead.cc:117] Processing xml:  mytest.xml
+notice [DeployDiagram.cc:628] add_xml_string packettuple: Success
+notice [DeployDiagram.cc:576] add_xml_string packet: Success
+notice [DeployDiagram.cc:866] add_xml_string <box name="mybox" type="aggregate" node="192.168.1.7:15000" >
+ <in  stream="packet" />
+ <out  stream="aggregate"/>
+ <parameter  name="advance" value="1"/>
+ <parameter  name="aggregate-function-output-name.0" value="count"/>
+ <parameter  name="aggregate-function.0" value="count()"/>
+ <parameter  name="order-by" value="FIELD"/>
+ <parameter  name="order-on-field" value="time"/>
+ <parameter  name="window-size" value="1"/>
+ <parameter  name="window-size-by" value="VALUES"/>
+</box>
+: Success
+notice [DeployDiagram.cc:925] add_xml_string aggregate: Success
+notice [mytest.cc:27] For time interval starting at 0 tuple count was 60
+notice [mytest.cc:27] For time interval starting at 1 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 2 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 3 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 4 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 5 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 6 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 7 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 8 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 9 tuple count was 180
+notice [mytest.cc:27] For time interval starting at 10 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 11 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 12 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 13 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 14 tuple count was 200
+notice [mytest.cc:27] For time interval starting at 15 tuple count was 200
+
+To stop the application, invoke:
+
+./runtest stop
+
+
+Both applications send their outputs to the terminal as well
+as to a text file with extension ".log".
+
+You can also launch all components of the applications manually as follows:
+1 - ./runtest borealis
+2 - ./runtest mytestapp
+
+If you want to see more debug messages, edit the script file "runtest". You can
+increase or decrease the verbosity of the output by modifying the following line:
+
+export LOG_LEVEL="0"
+
+You can change it to be: export LOG_LEVEL="1" or export LOG_LEVEL="2"
+
+Note: After compiling, it may take a relatively long time for an
+application to launch for the first time. Because of this extra delay
+"runtest mytest" may not work. The global catalog, for example, may
+not yet be running by the time the script launches a Borealis node.
+To avoid problems, you can launch the Head and Borealis manually with
+"runtest head" and "runtest borealis" when launching them for the
+first time after compilation. Subsequently, the applications will
+start quickly.
+
+
+
+================================================================
+Running example 2: mytestdist
+================================================================
+
+This second example demonstrates:
+1 - Distributing a query diagram over multiple processing nodes
+2 - Launching and using the global catalog to enable 
+    dynamic modifications of the query diagram
+
+Inside the file mytestdist.xml, you can find the description of the
+query diagram corresponding to the application. The query diagram is
+the same as for mytest, except for an extra operator that filters the
+output produced by count, dropping every other result.
+
+Because we want to run each operator on a separate processing node, we
+create a second file that specifies our desired deployment.  Examine
+the file mytestdist-deploy.xml to see how the deployment can be
+specified.
+
+The deployment is specified in terms of "queries". A query is simply
+a group of one or more operators.
+
+Given these files, we could simply deploy the query diagram as
+above. However, to demonstrate dynamic modifications of the query
+diagram, we will start a third application, the global 
+catalog (aka Head). 
+
+The global catalog takes requests from clients to create,
+deploy, or modify query diagrams. It then propagates that information
+to the appropriate Borealis nodes.
+
+To see how the application sends requests to the global catalog,
+examine the method: MytestdistMarshal::launchDiagram and compare it to
+MytestMarshal::launchDiagram.
+
+Note that we have *modified* the file MytestdistMarshal.cc
+that was generated automatically by marshal
+to instantiate and use the HeadClient.
+
+Finally, to run the application, simply invoke the following script:
+
+./runtest mytestdist
+
+You should see four windows:
+1 - First,  the global catalog starts in a window called: HEAD"
+2 - Second, a Borealis nodes starts in a window called: Borealis"
+3 - Third, a *second* Borealis nodes starts in a window called: Borealis"
+    Note that the window will appear on top of the previous one.
+3 - Finally, mytestdist starts in a window called: mytestdist"
+
+In the mytestdist window, you should see the following output:
+
+notice [mytestdist.cc:27] For time interval starting at 0 tuple count was 40
+notice [mytestdist.cc:27] For time interval starting at 2 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 4 tuple count was 180
+notice [mytestdist.cc:27] For time interval starting at 6 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 8 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 10 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 12 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 14 tuple count was 200
+notice [mytestdist.cc:27] For time interval starting at 16 tuple count was 200
+
+
+To stop the application, invoke:
+
+./runtest stop
+
+
+Once again, all applications send their outputs to the terminal as well
+as to a text file with extension ".log".
+
+

@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  upstreamtest6.cc -->
+<!-- CP followed by Aggregate with its output branching, each branch goes to a different
+invertible Map -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result1"      schema="OutputTuple" />
+    <output  stream="Result2"      schema="OutputTuple" />
+    
+    <schema name="PacketTuple" >
+            <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_value" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="quote" type="string" size="4" />
+        <field name="time" type="int" />
+        <field name="price" type="int" />
+        <field name="count" type="int" />
+        <field name="revised_value" type="string" size="4" />
+    </schema>
+
+    <query name="upstreamtest6">    
+    <box name="agg1" type="revisionaggregate" >
+        <in stream="Packet" connection_point_view="view" />
+        <out stream="agg_out" />
+        <parameter name="aggregate-function.0" value="sum(price)" />
+        <parameter name="aggregate-function.1" value="count()" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="5"          />
+        <parameter name="advance"              value="3"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="time"       />
+        <parameter name="group-by"             value="quote"      />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP"/>
+    </box>
+    <box name="map1" type="revisionmap" >
+        <in stream="agg_out" />
+        <out stream="Result1"/>
+        <parameter name="expression.0" value="quote" />
+        <parameter name="output-field-name.0" value="quote" />
+        <parameter name="inverse.0" value="quote" />
+        <parameter name="expression.1" value="time" />
+        <parameter name="output-field-name.1" value="time" />
+        <parameter name="inverse.1" value="time" />
+        <parameter name="expression.2" value="agg_0 + 10" />
+        <parameter name="output-field-name.2" value="price" />
+        <parameter name="inverse.2" value="price - 10" />
+        <parameter name="expression.3" value="agg_1" />
+        <parameter name="output-field-name.3" value="count" />
+        <parameter name="inverse.3" value="count" />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP"/>
+    </box>
+
+    <box name="map2" type="revisionmap" >
+        <in stream="agg_out" />
+        <out stream="Result2"/>
+        <parameter name="expression.0" value="quote" />
+        <parameter name="output-field-name.0" value="quote" />
+        <parameter name="inverse.0" value="quote" />
+        <parameter name="expression.1" value="time" />
+        <parameter name="output-field-name.1" value="time" />
+        <parameter name="inverse.1" value="time" />
+        <parameter name="expression.2" value="agg_0 - 10" />
+        <parameter name="output-field-name.2" value="price" />
+        <parameter name="inverse.2" value="price + 10" />
+        <parameter name="expression.3" value="agg_1" />
+        <parameter name="output-field-name.3" value="count" />
+        <parameter name="inverse.3" value="count" />
+        <parameter name="processing-mode" value="UPSTREAM"/>
+        <parameter name="anchor" value="PacketCP"/>
+    </box>
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+            <order  field="time" />
+        <size   value="250"     />
+        <radius value="4" />
+    </connection_point_view>
+
+    
+</borealis>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<deploy>
+
+  <!-- mit + harvard -->
+  <publish  stream="mit_cpu_load"   />
+  <publish  stream="mit_mem_used"   />
+  <publish  stream="harv_cpu_load"  />
+  <publish  stream="harv_mem_used"  />
+
+  <!-- cambridge + bristol -->
+  <publish  stream="cam_cpu_load"   />
+  <publish  stream="cam_mem_used"   />
+  <publish  stream="bris_cpu_load"  />
+  <publish  stream="bris_mem_used"  />
+
+  <!-- sics + hut --> 
+  <publish  stream="sics_cpu_load"  />
+  <publish  stream="sics_mem_used"  />
+  <publish  stream="hut_cpu_load"   />
+  <publish  stream="hut_mem_used"   />
+
+  <!-- cmu + upenn --> 
+  <publish  stream="cmu_cpu_load"   />
+  <publish  stream="cmu_mem_used"   />
+  <publish  stream="upenn_cpu_load" />
+  <publish  stream="upenn_mem_used" />
+
+  <client  endpoint="localhost">
+      <subscribe  stream="union_heavily_used" />
+  </client>
+
+  <!-- mit + harvard -->
+  <!-- node = planetlab5.csail.mit.edu -->
+  <node endpoint="localhost"   query="group1" />
+
+
+  <!-- cambridge + bristol -->
+  <!-- node = pli1-br-2.hpl.hp.com -->
+  <node endpoint="localhost"   query="group2" />
+
+
+  <!-- sics + hut -->
+  <!-- node = planetlab1.sics.se -->
+  <node endpoint="localhost"  query="group3" />
+
+
+  <!-- cmu + upenn -->
+  <!-- node = planetlab2.cis.upenn.edu -->
+  <node endpoint="localhost" query="group4" />
+
+
+  <!-- union all the sites together -->
+  <!-- planetlab1.ucsd.edu -->
+  <node endpoint="localhost" query="union_heavily_used" />
+
+</deploy>

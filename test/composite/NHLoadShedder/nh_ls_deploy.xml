@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis deployment diagram for: nh_ls and nh_ls_equal -->
+
+<deploy>
+
+    <publish   stream="Input1"  />
+    <publish   stream="Input2"  />
+
+    <subscribe stream="Output1"  />
+    <subscribe stream="Output2"  />
+
+    <node endpoint="128.148.37.50:21000"  query="Server1" />
+    <node endpoint="128.148.37.56:22000"  query="Server2" />
+    <node endpoint="128.148.37.58:23000"  query="Server3" />
+    <node endpoint="128.148.37.59:24000"  query="Server4" />
+    <node endpoint="128.148.37.60:25000"  query="Server5" />
+
+</deploy>

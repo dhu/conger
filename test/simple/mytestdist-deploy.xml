@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<deploy>
+    <publish    stream="Packet"/>
+    <subscribe  stream="Aggregate" endpoint="127.0.0.1:25000"/>
+
+    <node   endpoint="127.0.0.1:15000"  query="mycount" />
+    <node   endpoint="127.0.0.1:17000"  query="myfilter" />
+</deploy>
+
+

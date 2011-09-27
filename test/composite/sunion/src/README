@@ -1,0 +1,109 @@
+The sample application in this directory demonstrate the DPC 
+fault-tolerance protocol with replication and distribution.
+
+DPC is presented in detail in: [balazinska06] 
+Fault-Tolerance and Load Management in a Distributed Stream Processing System.
+Magdalena Balazinska. PhD dissertation. 
+Massachusetts Institute of Technology. February 2006.
+
+
+================================================================
+Compiling
+================================================================
+To compile the sample application, follow these steps:
+
+> cd borealis/test/
+> ./setup
+> wtf configure --with-antlr=/wherever/you/untarred/antlr/ [--with-nmstl=/where/you/installed/nmstl]
+> make
+
+
+================================================================
+The main two executables for this application are:
+
+suniondeploy.cc generates the query diagram file (QueryVar.xml) and 
+                the deployment file (DeployVar.xml) based on input parameters.
+
+sunionin.cc     deploys the query diagram, produces the input streams, 
+                causes the temporary failure on one input stream,
+                and receives the output stream.
+
+Other source files support the above two main applications.
+
+
+================================================================
+Without any parameters, suniondeploy and sunionin run the
+query diagram and deployment from files Query.xml and Deployment.xml,
+respectively.
+
+In this configuration, a Borealis node and its replica execute 
+a query diagram composed of an SUnion and an SOutput operator. 
+The Borealis node and its replica run at port numbers 17100 and 17200,
+respectively.
+
+The Borealis nodes running at port numbers 18000 and 19000 are client
+proxies. They perform all the fault-tolerance actions on behalf of
+output clients. Locally, these nodes only run pass-through
+filters. Clients subscribe to the output of one of those filters to
+get the benefits of the proxy.
+
+
+To run this example, execute:
+./runtest sunion
+
+You should see the following windows appear one by one:
+1 - First,  the global catalog starts in a window called: HEAD"
+2 - Second, four Borealis nodes start in windows called: 
+    - Borealis@127.0.0.1:17100"
+    - Borealis@127.0.0.1:17200"
+    - Borealis@127.0.0.1:18000"
+    - Borealis@127.0.0.1:19000"
+3 - Third, suniondeploy starts, submits the Query.xml file to the global
+    catalog and exits
+4 - Fourth, sunionin starts, deploys the query diagram by forwarding
+    the file Deployment.xml to the global catalog. It then starts to send
+    data to the borealis nodes running a port numbers 17100 and 17200.
+    It also receives the output from the Borealis node running at port 18000.
+
+In the sunionin window, you should see an output similar to
+that shown in file: sunionin.sample_output.log. The output shows
+how the processing delays change as a temporary failure occurs then
+heals.
+
+The output produced by the Borealis nodes shows the details of
+how the nodes reacted to the failure.
+
+
+================================================================
+To try an example of failure and recovery through a chain of two nodes, execute
+./runtest suniondist -ptest.params:8 -ftest.dat
+
+You should see the global catalog start along with a couple of Borealis
+nodes. The output produced by sunionin should be similar
+to that shown in  sunionin.sample_output_dist1.log
+
+Wait for sunionin to exit by itself before stopping everything with "runtest stop"
+When it exits, sunionin writes some statistics in test.dat.
+
+
+As another example, you can run:
+./runtest suniondist -ptest.params:8 -ftest.dat
+
+The output produced by sunionin should be similar
+to that shown in  sunionin.sample_output_dist2.log
+In this scenario, each one of the nodes in the sequence continuously
+delayed tuples instead of processing them as they arrive once the
+failure was detected.
+
+The file test.dat should show some statistics from the two executions.
+
+The file test.params shows examples of parameters that can be used
+with the suniondeploy and sunionin applications
+
+
+To test chains of nodes deeper than two or three, it is necessary to
+start distributing Borealis nodes across multiple physical machines.
+
+
+
+

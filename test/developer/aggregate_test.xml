@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  aggregate_test.cc -->
+
+<borealis>
+    <input   stream="Input"      schema="InputTuple"    />
+    <output  stream="Output"     schema="OutputTuple"   />
+
+    <schema name="InputTuple" >
+        <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field  name="time"       type="int" />
+        <field  name="value"      type="int" />
+    </schema>
+
+    <box name="AggregateBox"  type="aggregate" >
+        <in    stream="Input" />
+        <out   stream="Output" />
+        <parameter  name="aggregate-function.0"  value="count()" />
+        <parameter  name="aggregate-function-output-name.0"  value="value" />
+        <parameter  name="window-size-by"        value="VALUES"  />
+        <parameter  name="window-size"           value="1"       />
+        <parameter  name="advance"               value="1"       />
+        <parameter  name="order-by"              value="FIELD"   />
+        <parameter  name="order-on-field"        value="time"    />
+    </box>
+</borealis>

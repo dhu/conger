@@ -1,0 +1,12 @@
+<deploy>
+  <publish    stream="rng"          />
+  <subscribe  stream="probability"  />
+
+  <node   endpoint=":15000" query="flop"/>
+  <node   endpoint=":17000" query="turn"/>
+  <node   endpoint=":19000" query="river"/>
+
+  <region node=":15000" />
+  <region node=":17000" />
+  <region node=":19000" />
+</deploy>

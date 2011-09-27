@@ -1,0 +1,13 @@
+#!/bin/bash
+
+my_home=/export/home/user-mbalazin
+
+cd ${my_home}
+source env.sh
+cd ${BOREALIS_HOME}/utility/test/composite/sunion/scripts/
+if [ $# -gt 2 ]
+then
+    ./runtest segment $1 $2 $3
+else
+    echo "You must specify file_with_params:line_nb runtime sequence_nb"
+fi

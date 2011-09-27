@@ -1,0 +1,99 @@
+<medusaconfig>
+
+  <ha>
+    <pair primary="" secondary=""/>
+    <pair primary="" secondary=""/>
+    <pair primary="" secondary=""/>
+    
+    <replica_set> 
+	    <replica name="192.168.10.1:17100"/>
+	    <replica name="192.168.10.1:17200"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.89:17100"/>
+        <replica name="18.31.0.89:17200"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.89:17300"/>
+        <replica name="18.31.0.89:17400"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.89:17500"/>
+        <replica name="18.31.0.89:17600"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.89:17700"/>
+        <replica name="18.31.0.89:17800"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.176:17100"/>
+        <replica name="18.31.0.176:17200"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.176:17300"/>
+        <replica name="18.31.0.176:17400"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.176:17500"/>
+        <replica name="18.31.0.176:17600"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.176:17700"/>
+        <replica name="18.31.0.176:17800"/>
+    </replica_set>
+
+
+    <replica_set> 
+        <replica name="18.31.0.41:17100"/>
+        <replica name="18.31.0.41:17200"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.41:17300"/>
+        <replica name="18.31.0.41:17400"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.41:17500"/>
+        <replica name="18.31.0.41:17600"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.41:17700"/>
+        <replica name="18.31.0.41:17800"/>
+    </replica_set>
+
+
+    <replica_set> 
+        <replica name="18.31.0.161:17100"/>
+        <replica name="18.31.0.161:17200"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.161:17300"/>
+        <replica name="18.31.0.161:17400"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.161:17500"/>
+        <replica name="18.31.0.161:17600"/>
+    </replica_set>
+
+    <replica_set> 
+        <replica name="18.31.0.161:17700"/>
+        <replica name="18.31.0.161:17800"/>
+    </replica_set>
+
+
+    <config interval="250" start="5000"/>
+  </ha>
+
+</medusaconfig>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  jointest.cc -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple"      />
+    <input   stream="Bound"       schema="BoundTuple"       />
+    <output  stream="Suspicious"  schema="SuspiciousTuple"  />
+
+    <schema name="PacketTuple" >
+        <field  name="time"       type="int" />
+        <field  name="protocol"   type="string" size="4" />
+    </schema>
+
+    <schema name="BoundTuple" >
+        <field  name="tsmin"      type="int" />
+        <field  name="tsmax"      type="int" />
+        <field  name="tempmin"    type="int" />
+        <field  name="tempmax"    type="int" />
+    </schema>
+
+    <schema name="SuspiciousTuple" >
+        <field  name="time"       type="int" />
+        <field  name="protocol"   type="string" size="4" />
+        <field  name="tsmin"      type="int" />
+        <field  name="tsmax"      type="int" />
+        <field  name="tempmin"    type="int" />
+        <field  name="tempmax"    type="int" />
+    </schema>
+   
+    <box name="join"  type="joinstatic" >
+        <in   stream="Packet"     />
+        <in   stream="Bound"      />
+        <out  stream="Suspicious" />
+
+        <parameter  name="predicate"
+                   value="left.start_time_sec > right.tsmin" />
+    </box>
+</borealis>

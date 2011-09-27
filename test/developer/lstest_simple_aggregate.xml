@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<borealis>
+
+    <schema name="IntTuple">
+        <field name="timestamp" type="int" />
+        <field name="value" type="int" />
+    </schema>
+    <schema name="AggTuple">
+        <field name="timestamp" type="int" />
+        <field name="count" type="int" />
+    </schema>
+
+    <input stream="input1" schema="IntTuple" />
+    <output stream="output1" schema="AggTuple" />
+
+    <query name="query1">
+        <box name="box1_1" type = "aggregate">
+            <in stream="input1" />
+            <out stream="intermediate1" />
+            <parameter name="aggregate-function.0" value="firstval(timestamp)" />
+            <parameter name="aggregate-function-output-name.0" value="timestamp" />
+            <parameter name="aggregate-function.1" value="count()" />
+            <parameter name="aggregate-function-output-name.1" value="count" />
+            <parameter name="window-size-by" value="VALUES"/>
+            <parameter name="window-size" value="100"/>
+            <parameter name="advance" value="1"/>
+            <parameter name="order-by" value="FIELD"/>
+            <parameter name="order-on-field" value="timestamp"/>
+        </box>
+        <box name="box2_1" type = "delay">
+            <in stream="intermediate1" />
+            <out stream="output1" />
+            <parameter name="delay-ms" value="10"/>
+            <parameter name="churn" value="1"/>
+        </box>
+    </query>
+
+</borealis>
+

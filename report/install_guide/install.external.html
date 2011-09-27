@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Packages Needed For Borealis</TITLE>
+   <LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<PRE><H3><CENTER>Packages Needed For Borealis</CENTER></H3></PRE>
+
+<UL><P CLASS="body">
+Borealis relies on several external software packages that are available
+through free downloads.  Some of the packages are denoted optional and are
+only required when you want to use specific features.
+</P>
+
+<P CLASS="body">
+Many versions of packages are incompatible with the versions used to build
+and run Borealis.  Consequently newer or older versions may not work
+properly in many cases.  The versions used to build Borealis are listed for
+each package.  You can try different versions if you like, but the most
+reliable method is to install the given versions of each package.
+</P>
+
+<P CLASS="body">
+Before installing the packages you will want to think about where you want
+to place them.  Everyone has their own way of doing things.  We established
+a dedicated software directory containing subdirectories for each of the
+installed packages.  It also contains a kit subdirectory with all of the
+downloaded files.  The total space used is under 50 MB.
+</P>
+
+<P CLASS="body">
+Links are provided for each of the packages used by the Borealis system.
+There you will find software and installation instructions for each package.
+Additional notes on installing some packages are provided for
+
+
+   <A HREF="install.select.html#gcc">GNU Gcc,</A>
+   <A HREF="install.select.html#ccache">CCache,</A>
+   <A HREF="install.select.html#antlr">Antlr,</A>
+   <A HREF="install.select.html#xerces">Xerces,</A>
+   <A HREF="install.select.html#libtool_automake">Libtool / Autoconf / Automake,</A>
+   <A HREF="install.select.html#berkeley_db">Berkeley-Db,</A>
+   <A HREF="install.select.html#glpk">Glpk,</A>
+   <A HREF="install.select.html#gsl">Gsl,</A>
+   <A HREF="install.select.html#ocv">Open Computer Vision,</A>
+   <A HREF="install.select.html#doxygen">and Doxygen.</A>
+</P>
+
+<BR><H4>Tools Used to Build Borealis</H4>
+<UL><PRE><B>
+libtoolize    1.5.22 or 1.5.10
+              http://www.gnu.org/software/libtool/libtool.html
+              ftp://ftp.gnu.org/gnu/libtool/
+
+autoconf      2.6 or 2.59
+autoheader    (part of autoconf)
+              http://www.gnu.org/software/autoconf/
+              ftp://ftp.gnu.org/gnu/autoconf/
+
+automake      1.9.6 (requires autoconf 2.6 to build) or 1.9.2
+aclocal       (part of automake)
+              http://www.gnu.org/software/automake/
+              ftp://ftp.gnu.org/gnu/automake/
+
+gcc           3.3.5 through 4.1.1
+              http://gcc.gnu.org
+
+ocv           1.0.0
+              http://downloads.sourceforge.net/opencvlibrary/
+
+ccache        2.4 (tested with gcc 4.1.1) or 2.3 (tested with gcc 3.3.5)
+              (optional, helps speed-up consecutive recompilations)
+              http://samba.org/ftp/ccache/
+              http://ccache.samba.org/
+              http://www-106.ibm.com/developerworks/linux/library/l-ccache.html
+
+java jdk      1.5
+javac         Newer versions of Java will probably work.
+              Try your installed version of Java first unless you have an
+              older version.  In that case locate a newer version on the web
+              that is compatible with your environment.
+
+              Position this version of java first on your PATH and CLASSPATH
+              variables if you need to override any older installed version.
+
+              For tcsh:
+                 setenv  PATH       /.../java/linux/jdk1.5/bin:${PATH}
+                 setenv  CLASSPATH  /.../java/linux/jdk1.5/lib/jre/javaws/:${CLASSPATH}
+
+              For bash:
+                 export  PATH=/.../java/linux/jdk1.5/bin:${PATH}
+                 export  CLASSPATH=/.../java/linux/jdk1.5/lib/jre/javaws/:${CLASSPATH}
+
+doxygen       1.4.7 or 1.4.2 (optional, serves to generate documentation from code)
+              http://www.stack.nl/~dimitri/doxygen/index.html
+              See:  borealis/report/doc/
+</B></PRE></UL>
+
+<BR><H4>Packages Used By Borealis</H4>
+<UL><PRE><B>
+Antlr         Linux: 2.7.6 (tested with gcc 4.1.1) or 2.7.4 (tested with gcc 3.3.5)   Mac: 2.7.4
+              Used to parse:  borealis/src/modules/queryProcessor/expr/expr.g
+              It uses java to run:
+                  $(JAVA) -cp $(ANTLR_JAR_FILE) antlr.Tool -o . expr.g
+              http://www.antlr.org
+
+Xerces        Linux: 2.7.0 (tested with gcc 4.1.1) or 2.6.0 (tested with gcc 3.5.5)   Mac: 2.5.0
+              Used by Borealis to parse XML.
+              http://xml.apache.org/xerces-c/
+
+BerkeleyDB    (aka db4; optional)  Linux: db-4.4.20   Mac: 4.2
+              See:  borealis/src/external/bdb/Table.cc
+              http://www.sleepycat.com/
+
+Glpk          (optional)  Linux:  4.9 or 4.8
+              Used by the Load Manager component.
+              http://www.gnu.org/software/glpk/glpk.html
+              ftp://ftp.gnu.org/gnu/glpk/
+
+Gsl           (optional)  Linux:  1.8 or 1.7
+              Used for Predictive queries.
+              http://www.gnu.org/software/gsl/
+              ftp://ftp.gnu.org/gnu/gsl/
+
+Ocv           (optional)  Linux:  1.0
+              Used for Array processing (ASAP).
+              http://easynews.dl.sourceforge.net/sourceforge/opencvlibrary/
+
+TinyDb        (optional; currently not in use)
+              See: borealis/utility/stale/tinydbwraper/
+              http://telegraph.cs.berkeley.edu/tinydb
+              http://www.tinydb.com
+</B></PRE></UL>
+
+<BR><H4>Software Integrated Into NMSTL</H4>
+<P CLASS="body">
+
+<p>The Networking, Messaging, Servers, and Threading Library (NMSTL)
+is a portable, templatized C++ library for writing networking and
+messaging components, servers, and threaded applications.  The NMSTL
+library, originally developed by Jon Salz, is a great library that you
+can use for all your C++ projects. It comes with some documentation
+(/nmstl/doc). You should check it out.
+
+<p>Template-heavy code like NMSTL and STL generates really weird-looking
+compiler errors, so NMSTL includes a tool called WTF to prettify error
+output from the GNU C++ compiler, g++. Try it and you'll be hooked.
+
+<p>The NMSTL code required for Borealis is distributed in the release.
+These are for reference purposes and are only useful for people that
+want to port Borealis to another platform.
+</P>
+
+<UL><PRE><B>
+expat         Used by NMSTL to parse XML.
+              http://expat.sourceforge.net
+
+readline      http://cnswww.cns.cwru.edu/%7Echet/readline/rltop.html
+
+atomicity.h   exchange_and_add and atomic_add
+              Power PC:  www.uclibc.org/lists/uclibc-cvs/2003-March/003194.html
+
+libncurses
+
+backtrace from glibc
+              http://linux.tucows.com/preview/8267.html
+              http://www.gnu.org/software/libc/libc.html
+
+high resolution timer
+              i386 - rdtsc
+              ppc  - http://lists.apple.com/archives/mac-games-dev/2002/May/msg00244.html
+
+memalign      In malloc.h - Not available for the Power PC
+</B></PRE></UL></UL>
+
+<BR>
+<H3><CENTER><A HREF="install.borealis.html">Back to the installion page</A></CENTER></H3>
+</BODY></HTML>

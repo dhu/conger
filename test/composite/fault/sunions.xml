@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for: sunions.cc -->
+
+<borealis>
+   
+  <input   stream="Input1"    schema="TrivialTuple"/>
+  <input   stream="Input2"    schema="TrivialTuple"/>
+  <input   stream="Input3"    schema="TrivialTuple"/>
+
+  <output  stream="SOutput1"    schema="TrivialTuple"  />
+  <output  stream="SOutput2"    schema="TrivialTuple"  />
+  <output  stream="SOutput3"    schema="TrivialTuple"  />
+
+  <output  stream="ControlUnion1"  schema="EmptyTuple"  />
+  <output  stream="ControlUnion2"  schema="EmptyTuple"  />
+  <output  stream="ControlUnion3"  schema="EmptyTuple"  />
+
+  <output  stream="ControlOutput1" schema="EmptyTuple"  />
+  <output  stream="ControlOutput2" schema="EmptyTuple"  />
+  <output  stream="ControlOutput3" schema="EmptyTuple"  />
+
+  <schema name="EmptyTuple">
+  </schema>
+
+  <schema name="TrivialTuple">
+    <field  name="value"        type="int" />
+  </schema>
+  
+  <query name="my_query">
+    
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion1"   type="sunion" >
+      <in   stream="Input1"    />
+      <in   stream="Input2"    />
+      <parameter name="location" value="input"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion1" />
+      <out  stream="Union1" />
+    </box>
+
+    <box name="my_soutput1" type="soutput">
+      <in  stream="Union1" />
+      <out stream="ControlOutput1"/>
+      <out  stream="SOutput1" />
+    </box>
+
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion2"   type="sunion" >
+      <in   stream="Input3"    />
+      <parameter name="location" value="input"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion2" />
+      <out  stream="Union2" />
+    </box>
+
+    <box name="my_soutput2" type="soutput">
+      <in  stream="Union2" />
+      <out stream="ControlOutput2"/>
+      <out  stream="SOutput2" />
+    </box>
+
+
+    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+    <box name="my_sunion3"   type="sunion" >
+      <in   stream="Union1"    />
+      <in   stream="Union2"    />
+      <parameter name="location" value="middle"/>
+      <parameter name="interval" value="500"/>
+      <parameter name="stagger" value="0"/>
+      <parameter name="max-delay.0" value="2000"/>
+      <parameter name="max-delay.1" value="2000"/>
+      <out  stream="ControlUnion3" />
+      <out  stream="Union3" />
+    </box>
+
+    <box name="my_soutput3" type="soutput">
+      <in  stream="Union3" />
+      <out stream="ControlOutput3"/>
+      <out  stream="SOutput3" />
+    </box>
+
+
+  </query>
+
+</borealis>

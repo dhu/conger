@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!-- Borealis deployment diagram for: lstest_simple.xml -->
+
+<deploy>
+
+    <publish stream="input1"/>
+
+    <subscribe stream="output1" />
+
+    <node endpoint="127.0.0.1:15000" query="query1" />
+
+    <region node="127.0.0.1:15000" endpoint="127.0.0.1:40000" />
+
+</deploy>

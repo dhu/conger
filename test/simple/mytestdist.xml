@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  mytest.cc -->
+
+<borealis>
+    <input   stream="Packet"     schema="PacketTuple"     />
+    <output  stream="Aggregate"  schema="AggregateTuple"  />
+
+    <schema name="PacketTuple">
+        <field  name="time"        type="int" />
+        <field  name="protocol"    type="string"  size="4" />
+    </schema>
+
+    <schema name="AggregateTuple">
+        <field  name="time"        type="int" />
+        <field  name="count"       type="int" />
+    </schema>
+
+    <box name="mycount"   type="aggregate" >
+        <in   stream="Packet"    />
+        <out  stream="AggregatePreFilter" />
+
+        <parameter   name="aggregate-function.0"  value="count()"  />
+        <parameter   name="aggregate-function-output-name.0"
+                    value="count"  />
+
+        <parameter   name="window-size-by"        value="VALUES"   />
+        <parameter   name="window-size"           value="1"        />
+        <parameter   name="advance"               value="1"        />
+        <parameter   name="order-by"              value="FIELD"    />
+        <parameter   name="order-on-field"        value="time"     />
+    </box>
+
+    <box name="myfilter" type="filter">
+        <in stream="AggregatePreFilter" />
+        <out stream="Aggregate" />
+        <parameter name="expression.0" value="(time % 2) == 0"/> 
+    </box>
+
+</borealis>

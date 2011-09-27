@@ -1,0 +1,31 @@
+#include "LMPerformanceMonitor.h"
+
+BOREALIS_NAMESPACE_BEGIN
+
+TimeSeries LoadMigrationStatistics::amount_of_load_moved;
+
+double GlobalClusteringPerformanceMetric::average_super_box_avg_load;
+double GlobalClusteringPerformanceMetric::maximum_super_box_avg_load;
+
+double GlobalDistributionPerformanceMetric::average_node_avg_load;
+double GlobalDistributionPerformanceMetric::std_of_node_avg_load;
+double GlobalDistributionPerformanceMetric::average_node_load_std;
+double GlobalDistributionPerformanceMetric::maximum_node_load_std;
+double GlobalDistributionPerformanceMetric::average_node_load_correlation;
+double GlobalDistributionPerformanceMetric::cutting_super_edge_over_total_super_edge_bandwidth_ratio;
+
+double BandwidthReductionMetric::bandwidth_reduction_ratio;
+double BandwidthReductionMetric::bandwidth_reduction_ratio_after_load_balancing;
+
+StatisticsTools::TimeSeries BandwidthReductionMetric::amount_of_load_moved;
+StatisticsTools::TimeSeries BandwidthReductionMetric::average_load;
+StatisticsTools::TimeSeries BandwidthReductionMetric::max_load;
+StatisticsTools::TimeSeries BandwidthReductionMetric::end_to_end_latency;
+StatisticsTools::TimeSeries BandwidthReductionMetric::latency_sim_time;
+double BandwidthReductionMetric::number_of_load_migrations = 0;
+
+map<IdType, StatisticsTools::TimeSeries> BandwidthReductionMetric::nodes_load;
+
+
+
+BOREALIS_NAMESPACE_END

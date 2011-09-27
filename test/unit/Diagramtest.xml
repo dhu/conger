@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  Diagramtest.cc -->
+
+<borealis>
+    <input   stream="Packet"     schema="PacketTuple"     endpoint="15000"  />
+    <output  stream="Result"     schema="PacketTuple"     endpoint="25000"  />
+    <output  stream="Aggregate"  schema="AggregateTuple"  endpoint="25000"  />
+
+    <schema name="PacketTuple">
+        <field  name="time"        type="int" />
+        <field  name="protocol"    type="string"  size="4" />
+    </schema>
+
+    <schema name="AggregateTuple">
+        <field  name="interval"    type="int" />
+        <field  name="count"       type="int" />
+    </schema>
+
+    <query name="SimpleQuery"  node="localhost" >
+        <box  name="box1"  type="filter" >
+            <in       stream="Packet"       />
+            <out      stream="Intermediate" /> 
+            <parameter  name="expression.0"  value="1=1" />
+        </box>
+
+        <box  name="box2"  type="filter" >
+            <in       stream="Intermediate" />
+            <out      stream="Result"       /> 
+            <parameter  name="expression.0"  value="1=1" />
+        </box>
+    </query>
+
+    <box name="mybox"   type="aggregate" node="localhost" >
+        <in   stream="Packet"    />
+        <out  stream="Aggregate" />
+
+        <parameter   name="aggregate-function.0"  value="count()"  />
+        <parameter   name="window-size-by"        value="VALUES"   />
+        <parameter   name="window-size"           value="1"        />
+        <parameter   name="advance"               value="1"        />
+        <parameter   name="order-by"              value="FIELD"    />
+        <parameter   name="order-on-field"        value="time"     />
+    </box>
+
+    <connection_point_view  name="view1"  stream="Intermediate" >
+        <order  field="time" />
+        <size   value="5"     />
+    </connection_point_view>
+
+    <connection_point_view  name="view2"  stream="Intermediate" >
+        <order  field="time" />
+        <size   value="7"     />
+    </connection_point_view>
+
+    <input   stream="Insert"      schema="TableTuple"       endpoint="15000" />
+    <input   stream="Update"      schema="TableTuple"       endpoint="15000" />
+    <input   stream="Read1"       schema="KeyTuple"         endpoint="15000" />
+
+    <output  stream="Select"  schema="TableTuple"  endpoint="35000" />
+
+    <schema name="TableTuple" >
+        <field  name="f1"       type="int" />
+        <field  name="f2"       type="int" />
+        <field  name="f3"       type="int" />
+        <field  name="f4"       type="int" />
+        <field  name="f5"       type="int" />
+    </schema>
+
+    <schema name="KeyTuple" >
+        <field  name="k1"       type="int" />
+        <field  name="k2"       type="int" />
+        <field  name="k3"       type="int" />
+    </schema>
+
+    <query name="tableQuery"  node="localhost">
+        <table name="testTable"  schema="TableTuple" >
+            <index     field="f4" />
+            <parameter  name="key"       value="f1,f2,f3" />
+            <parameter  name="truncate"  value="0" />
+            <parameter  name="create"    value="1" />
+        </table>
+
+        <box name="insertBox"  type="insert" >
+            <in      stream="Insert" />
+            <access  table="testTable" />
+
+            <parameter name="sql" 
+                      value="insert into testTable values (f1, f2, f3, f4, f5)"
+             />
+        </box>
+
+        <box name="updateBox"  type="update" >
+            <in   stream="Update" />
+            <access  table="testTable" />
+
+            <parameter name="sql"
+                      value="update testTable set testTable.f2 = input.f2  where testTable.f1 = input.f1"
+             />
+        </box>
+    </query>
+
+    <query name="readQuery"  node="localhost" >
+        <box name="selectBox"  type="select" >
+            <in      stream="Read1" />
+            <out     stream="Select" />
+            <access   table="testtable" />
+            <parameter name="sql"
+                      value="select * from testTable where testTable.f1 == input.k1"
+             />
+        </box>
+    </query>
+</borealis>

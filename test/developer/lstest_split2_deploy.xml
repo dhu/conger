@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<!-- Borealis deployment diagram for: lstest_split.xml -->
+
+<deploy>
+
+    <publish stream="input1" />
+    <publish stream="input2" />
+
+    <subscribe stream="output1" gap="50" />
+    <subscribe stream="output2" gap="50" />
+    <subscribe stream="output3" gap="50" />
+    <subscribe stream="output4" gap="50" />
+
+    <node endpoint=":15000" query="query1" />
+    <node endpoint=":20000" query="query2" />
+
+    <region node=":15000" endpoint=":40000" />
+    <region node=":20000" endpoint=":40000" />
+
+</deploy>

@@ -1,0 +1,17 @@
+<network>
+  <schema name="simple">
+    <field name="x" type="int"/>
+    <field name="y" type="single"/>
+  </schema>
+
+  <stream name="istream0" type="simple"/>
+
+  <query name="query1">
+    <box name="fbox0" type="filter">
+      <input port="1" stream="istream0"/>
+      <output port="1" stream="ostream0"/>
+      <param name="expression.0" value="x &lt; 5"/>
+      <param name="pass-on-false-port" value="0"/>
+    </box>
+  </query>
+</network>

@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Example .bashrc File Settings</TITLE>
+   <LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<B><PRE><SPAN class=yellow>
+#########################  login.bashrc  ######################################
+#
+#  Sample login scipt settings for Borealis.
+#  Do not blindly apply these settings.
+#  You need to determine what settings make sense for your environment.
+#..............................................................................
+
+echo  "Do not blindly apply these settings."
+
+
+###############################################################################
+#
+# Handy aliases for Borealis.
+#
+#..............................................................................
+
+
+#  Abbreviations to run the build script.
+#
+alias    bbb     build.borealis.sh
+alias    bbbt    build.borealis.sh -tool.head -tool.marshal
+
+
+#  Copy the BigGiantHead and marshal tools to the local bin directory.
+#  This is run after rebuilding the tools.
+#
+alias    retool  '/bin/cp -f ${HOME}/borealis/tool/head/BigGiantHead ${HOME}/bin; /bin/cp -f ${HOME}/borealis/tool/marshal/marshal ${HOME}/bin'
+
+
+#  Enable and disable run-time debug traces.
+#
+alias    debug   export  LOG_LEVEL=2
+alias    debug0  export  LOG_LEVEL=0
+
+
+
+###############################################################################
+#
+# Example environment 
+#
+# BOREALIS_SOFTWARE - Set to the directory where external software is installed.
+#
+#..............................................................................
+
+
+# Needed to build Borealis
+#
+export  PATH=${PATH}:${HOME}/install_nmstl/bin
+
+
+# Needed to run Java for the graphical user interface.
+#
+export  CLASS_PATH       .:${CLASS_PATH}
+export  JAVA_HOME        /usr/lib/j2se/1.4
+export  PATH             ${JAVA_HOME}/bin:${PATH}
+
+
+#  First on PATH to override older Debian version.
+#
+export  PATH=${HOME}/bin:${BOREALIS_SOFTWARE}/bin:${PATH}
+
+
+#  First on PATH to override older Brown Debian version.
+#
+export  CXX="ccache  g++"
+
+export  INSTALL_BDB=${BOREALIS_SOFTWARE}/bdb
+export  INSTALL_GLPK=${BOREALIS_SOFTWARE}/glpk
+export  INSTALL_GSL=${BOREALIS_SOFTWARE}/gsl
+export  INSTALL_ANTLR=${BOREALIS_SOFTWARE}/antlr
+export  INSTALL_XERCESC=${BOREALIS_SOFTWARE}/xerces
+export  INSTALL_NMSTL=${BOREALIS_SOFTWARE}/nmstl
+
+
+# Needed to run Borealis
+#
+LD_LIBRARY_PATH=${INSTALL_ANTLR}/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_NMSTL}/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_XERCESC}/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_GLPK}/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_GSL}/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INSTALL_BDB}/lib
+
+export  LD_LIBRARY_PATH
+#
+########################### end sample login.bashrc ###########################
+</SPAN></PRE></B></BODY></HTML>

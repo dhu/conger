@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  aurorajoin_test.cc -->
+
+<borealis>
+    <input  stream="Input1"     schema="InputTuple1" />
+    <input  stream="Input2"     schema="InputTuple2" />
+    <output stream="JoinOutput" schema="JoinTuple"   />
+
+    <schema name="InputTuple1">
+        <field name="time1"  type="int" />
+        <field name="value1" type="int" />
+    </schema>
+
+    <schema name="InputTuple2">
+        <field name="time2"  type="int" />
+        <field name="value2" type="int" />
+    </schema>
+
+    <schema name="JoinTuple">
+        <field name="time1"  type="int" />
+        <field name="value1" type="int" />
+        <field name="time2"  type="int" />
+        <field name="value2" type="int" />
+    </schema>
+
+    <box name="box1" type="aurorajoin" >
+        <in  stream="Input1" />
+        <in  stream="Input2" />
+        <out stream="JoinOutput" />
+        <parameter name="predicate"             value="1=1" />
+        <parameter name="up-size"		value="5" />
+        <parameter name="down-size"		value="3" />
+        <parameter name="left-order-by"		value="VALUES" />
+        <parameter name="left-order-on-field"   value="time1" />	
+        <parameter name="right-order-by"        value="VALUES" />
+        <parameter name="right-order-on-field"  value="time2" />	
+        <parameter name="out-field-name.0"      value="time1" />
+        <parameter name="out-field.0"		value="left.time1" />
+        <parameter name="out-field-name.1"	value="value1" />
+        <parameter name="out-field.1"		value="left.value1" />
+        <parameter name="out-field-name.2"	value="time2" />
+        <parameter name="out-field.2"		value="right.time2" />
+        <parameter name="out-field-name.3"	value="value2" />
+        <parameter name="out-field.3"		value="right.value2" />
+    </box>
+</borealis>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram. -->
+
+<borealis>
+    <schema name="ccd_schema" >
+	<field name="frame"  type="byte(0...*)"  />   
+	<field name="final_bit" type="int" />
+    </schema>
+	
+    <input  stream="CcdStream"  schema="ccd_schema"  />
+    <output stream="CcdDetected"  schema="ccd_schema" /> 
+
+
+   <box name="FaceDetector" type="face_detect_spatial">
+       <in      stream="CcdStream" /> 
+       <out     stream="CcdDetected" />
+       <parameter name="dimension.0" value="320" />
+       <parameter name="dimension.1" value="240" />
+       <parameter name="dimension.2" value="3" />
+   </box>
+
+</borealis>

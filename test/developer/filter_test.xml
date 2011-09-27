@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  filter_test.cc -->
+
+<borealis>
+    <input   stream="in"   schema="Schema"  />
+    <output  stream="out"  schema="Schema"  />
+
+    <schema name="Schema">
+        <field  name="seq_no" type="int" />
+    </schema>
+
+    <box name="filter_box"   type="filter" >
+        <in stream="in" />
+        <out stream="out" />
+        <parameter name="expression.0" value="seq_no &gt; 0"/>
+    </box>
+</borealis>

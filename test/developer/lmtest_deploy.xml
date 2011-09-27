@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<!-- Borealis deployment diagram for:  lmtest.cc -->
+
+<deploy>
+    <publish  stream="si_b1_p1"  />
+    <publish  stream="si_b3_p1"  />
+
+    <subscribe stream="so_b4_p1" />
+    <subscribe stream="so_b2_p1" />
+
+    <node   endpoint="127.0.0.1:15000"     query="b1 b3" />
+    <node   endpoint="127.0.0.1:16000"     query="b2 b4" />
+
+    <region  node="127.0.0.1:15000"  endpoint="127.0.0.1:40000" />
+    <region  node="127.0.0.1:16000"  endpoint="127.0.0.1:40000" />
+</deploy>

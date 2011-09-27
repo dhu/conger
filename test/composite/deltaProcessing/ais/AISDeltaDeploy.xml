@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis deployment diagram. -->
+
+<deploy>
+    <publish    stream="incoming_east"  />
+    <publish    stream="incoming_west"  />
+    <publish    stream="deltas_east"  />
+    <publish    stream="deltas_west"  />   
+    <publish    stream="mapped_east"  />
+    <publish    stream="mapped_west"  />
+    <publish    stream="time_snapshot" />
+    <subscribe  stream="us_map"/>
+    <node   endpoint=":15000" query="delta_detect_east delta_detect_west convert_to_cartesian_east convert_to_cartesian_west group_time_matches render_map" /> 
+    <!-- delta_detect_east delta_detect_west  -->
+</deploy>

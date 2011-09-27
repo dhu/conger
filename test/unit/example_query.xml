@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<borealis>
+
+    <schema name="intstuple">
+        <field  name="f1"    type="int" />
+        <field  name="f2"    type="int" />
+    </schema>
+
+    <input  stream="s1"    schema="intstuple" />
+    <input  stream="s4"    schema="intstuple" />
+
+    <output stream="s3"    schema="intstuple" />
+    <output stream="s6"    schema="intstuple" />
+
+    <box name="b1"    type = "delay">
+        <in     stream="s1" />
+        <out    stream="s2" />
+        <parameter name="delay-ms" value="10" />
+        <parameter name="churn" value="1" />
+    </box>
+    <box name="b2"    type = "delay">
+        <in     stream="s2" />
+        <out    stream="s3" />
+        <parameter name="delay-ms" value="10" />
+        <parameter name="churn" value="1" />
+    </box>
+
+    <box name="b3"    type = "delay">
+        <in     stream="s4" />
+        <out    stream="s5" />
+        <parameter name="delay-ms" value="10" />
+        <parameter name="churn" value="1" />
+    </box>
+    <box name="b4"    type = "delay">
+        <in     stream="s5" />
+        <out    stream="s6" />
+        <parameter name="delay-ms" value="10" />
+        <parameter name="churn" value="1" />
+    </box>
+
+</borealis>

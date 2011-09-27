@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<deploy>
+    <publish    stream="Input1"/>
+    <publish    stream="Input2"/>
+    <publish    stream="Input3"/>
+
+    <subscribe  stream="Output" endpoint="127.0.0.1:25000"/>
+
+    <replica_set  name="set1"  query="my_query1" >
+        <node   endpoint="127.0.0.1:17100" />
+        <node   endpoint="127.0.0.1:17200" />
+    </replica_set>
+
+    <node   endpoint="127.0.0.1:18000"  query="my_query2" />
+    <node   endpoint="127.0.0.1:19000"  query="my_query3" />
+</deploy>
+
+

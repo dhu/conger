@@ -1,0 +1,149 @@
+#!/bin/bash
+
+export LOG_LEVEL="0 SOutputQBox.cc:1 ConsistencyMngr.cc:1 AdminCatalog.cc:2"
+
+if [ $# -lt 1 ]
+then
+    echo "usage: runtest sunion"
+    echo "and when you want to stop: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+IP="127.0.0.1"
+
+# Looking for the BOREALIS_HOME environment variable 
+# which gives the top level location of all the source code. 
+# If not assigned, try a reasonable default
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../../"}
+APPS_HOME="./"
+
+# The IP address where the global catalog will be running
+HEAD_IP=${HEAD_IP:-"${IP}"}
+HEAD_PORT=35000
+
+PORTS_IN=15000
+PORTS_OUT=18000
+PORTS_OUT2=19000
+BOREALIS_DATA_PORT=17000
+
+PORT_DELTA=100
+PORTS={}
+for i in `seq 1 20`
+do
+    let "BOREALIS_DATA${i}_PORT = BOREALIS_DATA1_PORT+${i}*${PORT_DELTA}"
+    let "PORTS[i] = BOREALIS_DATA_PORT+${i}*${PORT_DELTA}"
+done
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=5000
+export AURORA_PAGE_SIZE=16384
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+    head)
+        if [ "${IP}" != "${HEAD_IP}" ]
+        then
+            eval echo "If you want to run HEAD here, then please adjust HEAD_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting Head..."
+        BINDING=${IP}:${HEAD_PORT}
+        eval echo "xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e ${BOREALIS_HOME}/tool/head/BigGiantHead"
+        xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e sh -c "${BOREALIS_HOME}/tool/head/BigGiantHead 2>&1 |tee head-${BINDING}.log"  &
+        echo "CLS started."
+        ;;
+
+    borealis)
+        echo "Starting Borealis"
+        BINDING=${IP}:${PORTS[1]}
+        if [ $# -gt 1 ]
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        fi
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+
+    suniondeploy)
+        echo "Starting suniontestdeploy"
+        eval echo "xterm -T suniontestdeploy -geometry 200x30+200+30 -e ${APPS_HOME}/suniondeploy $2 $3 2>&1 |tee suniondeploy.log" &
+        xterm -T suniontestdeploy -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/suniondeploy $2 $3 2>&1 |tee suniondeploy.log" &
+        echo "Client-in started"
+        ;;
+
+    sunionin)
+        echo "Starting sunionin"
+        eval echo "xterm -T sunionin -geometry 200x30+200+30 -e ${APPS_HOME}/sunionin $2 $3 2>&1 |tee sunionin.log" &
+        xterm -T sunionin -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/sunionin $2 $3 2>&1 |tee sunionin.log" &
+        echo "Client-in started"
+        ;;
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+    sunion)
+        $0 head 
+        sleep 2
+        $0 borealis ${IP}:${PORTS[1]}
+        sleep 2
+        $0 borealis ${IP}:${PORTS[2]}
+        sleep 2
+        $0 borealis ${IP}:${PORTS_OUT}
+        sleep 3
+        $0 borealis ${IP}:${PORTS_OUT2}
+        sleep 3
+        $0 suniondeploy
+        sleep 2
+        $0 sunionin
+        exit 0
+        ;;
+
+    ## Example: ./runtest sunion -ptest.params:7 -ftest.dat
+    suniondist)
+        $0 head
+        sleep 2
+        $0 borealis ${IP}:${PORTS[1]}  # First pair
+        sleep 2
+        $0 borealis ${IP}:${PORTS[2]}
+        sleep 2
+        $0 borealis ${IP}:${PORTS[3]}  # Second pair
+        sleep 2
+        $0 borealis ${IP}:${PORTS[4]}
+        sleep 2
+        $0 borealis ${IP}:${PORTS_OUT} # Client proxy
+        sleep 3
+        $0 suniondeploy $2 $3
+        sleep 5
+        $0 sunionin $2 $3
+        exit 0
+        ;;
+
+
+   stop)
+        killall xterm.real
+        killall xterm
+        exit 0
+        ;;
+
+
+esac
+

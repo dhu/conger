@@ -1,0 +1,12 @@
+#!/bin/bash
+
+my_home=/export/home/user-mbalazin
+
+cd ${my_home}
+source env.sh
+#if [ $# -gt 0 ]
+#then
+./runtest-remote stop 
+#else
+#    echo "You must specify runtime"
+#fi

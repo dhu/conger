@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram for sparse arrays. -->
+
+<borealis>
+    <input   stream="Packet"  schema="PacketTuple"  />
+    <output  stream="Result"  schema="PacketTuple"  />
+
+    <schema name="PacketTuple" >
+        <field name="value"  type="byte(int, string:3, 0...2)"/>
+        <field name="time"   type="int" />
+    </schema>
+ 
+    <box  name="box1"  type="filter" >
+        <in       stream="Packet"       />
+        <out      stream="Result"       /> 
+        <parameter  name="expression.0"  value="1=1" />
+    </box>
+
+</borealis>

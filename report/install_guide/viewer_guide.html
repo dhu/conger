@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Building and Running the Graphical User Interface</TITLE>
+   <LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<PRE><H3><CENTER>Building and Running the Stream Viewer</CENTER></H3></PRE>
+
+<PRE><H5><CENTER><SPAN class=white>Summer Release 2008</SPAN></CENTER></H4></PRE>
+
+<P CLASS="body">
+The Stream Viewer is used to create network topologies for Borealis
+applications.  Network diagrams are constructed using &quotbox and
+arrow&quot figures.  The figures are then annotated with detailed text
+attributes.  The output is an XML file that may be fed into the Borealis Head;
+which in turn deploys the diagram to Borealis nodes.
+</P>
+
+<P CLASS="body">
+The Graphical User Interface distributed in the Winter 2007 release of Borealis
+has been rewritten for the Summer 2008 release and renamed the Stream Viewer.
+It is in the <kbd>borealis/tool/borealis/viewer/</kbd> directory.  You will
+also need to run a Global component to propagate diagrams from the Head
+to the Viewer.  A basic Global component is in:
+<kbd>borealis/utility/client/</kbd>
+</P>
+
+<P CLASS="body">
+XML for Borealis applications can also be written using a plain text editor.
+The remaining instructions are for the prior release and are only included in
+lieu of new documentation.
+</P>
+
+<P CLASS="body">
+The tool is built using version 1.5 of the Java Developer's Kit.  Newer
+versions of Java will probably work.  Try your installed version of Java
+first unless you have an older version.  In that case locate a newer version
+on the web that is compatible with your environment.  Note that other Java
+source in the Borealis code base will build with either version 1.4 or 1.5.
+</P>
+
+<P CLASS="body">
+If you need to override any older installed version, position this version
+of java first on your PATH and CLASSPATH variables.
+</P>
+
+<UL><PRE>
+For csh and tcsh:
+
+    setenv  PATH       /.../java/linux/jdk1.5/bin:${PATH}
+    setenv  CLASSPATH  /.../java/linux/jdk1.5/lib/jre/javaws/:${CLASSPATH}
+
+
+For sh and bash:
+    export  PATH=/.../java/linux/jdk1.5/bin:${PATH}
+    export  CLASSPATH=/.../java/linux/jdk1.5/lib/jre/javaws/:${CLASSPATH}
+</PRE></UL>
+
+<P CLASS="body">
+The tool can then be built and run using ant.
+</P>
+
+<UL><PRE>
+borealis/tool/gui>  ant         # Compile the Graphical User Interface.
+borealis/tool/gui>  ant  run    # Launch the Graphical User Interface.
+</PRE></UL>
+
+<P CLASS="body">
+Some of the basic operations for creating a new diagram are:
+</P>
+
+<UL CLASS="bullet">
+<LI><H5>Select the Editor tab.</H5>
+
+<LI><H5>Single click on a boxed item on the left side of the window and a
+        copy with default names and values will be placed on the edit pad.</H5>
+
+<LI><H5>On the edit pad, click and hold between items
+        to connect them by a stream.</H5>
+
+<LI><H5>Use the "Element Editor" panel to modify the default names and
+        set attribute values.</H5>
+
+<LI><H5>Define schemas using the button, "Add Schema" on the
+        right hand side of the window.</H5>
+</UL>
+
+<CENTER><SPAN class=white>Last modified: Tuesday August 12, 2008</SPAN></CENTER>
+
+</BODY></HTML>

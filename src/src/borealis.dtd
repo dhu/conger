@@ -1,0 +1,741 @@
+<!-- DTD for Borealis network transactions -->
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+       A borealis file defines a Borealis network topology.
+
+          <borealis  [update_queue={0 | 1}] 
+                     [queue_type={0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}] 
+                     [key={field name}] />
+               :
+          </borealis>
+       .................................................................... -->
+
+
+<!ELEMENT borealis ( box | table | schema | type | connection_point_view |
+                     input | output | modify | delete )+>
+
+
+<!-- This flag shows if queues on arcs should have update semantics or not.  
+     This flag applies to the whole borealis diagram unless overwritten
+     by another flag down in the diagram hierarchy.
+     If the flag is 0, they have the regular append semantics. 
+     If the flag is omitted, then it is set to 0 by default.
+     See the application guide for a detailed description.
+-->
+<!ATTLIST borealis  update_queue   (0 | 1)   #IMPLIED>
+
+<!-- Type for an update queue indicates its preemption policy. 
+     0: FIFO, 1: INPLACE, 
+     2: LINECUT_UF_FRONT, 3: LINECUT_UF_MIDDLE,
+     4: LINECUT_DF_FRONT, 5: LINECUT_DF_MIDDLE, 
+     6: LINECUT_UF_MIDDLE_DETERMINISTIC, 7: LINECUT_DF_MIDDLE_DETERMINISTIC,
+     8: LINECUT_PRIOR
+-->
+<!ATTLIST borealis  queue_type (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8) #IMPLIED>
+
+<!-- Name of the key field for an update queue. -->
+<!ATTLIST borealis  key    ID    #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       An input stream passes data from an application into the network.
+
+          <input stream={stream name} schema={schema name} [node={sender}]/>
+
+       A TCP port is designated with a host IP address and port number.
+       The IP address is taken from the host to which the stream is mapped.
+       If the port number is not specified, a default is used.
+
+       Note:  An input stream may be connected to boxes on several nodes.
+              It may be useful to multiplex several data streams into one input.
+              These features are currently not implemented.
+       .................................................................... -->
+
+
+<!ELEMENT input EMPTY>
+
+
+<!-- A stream on the node to connect through.
+     The stream's source must be unconnected.
+  -->
+<!ATTLIST input  stream   IDREF  #REQUIRED>
+
+<!-- The schema describing the data for an input -->
+<!ATTLIST input  schema   ID     #REQUIRED>
+
+<!-- The endpoint for of the node sending the data.
+     This is only used in update XML.
+     The stream is an intermediate input to a node.
+  -->
+<!ATTLIST input  node     CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       An output stream receives data from the network by an output handler.
+
+           <output  stream={stream name}  [schema={schema name}] />
+
+       Schemas for outputs can be inferred when you specify a complete
+       query with respect to the output.
+       .................................................................... -->
+
+
+<!ELEMENT output EMPTY>
+
+
+<!-- A stream on the node to connect through.  The sink may be unconnected. -->
+<!ATTLIST output  stream   IDREF   #REQUIRED>
+
+<!-- The schema describing the data for an output.
+     The output schema can be derived when given a full query diagram.
+  -->
+<!ATTLIST output  schema   ID      #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A schema defines the set of fields that constitute a tuple.
+
+         <schema  name={schema name} />
+            <field  name={field name}  type={field type}  [size={string size}]/>
+               :
+         </schema>
+
+       A control stream is desgnated by a schema with no fields.
+       .................................................................... -->
+
+
+<!ELEMENT schema (field*)>
+
+
+<!-- An identifier for the schema.  -->
+<!ATTLIST schema  name   ID     #REQUIRED>
+
+
+<!-- A field defines an element of a tuple.  -->
+<!ELEMENT field  EMPTY>
+
+
+<!-- A name used to access the field.  -->
+<!ATTLIST field  name    ID     #REQUIRED>
+
+<!-- The type of the data in the field.
+     May be an alias for an array type or have array dimensions as:
+         <type> '(' [<min> '...'] <max>, .. ')'
+  -->
+<!ATTLIST field  type (byte | short | int | long | single | double | string | timestamp) #REQUIRED>
+
+<!-- The maximum size of a string.  Not used for other types.  -->
+<!ATTLIST field  size    CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A type defines an alias for an array type declaration.
+
+         <type  name={alias name}  array={type(...)}  [size={string size}] />
+
+       The size attribute is not yet implemented.
+       .................................................................... -->
+
+
+<!ELEMENT type EMPTY>
+
+<!-- An alias for the type.  -->
+<!ATTLIST type  name     ID     #REQUIRED>
+
+<!-- An alias for the type.  -->
+<!ATTLIST type  array    ID     #REQUIRED>
+
+<!-- The maximum size of a string.  Not used for other types.  -->
+<!ATTLIST type  size     CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A box reads from streams, transforms them and writes streams.
+
+         <box name={box name} type={transform} [node={box location}]
+              [update_queue={0 | 1}] 
+              [queue_type={0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}] 
+              [key={field name}] >
+
+           <in stream={input stream name}
+               [connection_point_view={view name}]
+               [update_queue={0 | 1}] 
+               [queue_type={0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}] 
+               [key={field name}] />  ...
+
+           <out      stream={output stream name}  />  ...
+           <parameter  name={parameter name}   value={parameter value} />  ...
+           <access    table={table name} />
+         </box>
+       .................................................................... -->
+
+
+<!ELEMENT box (in+,  out+, parameter*)>
+
+
+<!-- A name for this instance of the box.  -->
+<!ATTLIST box  name  ID      #REQUIRED>
+
+<!-- The function performed by the box. -->
+<!ATTLIST box  type  ID      #REQUIRED>
+
+<!-- This flag shows if queues on arcs for this box should have 
+     update semantics or not. See the <borealis> element above for details.
+-->
+<!ATTLIST box  update_queue   (0 | 1)   #IMPLIED>
+
+<!-- Type for an update queue indicates its preemption policy. 
+     See the <borealis> element above for details.
+-->
+<!ATTLIST box  queue_type (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8)  #IMPLIED>
+
+<!-- Name of the key field for an update queue. -->
+<!ATTLIST box  key    ID     #IMPLIED>
+
+<!-- The box location.  This is used in update XML only. -->
+<!ATTLIST box  node   CDATA  #IMPLIED>
+
+
+<!-- Box input streams.  Port numbers are assigned in the order listed. -->
+<!ELEMENT in EMPTY>
+
+
+<!-- Stream connected to the input. -->
+<!ATTLIST in  stream  IDREF  #REQUIRED>
+
+<!-- This flag shows if queues on arcs for this input stream should have 
+     update semantics or not. See the <borealis> element above for details.
+-->
+<!ATTLIST in  update_queue   (0 | 1)   #IMPLIED>
+
+<!-- Type for an update queue indicates its preemption policy.
+     See the <borealis> element above for details.
+-->
+<!ATTLIST in  queue_type (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8)  #IMPLIED>
+
+<!-- Name of the key field for an update queue. -->
+<!ATTLIST in  key     ID     #IMPLIED>
+
+
+<!-- Box output streams.  Port numbers are assigned in the order listed. -->
+<!ELEMENT out EMPTY>
+
+
+<!-- Stream connected to the output.
+     This connection determines the location of the named stream.
+  -->
+<!ATTLIST out  stream  IDREF  #REQUIRED>
+
+
+<!-- Parameters are specific to the type of box.  -->
+<!ELEMENT parameter EMPTY>
+
+
+<!-- Identifier for the parameter.  -->
+<!ATTLIST parameter  name  ID     #REQUIRED>
+
+<!-- Value assigned to the identifier.  -->
+<!ATTLIST parameter  value CDATA  #REQUIRED>
+
+
+<!-- Allow a box to access a table.  -->
+<!ELEMENT access EMPTY>
+
+
+<!-- Name of the table to access.  -->
+<!ATTLIST access  table  ID   #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A query is a group of boxes that may be referenced collectively.
+       Queries often consist of all boxes between interconnected input and
+       output streams.
+
+          <query name={query name} 
+                 [update_queue={0 | 1}] 
+                 [queue_type={0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}] 
+                 [key={field name}] />
+            ( (box | table)+ | input* | output* | schema* | type*
+                                                | table*  | view* )
+          </query>
+
+       Note:  Queries may be removed, suspended, or resumed.
+              Currently these operations are not yet implemented.
+       .................................................................... -->
+
+
+<!ELEMENT query ((box | table)+, schema*, type*, stream*,
+                         input*, output*, connection_point_view*)>
+
+
+<!ATTLIST query  name  ID  #REQUIRED>
+
+<!-- This flag shows if queues on arcs for this input stream should have 
+     update semantics or not. See the <borealis> element above for details.
+-->
+<!ATTLIST query  update_queue   (0 | 1)   #IMPLIED>
+
+<!-- Type for an update queue indicates its preemption policy.
+     See the <borealis> element above for details.
+-->
+<!ATTLIST query  queue_type (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8)  #IMPLIED>
+
+<!-- Name of the key field for an update queue. -->
+<!ATTLIST query  key   ID  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A connection point records a stream's history.
+       They are used for revision processing and time travel.
+       Either size or a range is needed, but not both.
+
+          <connection_point_view  name={view name}  stream={stream name} >
+             <order field={field name} />
+           ( <size  value={number of tuples} />
+           | <range start={start tuple}  end={end tuple} />
+           )
+           <parameter  name={parameter name}   value={parameter value} />  ...  
+          </connection_point_view>
+       .................................................................... -->
+
+
+<!ELEMENT connection_point_view ((size | range), order?, parameter*)>
+
+
+<!-- Identifier for the view.  -->
+<!ATTLIST connection_point_view  name    ID     #REQUIRED>
+
+<!-- Stream associated with the view.  -->
+<!ATTLIST connection_point_view  stream  IDREF  #REQUIRED>
+
+
+<!-- If not present then order-by is "TUPLENUM".
+     If present then order-by is "FIELD" and order-on-field is {field name}
+  -->
+<!ELEMENT order EMPTY>
+
+
+<!-- Name of the field for order-on-field mode.  -->
+<!ATTLIST order  field  ID  #REQUIRED>
+
+
+<!-- The size says how many MOST RECENT tuples the view stores.
+     When order-by tuplenum and size = 10, then cp stores 10 LAST tuples.
+     If the last tuple that came in is 347, CPV will store 338-347.
+
+     When order-by field and size = 10, then cp stores 10 values according to
+     the order-by field.
+     If the order_by of the last tuple received by CP is time=35,
+     then it stores tuples with order_by from time = 26 to time = 35)
+  -->
+<!ELEMENT size EMPTY>
+
+
+<!ATTLIST size  value  CDATA  #REQUIRED>
+
+
+<!-- A range defines a fixed window of tuples to store.
+     Whatever is specified in start/end, only tuples between those are stored.
+     Again, the order-by field determines which field to look at.
+     Order-by-type does not make sense here.  CP will disregard it anyway.
+
+     When order-by time and start = 3 and end=10,
+     then the CP stores tuples between time=3 and time=10.
+     The tuples stored are not updated at all
+     (even if time=1000, CP still has time=3-10).
+  -->
+<!ELEMENT range EMPTY>
+
+
+<!-- First tuple in a range.  -->
+<!ATTLIST range  start  CDATA  #REQUIRED>
+
+<!-- Last tuple in a range.  -->
+<!ATTLIST range  end    CDATA  #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Include a table in a query.
+
+         <table  name={table name}  schema={schema name}  [node={location}]>
+           <key       field={field name} />  ...
+          [<index     field={field name} />  ...]
+          [<parameter  name={parameter name}   value={parameter value} />  ...]
+         </table>
+       .................................................................... -->
+
+
+<!ELEMENT table (key+, index*, parameter*)>
+
+
+<!-- An identifier for the table.  -->
+<!ATTLIST table  name    ID     #REQUIRED>
+
+<!-- The schema for the table.  -->
+<!ATTLIST table  schema  ID     #REQUIRED>
+
+<!-- An stream for the table to process.  -->
+<!ATTLIST table  stream  IDREF  #REQUIRED>
+
+<!-- The table location.  This is used in update XML only. -->
+<!ATTLIST table  node    CDATA  #IMPLIED>
+
+
+<!-- Key fields included in the table.  -->
+<!ELEMENT key EMPTY>
+
+
+<!-- Name of a key field to included.  -->
+<!ATTLIST key    field   CDATA  #REQUIRED>
+
+
+<!-- Indexed fields included in the table.  -->
+<!ELEMENT index EMPTY>
+
+
+<!-- Name of a field to index.  -->
+<!ATTLIST index  field   CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Delete a query or boxes.  Note:  We may also want to delete streams.
+
+           <delete  query={query list}  box={box  list} />
+
+       The delete function is not yet implemented.
+       .................................................................... -->
+
+
+<!ELEMENT delete EMPTY>
+
+
+<!-- A query to delete.  All boxes are deleted per node.  -->
+<!ATTLIST delete  query   IDREF   #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Modify parameters of an existing box or table.
+
+           <modify  (box={box name} | table={table name}) >
+               <parameter name={parameter name}  value={parameter value} /> ...
+           </modify>
+
+       Modification of table parameters is not yet implemented.
+       .................................................................... -->
+
+
+<!ELEMENT modify (parameter+)>
+
+
+<!-- A box to modify.  -->
+<!ATTLIST modify  box    IDREF   #IMPLIED>
+
+<!-- A table to modify.  -->
+<!ATTLIST modify  table  IDREF   #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+       A deployment file is used to locate queries on nodes.
+
+           <deploy>
+               :
+           </deploy>
+       .................................................................... -->
+
+
+<!ELEMENT deploy  (replica_set | node | region | publish | subscribe | unsubscribe | move)+ >
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Disconnect a box from it's streams (prepare for move or delete).
+
+          <disconnect  box="<box name>" />
+
+     This element is only used internally in update XML.
+       .................................................................... -->
+
+
+<!ELEMENT disconnect EMPTY>
+
+
+<!-- Name of the box to disconnect.  -->
+<!ATTLIST disconnect  box    IDREF  #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Use for high availability.
+       Replicated nodes may contain the same query network.
+
+          <replica_set   name="<set name>"
+                        query="<name1> <name2> ..." ... />
+              <node ... />
+                :
+          </replica_set>
+       .................................................................... -->
+
+
+<!ELEMENT replica_set (node+)>
+
+
+<!-- A name used to access the set.  -->
+<!ATTLIST replica_set name   ID      #REQUIRED>
+
+<!-- A list of queries to be located on all nodes in this set.
+     Additional queries for the same set may be specified in
+     subsequent replica_set elements.
+        Example: query="myQuery  filterQuery yourQuery"
+  -->
+<!ATTLIST replica_set query  IDREFS  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Map queries to nodes for initial deployment.
+
+          <node  endpoint="<host>[:endpoint]"
+                   [query="<name> ..." ... />]
+       .................................................................... -->
+
+
+<!ELEMENT node  EMPTY>
+
+
+<!-- Node listener for data and update XML.
+  -->
+<!ATTLIST node  endpoint  CDATA   #REQUIRED>
+
+<!-- A list of queries to be located on this node.
+     Additional queries for the same node may be specified in
+     subsequent node elements.
+        Example: query="myQuery  filterQuery yourQuery"
+  -->
+<!ATTLIST node  query     IDREFS  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Include nodes in a region.
+
+          <region  [node="<bip>[:<bport>"]  [endpoint="[<rip>:]rport"] />
+       .................................................................... -->
+
+
+<!ELEMENT region  EMPTY>
+
+
+<!-- A TCP endpoint to reflect XML from an Borealis node to a regional catalog.
+  -->
+<!ATTLIST region  endpoint  CDATA  #IMPLIED>
+
+
+<!-- A Borealis node to include in the region.  The head sends a request to
+     join the region to this node.
+  -->
+<!ATTLIST region  node      CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Connect inputs and outputs to client applications.
+
+          <client  [prefix="<class prefix>"]  [endpoint="<mip:mport>"] >
+               <publish   ... />  ...
+               <subscribe ... />  ...
+          </client>
+       .................................................................... -->
+
+
+<!ELEMENT client (publish | subscribe)+>
+
+
+<!-- The class generated by the marshal program is:  <prefix>Marshal
+     The default prefix is extracted from the first XML file given to the
+     marshal program:  <base name>.xml  ==>  <Base name>Marshal
+  -->
+<!ATTLIST client  prefix    ID     #IMPLIED>
+
+<!-- A TCP endpoint of the listener for a monitor program receiving the output.
+     Several outputs may be multiplexed onto one listening port.
+     If the monitor node is ommited "localhost" is used.
+     defaults to localhost:DEFAULT_MONITOR_PORT.
+  -->
+<!ATTLIST client  endpoint  CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Send input from a client application to a node.
+
+          <publish  stream="<stream name>"  [node="[<bip>:]bport"] />
+       .................................................................... -->
+
+
+<!ELEMENT publish  EMPTY>
+
+
+<!-- An input stream to receive data.  -->
+<!ATTLIST publish  stream  IDREF  #REQUIRED>
+
+<!-- A TCP endpoint of the Borealis node receiving the input.
+     Several inputs may be multiplexed into one listening port.
+     The node can be inferred if a complete topology is given.
+     If the port is omitted the default Borealis port is used.
+  -->
+<!ATTLIST publish  node    CDATA  #IMPLIED>
+    
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Send output from a node to a client application.
+
+          <subscribe  stream="<stream name>"  [gap="<gap size>"] 
+                   [endpoint="[<mip>:]mport"] />
+       .................................................................... -->
+
+
+<!ELEMENT subscribe EMPTY>
+
+
+<!-- An output stream to subscribe to.  -->
+<!ATTLIST subscribe  stream    IDREF  #REQUIRED>
+
+<!-- A TCP endpoint of the listener for a monitor program receiving the output.
+     Several outputs may be multiplexed onto one listening port.
+     This attribute is only used internally in update XML.
+     If the endpoint is ommited "localhost:DEFAULT_MONITOR_PORT" is used.
+
+     This attribute is deprecated for application XML.
+     Unless the subscribe is within a client element, the default will be used.
+  -->
+<!ATTLIST subscribe  endpoint  CDATA  #IMPLIED>
+
+<!-- Specifies the number of sequential tuples that are allowed to be lost.
+     By default this is unbounded.
+  -->
+<!ATTLIST subscribe  gap       CDATA  #IMPLIED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Disable a subscription.
+
+          <unsubscribe  stream="<stream name>" />
+       .................................................................... -->
+
+
+<!ELEMENT unsubscribe EMPTY>
+
+
+<!-- An output stream to remove a subscription.  -->
+<!ATTLIST unsubscribe  stream   IDREF  #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       Relocate a box or table.    This is in update XML only.
+
+           <move  (box={box list} | table={table list})  node={destination} />
+       .................................................................... -->
+
+
+<!ELEMENT move  EMPTY>
+
+
+<!-- A box to move.  -->
+<!ATTLIST move  box    IDREF   #IMPLIED>
+
+<!-- A table to move.  -->
+<!ATTLIST move  table  IDREF   #IMPLIED>
+
+<!-- The box or table location.  -->
+<!ATTLIST move  node   CDATA   #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+       A distribution defines the distribution configuration of a tuple
+       for the load generator component.
+
+          <distribution  type={type name} />
+              <param_distribution  name={parameter name}
+                                   type={distribution type} />
+
+              <param name={parameter name} value={parameter value} />  ...
+          </distribution>
+       .................................................................... -->
+
+
+<!ELEMENT distribution (param_distribution+)>
+
+
+<!-- A type defines the distribution type.  -->
+<!ATTLIST distribution  type  CDATA  #REQUIRED>
+
+
+<!-- A param_distribution defines the distribution configuration for each
+     parameter of a distribution.
+  -->
+<!ELEMENT param_distribution (param+) >
+
+
+<!-- A name defines the parameter name.  -->
+<!ATTLIST param_distribution  name  ID  #REQUIRED>
+
+<!-- A name defines the distribution name of the parameter.  -->
+<!ATTLIST param_distribution  type  ID  #REQUIRED>
+
+
+<!-- A param defines the parameter information.  -->
+<!ELEMENT param EMPTY >
+
+<!-- A name defines the name of the parameter.  -->
+<!ATTLIST param  name   ID     #REQUIRED>
+
+<!-- A value defines the value of the parameter.  -->
+<!ATTLIST param  value  CDATA  #REQUIRED>
+
+
+
+  <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+       A gen_info defines the information of the tuple to generate.
+    
+          <gen_info  stream_num={stream number}  tuple_num={tuple number}
+                      stream_id={stream ID} />
+       .................................................................... -->
+
+
+<!ELEMENT gen_info EMPTY >
+
+<!-- A stream_num defines the number of the stream.  -->
+<!ATTLIST gen_info  stream_num  CDATA  #REQUIRED>
+
+<!-- A tuple_num defines how many tuples should be generated.  -->
+<!ATTLIST gen_info  tuple_num   CDATA  #REQUIRED>
+
+<!-- A value stream_id the ID of the stream.  -->
+<!ATTLIST gen_info  stream_id   IDREF  #REQUIRED>
+
+
+<!-- ........................  end  borealis.dtd  .......................... -->

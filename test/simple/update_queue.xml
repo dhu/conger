@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  update_queue.cc -->
+
+<borealis>
+
+    <schema name="StockTuple">
+        <field name="time"  type="int" />
+        <field name="quote" type="string" size="4" />
+        <field name="price" type="int" />
+    </schema>
+    <schema name="AggTuple">
+        <field name="quote" type="string" size="4" />
+        <field name="time"  type="int" />
+        <field name="count" type="int" />
+    </schema>
+
+    <input  stream="input1"  schema="StockTuple" />
+    <output stream="output1" schema="AggTuple" />
+
+    <query name="query1">
+        <box name="box0_1" type = "window_drop">
+            <in stream="input1" />
+            <out stream="intermediate1" />
+            <parameter name="window-size-by" value="VALUES"/>
+            <parameter name="window-size" value="10"/>
+            <parameter name="window-slide" value="10"/>
+            <parameter name="order-by" value="FIELD"/>
+            <parameter name="order-on-field" value="time"/>
+            <parameter name="group-by" value="quote"/>
+            <parameter name="drop_rate" value="0"/>
+            <parameter name="max_batch_size" value="10"/>
+        </box>
+        <box name="box1_1" type = "delay">
+            <in stream="intermediate1" />
+            <out stream="intermediate2" />
+            <parameter name="delay-ms" value="1000"/>
+            <parameter name="churn" value="1"/>
+        </box>
+        <box name="box2_1" type = "aggregate">
+            <in stream="intermediate2" />
+            <out stream="intermediate3" />
+            <parameter name="aggregate-function.0" value="count()" />
+            <parameter name="aggregate-function-output-name.0" value="count" />
+            <parameter name="window-size-by" value="VALUES"/>
+            <parameter name="window-size" value="10"/>
+            <parameter name="advance" value="10"/>
+            <parameter name="order-by" value="FIELD"/>
+            <parameter name="order-on-field" value="time"/>
+            <parameter name="group-by" value="quote"/>
+            <parameter name="drop-mode" value="1"/>
+            <parameter name="last-agg" value="1" />
+        </box>
+        <box name="box3_1" type = "delay">
+            <in stream="intermediate3" />
+            <out stream="output1" />
+            <parameter name="delay-ms" value="1000"/>
+            <parameter name="churn" value="1"/>
+        </box>
+    </query>
+
+</borealis>
+

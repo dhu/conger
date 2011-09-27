@@ -1,0 +1,1 @@
+xterm -T faulttest -geometry 200x30+200+30 -e .//faulttest

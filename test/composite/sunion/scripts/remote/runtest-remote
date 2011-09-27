@@ -1,0 +1,109 @@
+#!/bin/bash
+
+export LOG_LEVEL="0" 
+#export LOG_LEVEL="2"
+#export LOG_LEVEL="0 AvailabilityMonitor.cc:1 IOQueue.cc:1 SUnionQBox.cc:1 DataPath.cc:1 AdminCatalog.cc:2 SUnionTestParams.cc:2 SOutputQBox.cc:1 ConsistencyMngr.cc:1"
+
+if [ $# -lt 1 ]
+then
+    echo "usage: runtest sunion"
+    echo "and when you want to stop: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+
+# Get the IP address of this machine on its Ethernet connection
+IP=`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:##g'`
+IP=${IP:-"127.0.0.1"}
+#IP="127.0.0.1"
+
+# Looking for CLS_IP and BOREALIS_HOME environment variables 
+# These variables give the top
+# level location of all the source code. If they are not
+# defined, assign them some reasonable defaults
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../../../"}
+UTILITIES_HOME="${BOREALIS_HOME}" 
+APPS_HOME="${BOREALIS_HOME}"
+
+# The IP address where the CentralLookupServer will be running
+CLS_IP=${CLS_IP:-"${IP}"}
+HEAD_IP=${HEAD_IP:-"${IP}"}
+
+# Second, we configure the port numbers that will be used by all the 
+# applications
+CLS_PORT=30000 # Port of the CentralLookupServer
+HEAD_PORT=35000
+
+PORTS_IN=15000
+PORTS_OUT=18000
+BOREALIS_DATA_PORT=17000
+
+PORT_DELTA=100
+PORTS={}
+for i in `seq 1 20`
+do
+    let "BOREALIS_DATA${i}_PORT = BOREALIS_DATA1_PORT+${i}*${PORT_DELTA}"
+    let "PORTS[i] = BOREALIS_DATA_PORT+${i}*${PORT_DELTA}"
+done
+
+
+# Assuming CentralLookupServer will be running at node 1
+export BOREALIS_CLS=${CLS_IP}:${CLS_PORT}
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=50000
+export AURORA_PAGE_SIZE=16384
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+    borealis-silent)
+        BINDING=${IP}:${PORTS[1]}
+        if [ $# -gt 1 ]
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        fi
+        nohup ${BOREALIS_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} > borealis-${BINDING}.log 2>&1 &
+        ;;
+
+    pair)
+        #if [ $# -gt 1 ]
+        #then
+        #$0 borealis-silent ${IP}:${PORTS[1]} "-t$2"
+        #sleep 2
+        #$0 borealis-silent ${IP}:${PORTS[2]} "-t$2" 
+        #sleep 2
+        $0 borealis-silent ${IP}:${PORTS[1]}
+        sleep 2
+        $0 borealis-silent ${IP}:${PORTS[2]}
+        sleep 2
+        #else
+        #    echo "You must specify the runtime"
+        #fi
+        ;;
+
+   stop)
+        killall borealis  
+        killall lt-borealis
+	    #killall xterm.real
+        #killall xterm
+        exit 0
+        ;;
+
+
+esac
+

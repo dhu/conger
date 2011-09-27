@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Add a second filter. -->
+
+<borealis>
+    <output  stream="Add"  schema="PacketTuple"  />
+
+    <box  name="box2"  type="filter" >
+        <in       stream="Result"       />
+        <out      stream="Add" /> 
+        <parameter  name="expression.0"  value="true" />
+    </box>
+</borealis>

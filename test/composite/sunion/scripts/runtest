@@ -1,0 +1,267 @@
+#!/bin/bash
+
+export LOG_LEVEL="0 ConsistencyMngr.cc:1 DataPath.cc:1 AdminCatalog.cc:2"
+#export LOG_LEVEL="0 IOQueue.cc:1 SUnionQBox.cc:1 DataPath.cc:1 AdminCatalog.cc:1 SUnionTestParams.cc:2 SOutputQBox.cc:1 ConsistencyMngr.cc:1"
+
+if [ $# -lt 1 ]
+then
+    echo "usage: runtest sunion"
+    echo "and when you want to stop: runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables (you may need to change these)
+# --------------------------------------------------
+
+# Get the IP address of this machine on its Ethernet connection
+IP=`/sbin/ifconfig eth0 | grep inet | awk '{print $2}' | sed 's#addr:##g'`
+IP=${IP:-"127.0.0.1"}
+#IP="127.0.0.1"
+
+# Looking for CLS_IP and BOREALIS_HOME environment variables 
+# These variables give the top
+# level location of all the source code. If they are not
+# defined, assign them some reasonable defaults
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../../../"}
+UTILITIES_HOME="${BOREALIS_HOME}/utility/" # Network monitoring tool
+APPS_HOME="../src"
+
+# The IP address where the CentralLookupServer will be running
+CLS_IP=${CLS_IP:-"${IP}"}
+HEAD_IP=${HEAD_IP:-"${IP}"}
+
+# Second, we configure the port numbers that will be used by all the 
+# applications
+CLS_PORT=30000 # Port of the CentralLookupServer
+HEAD_PORT=35000
+
+PORTS_IN=15000
+PORTS_OUT=18000
+BOREALIS_DATA_PORT=17000
+
+PORT_DELTA=100
+PORTS={}
+for i in `seq 1 20`
+do
+    let "BOREALIS_DATA${i}_PORT = BOREALIS_DATA1_PORT+${i}*${PORT_DELTA}"
+    let "PORTS[i] = BOREALIS_DATA_PORT+${i}*${PORT_DELTA}"
+done
+
+CLIENT1_PORT=25000
+CLIENT2_PORT=26000
+CLIENT3_PORT=27000
+
+MONITOR_PORT=50000
+
+# Assuming CentralLookupServer will be running at node 1
+export BOREALIS_CLS=${CLS_IP}:${CLS_PORT}
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=5000
+export AURORA_PAGE_SIZE=16384
+
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+MEDUSAXMLRPC_HOME=${UTILITIES_HOME}/medusaXmlRpc
+MONITOR_HOME=${UTILITIES_HOME}/statsView
+
+CLASSPATH="${CLASSPATH}:${MEDUSAXMLRPC_HOME}/lib/medusaXmlRpc.jar:${MEDUSAXMLRPC_HOME}/lib/xmlrpc.jar:${MONITOR_HOME}/lib/monitor.jar"
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+    head)
+        if [ "${IP}" != "${HEAD_IP}" ]
+        then
+            eval echo "If you want to run HEAD here, then please adjust HEAD_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting Head..."
+        BINDING=${IP}:${HEAD_PORT}
+        eval echo "xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e ${BOREALIS_HOME}/tool/head/BigGiantHead"
+        xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e sh -c "${BOREALIS_HOME}/tool/head/BigGiantHead 2>&1 |tee head-${BINDING}.log"  &
+        echo "CLS started."
+        ;;
+
+    head-silent)
+        BINDING=${IP}:${HEAD_PORT}
+        nohup ${BOREALIS_HOME}/tool/head/BigGiantHead > head-${BINDING}.log 2>&1 &
+        ;;
+
+    borealis)
+        echo "Starting Borealis"
+        BINDING=${IP}:${PORTS[1]}
+        if [ $# -gt 1 ]
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        fi
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+    borealis-silent)
+        BINDING=${IP}:${PORTS[1]}
+        if [ $# -gt 1 ]
+        then
+            BINDING=$2
+            OTHER_OPTIONS=$3 # There might be none
+        fi
+        nohup ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} > borealis-${BINDING}.log 2>&1 &
+        ;;
+
+    suniondeploy)
+        echo "Starting suniontestdeploy"
+        eval echo "xterm -T suniontestdeploy -geometry 200x30+200+30 -e ${APPS_HOME}/suniondeploy $2 $3 2>&1 |tee suniondeploy.log" &
+        xterm -T suniontestdeploy -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/suniondeploy $2 $3 2>&1 |tee suniondeploy.log" &
+        echo "Client-in started"
+        ;;
+
+    suniondeploy-silent)
+        nohup ${APPS_HOME}/suniondeploy $2 $3 > suniondeploy.log  2>&1 &
+        ;;
+
+
+    sunionin)
+        echo "Starting suniontestin"
+        eval echo "xterm -T sunionin -geometry 200x30+200+30 -e ${APPS_HOME}/sunionin $2 $3 2>&1 |tee sunionin.log" &
+        xterm -T sunionin -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/sunionin $2 $3 2>&1 |tee sunionin.log" &
+        echo "Client-in started"
+        ;;
+
+    sunionin-silent)
+        nohup ${APPS_HOME}/sunionin $2 $3 > sunionin.log 2>&1 &
+        ;;
+
+
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+
+    ## Example: ./runtest sunion -pmany-nodes.params:7 -ftest.dat   
+    sunion)
+        $0 head 
+        sleep 2
+        $0 borealis ${IP}:${PORTS[1]}  # First pair
+        sleep 2
+        $0 borealis ${IP}:${PORTS[2]} 
+        sleep 2
+        $0 borealis ${IP}:${PORTS[3]}  # Second pair
+        sleep 2
+        $0 borealis ${IP}:${PORTS[4]} 
+        sleep 2
+        $0 borealis ${IP}:${PORTS[5]} # Third pair
+        sleep 2
+        $0 borealis ${IP}:${PORTS[6]} 
+        sleep 2
+        #$0 borealis ${IP}:${PORTS[7]} # Fourth pair
+        #sleep 2
+        #$0 borealis ${IP}:${PORTS[8]} 
+        #sleep 2
+        $0 borealis ${IP}:${PORTS_OUT}
+        sleep 3
+        $0 suniondeploy $2 $3
+        sleep 5
+        $0 sunionin $2 $3
+        exit 0
+        ;;
+
+    distributed)
+        if [ $# -gt 4 ]
+        then
+            FILE_LINE=$2
+            RESULT_FILE=$3
+            TIME=$4
+            HOSTS_FILE=$5
+        else
+            echo "You must specify: file_with_params:line_nb result_file runtime file_with_host_ips"
+            exit 0
+        fi
+
+        # First just count the number of nodes
+        let "NBNODES=0"
+        for next_ip in `cat $HOSTS_FILE`
+        do
+            let "NBNODES=NBNODES+1"
+        done
+
+        # First node is local
+        $0 cls-silent
+        $0 head-silent
+        sleep 2
+
+        $0 borealis-silent ${IP}:${PORTS[1]} # First node
+        sleep 2
+        $0 borealis-silent ${IP}:${PORTS[2]} # Its replica
+        sleep 2
+        echo "Started first node"
+
+         # All other nodes are remote
+        let "NODE=0"
+        for next_ip in `cat $HOSTS_FILE`
+        do
+            let "NODE=NODE+1"
+            if [ ${NODE} -gt 1 ]
+            then
+                ssh ${next_ip} "start-nodes"
+                eval echo "Started node at ${next_ip}"
+            fi
+        done
+
+        sleep 3
+        echo "Starting proxy"
+        $0 borealis-silent ${IP}:${PORTS_OUT}
+        sleep 3
+        echo "Starting deployment app"
+        $0 suniondeploy-silent -p${FILE_LINE} -f${RESULT_FILE}
+        sleep 1
+        echo "Starting input data source"
+        $0 sunionin-silent -p${FILE_LINE} -f${RESULT_FILE}
+
+
+        # Stop everything
+        sleep 135 # Use 135 for 60 second failures
+        #sleep 70 # Debugging
+
+        echo "Stopping everything"
+        $0 stop 
+        killall lt-borealis
+        killall lt-CentralLookupServer
+        killall lt-BigGiantHead
+        killall lt-sunionin
+
+        let "NODE=0"
+        for next_ip in `cat $HOSTS_FILE`
+        do
+            let "NODE=NODE+1"
+            if [ ${NODE} -gt 1 ]
+            then
+                ssh ${next_ip} "stop-nodes"
+                eval echo "Stopped node at ${next_ip}"
+            fi
+        done
+        exit 0
+        ;;
+
+   stop)
+        killall xterm.real
+        killall xterm
+        exit 0
+        ;;
+
+
+esac
+

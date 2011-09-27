@@ -1,0 +1,120 @@
+#!/bin/bash
+
+# Setting the level of verbostiy higher for the main components being demonstrated
+# Modify this variable to 1 or 2 for all files or for particular files, 
+# if you want to see more debug messages
+export LOG_LEVEL="0 ConsistencyMngr.cc:2 SUnionQBox.cc:1"
+
+if [ $# -lt 1 ]
+then
+    echo "This script can launch three example applications."
+    echo "For each application, use one of the following commands:"
+    echo "./runtest fault"
+    echo "./runtest sunion 1"
+    echo "./runtest sunion 2"
+    echo "and when you want to stop: ./runtest stop"
+    exit 0
+fi
+	
+# What to start
+what=$1
+
+# --------------------------------------------------
+# Configurable variables 
+# --------------------------------------------------
+IP="127.0.0.1"
+
+# Looking for the BOREALIS_HOME environment variable 
+# which gives the top level location of all the source code. 
+# If not assigned, try a reasonable default
+BOREALIS_HOME=${BOREALIS_HOME:-"../../../"}
+APPS_HOME="./"
+
+# The IP address where the global catalog will be running
+HEAD_IP=${HEAD_IP:-"${IP}"}
+HEAD_PORT=35000
+
+# The port number for the borealis node that will be running locally
+BOREALIS_PORT=15000
+
+# Make sure Aurora gives itself enough memory
+export AURORA_PAGES=50000
+export AURORA_PAGE_SIZE=16384
+
+# --------------------------------------------------
+# Everything else below should get set automatically
+# --------------------------------------------------
+BOREALIS_SRC_HOME=${BOREALIS_HOME}/src/src
+
+# Staing CLS
+case "${what}" in 
+
+    # --------------------------------------------------
+    # Basic targets
+    # --------------------------------------------------
+    head)
+        if [ "${IP}" != "${HEAD_IP}" ]
+        then
+            eval echo "If you want to run HEAD here, then please adjust HEAD_IP in script to match ${IP}"
+            exit 0
+        fi
+        echo "Starting Head..."
+        BINDING=${IP}:${HEAD_PORT}
+        eval echo "xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e ${BOREALIS_HOME}/tool/head/BigGiantHead"
+        xterm -T HEAD@${BINDING} -geometry 80x10+20+200 -e sh -c "${BOREALIS_HOME}/tool/head/BigGiantHead 2>&1 |tee head-${BINDING}.log"  &
+        echo "Head started."
+        ;;
+
+    borealis)
+        echo "Starting Borealis"
+        BINDING=${IP}:${BOREALIS_PORT}
+        eval echo "xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e ${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS}"
+        xterm -T Borealis@${BINDING} -geometry 80x10+20+600 -e sh -c "${BOREALIS_SRC_HOME}/borealis -d ${BINDING} ${OTHER_OPTIONS} 2>&1 |tee borealis-${BINDING}.log" &
+        echo "Borealis started."
+        ;;
+
+    sunions)
+        echo "Starting sunions"
+        eval echo "xterm -T sunions -geometry 200x30+200+30 -e ${APPS_HOME}/sunions $2 2>&1 |tee sunionsout.log" &
+        xterm -T sunions -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/sunions $2 2>&1 |tee sunions.log" &
+        echo "Client-in started"
+        ;;
+
+    faulttest)
+        echo "Starting faulttest"
+        eval echo "xterm -T faulttest -geometry 200x30+200+30 -e ${APPS_HOME}/faulttest 2>&1 |tee faulttestout.log" &
+        xterm -T faulttest -geometry 200x30+300+20 -e sh -c "${APPS_HOME}/faulttest 2>&1 |tee faulttest.log" &
+        echo "Client-in started"
+        ;;
+
+    # --------------------------------------------------
+    # Composite targets
+    # --------------------------------------------------
+    sunion)
+        $0 head 
+        sleep 2
+        $0 borealis
+        sleep 2
+        $0 sunions $2
+        exit 0
+        ;;
+
+    fault)
+        $0 head 
+        sleep 2
+        $0 borealis
+        sleep 2
+        $0 faulttest
+        exit 0
+        ;;
+
+
+   stop)
+        killall xterm.real
+        killall xterm
+        exit 0
+        ;;
+
+
+esac
+

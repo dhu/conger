@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<borealis>
+
+    <schema name="intstuple">
+        <field  name="f1"    type="int" />
+        <field  name="f2"    type="int" />
+    </schema>
+
+    <input  stream="si_b1_p1"    schema="intstuple"    />
+        <box name="b1"    type = "union">
+            <in     stream="si_b1_p1" />
+            <out    stream="so_b1_p1" />
+        </box>
+        <box name="b2"    type = "union">
+            <in     stream="so_b1_p1" />
+            <out    stream="so_b2_p1" />
+        </box>
+    <output stream="so_b2_p1"    schema="intstuple"    />
+
+    <input  stream="si_b3_p1"    schema="intstuple"    />
+        <box name="b3"    type = "union">
+            <in     stream="si_b3_p1" />
+            <out    stream="so_b3_p1" />
+        </box>
+        <box name="b4"    type = "union">
+            <in     stream="so_b3_p1" />
+            <out    stream="so_b4_p1" />
+        </box>
+    <output stream="so_b4_p1"    schema="intstuple"    />
+</borealis>
+

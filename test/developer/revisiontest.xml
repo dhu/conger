@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  revisiontest.cc -->
+
+<borealis>
+    <input   stream="Packet"      schema="PacketTuple" />
+    <output  stream="Result"      schema="OutputTuple" />
+    <!--output  stream="Result2"     schema="PacketTuple" /-->
+    <!--output  stream="Result3"     schema="PacketTuple" /-->
+    
+    <schema name="PacketTuple" >
+        <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+        <field  name="revised_field" type="string" size="4" />
+    </schema>
+
+    <schema name="OutputTuple" >
+        <field name="quote" type="string" size="4" />
+        <field name="time" type="int" />
+        <field name="agg_0" type="int" />
+        <field name="revised_field" type="string" size="4" />
+    </schema>
+
+    <query name="test">
+        <!--
+    <box  name="map"     type="revisionmap" >
+        <in      stream="Packet" />
+        <out     stream="Intermediate" />
+        <parameter name="expression.0" value="quote" />
+        <parameter name="output-field-name.0" value="quote" />
+        <parameter name="expression.1" value="time" />
+        <parameter name="output-field-name.1" value="time" />
+        <parameter name="expression.2" value="price * 10" />
+        <parameter name="output-field-name.2" value="price" />
+    </box>
+    -->
+    <!--box  name="filter"  type="revisionfilter" >
+        <in      stream="Packet" />
+        <out     stream="Result" />
+        <out     stream="Result2" />
+        <out     stream="Result3" />
+        <parameter name="expression.0" value="time + 32" />
+        <parameter name="output-field-name.0" value="foo" />
+        <parameter name="expression.1" value="time + 33" />
+        <parameter name="output-field-name.1" value="bar" />
+        <parameter name="expression.0"  value="price > 0" />
+        <parameter name="expression.1"  value="price > 4" />
+        <parameter name="pass-on-false-port"  value="1"  />
+    </box-->
+    <!--
+    <box name="filter" type="revisionfilter" >
+        <in stream="Intermediate" />
+        <out stream="Intermediate2" />
+        <parameter name="expression.0" value="price > 20" />
+    </box>
+    -->
+    <box name="agg1" type="revisionaggregate" >
+        <in stream="Packet" />
+        <out stream="Result" />
+        <parameter name="aggregate-function.0" value="sum(price)" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="2"          />
+        <parameter name="advance"              value="1"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="time"       />
+        <parameter name="group-by"             value="quote"      />
+    </box>
+    <!--    
+    <box name="agg2" type="revisionaggregate" >
+        <in stream="interm" />
+        <out stream="Result" />
+        <parameter name="aggregate-function.0" value="sum(agg_0)" />
+        <parameter name="window-size-by"       value="VALUES"     />
+        <parameter name="window-size"          value="2"          />
+        <parameter name="advance"              value="1"          />
+        <parameter name="order-by"             value="FIELD"      />
+        <parameter name="order-on-field"       value="FIELD"       />
+        <parameter name="group-by"             value="quote"      />
+    </box>
+    -->
+    <!--box name="fixupmap" type="revisionmap" >
+        <in stream="Intermediate3" />
+        <out stream="Result" />
+        <parameter name="expression.0" value="FIELD" />
+        <parameter name="output-field-name.0" value="time" />
+        <parameter name="expression.1" value="agg_0" />
+        <parameter name="output-field-name.1" value="price" />
+    </box-->
+    
+    </query>
+        
+    <connection_point_view  name="view"  stream="Packet" >
+        <order  field="time" />
+        <size   value="25"     />
+        <radius value="10" />
+    </connection_point_view>
+    
+</borealis>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis deployment diagram. -->
+
+<deploy>
+    <publish    stream="i_frame"  />
+    <publish    stream="r_frame"  />
+    <publish    stream="g_frame"  /> 
+    <publish    stream="o_frame_1" /> 
+    <publish    stream="o_frame_2" />  
+    <subscribe  stream="scroller" />
+    
+    <node   endpoint=":15000"     query="first_join second_join create_scroller"/> 
+ <!-- second_join create_scroller -->
+
+    
+</deploy>

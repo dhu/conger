@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis deployment diagram for:  mytest.cc -->
+
+<deploy>
+    <publish    stream="Packet"     />
+    <subscribe  stream="Aggregate"  />
+
+    <replica_set  name="set1"  query="mybox" >
+        <node   endpoint=":15000" />
+        <node   endpoint=":15400" />
+    </replica_set>
+</deploy>

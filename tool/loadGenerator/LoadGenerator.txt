@@ -1,0 +1,89 @@
+This document is to describe how to run LoadGenerator with Borealis.
+It includes:
+
+*[To run Borealis and LoadGenerator]*
+*[To change the rate]*
+*[To save the tuples]*
+*[To send the exist tuples]*
+*[To run Borealis and LoadGenerator]*
+
+1. *Aim:*
+    This step is to run Borealis, deploy query network, and run LoadGenerator.
+
+   *Action:*
+    Excute "genrun" in directory "borealis/utility/test/simple".
+
+   *Discription:*
+    "genrun" is the script which use "gentest.xml" as its query network and
+    "gentest_deploy.xml" as its deployment xml file. Those two files are in
+    the same directory. You can change them to your relevant xml file.
+
+
+2. *Aim:*
+    This step is to run GUI.
+
+   *Action:*
+    Excute "ant run" in directory "borealis/utility/borealisgui".
+
+   *Discription:*
+    If you don't want to use GUI, but use your exist distribution file
+    directly, you may just excute "r [distribution file name]" in the
+    command line of the LoadGenerator windows(second xterm). For detail,
+    refer to the displayed information in the second xterm that prompted.
+
+
+3. *Aim:*
+    This step is to configure distribution file and send new tuples to Borealis.
+
+   *Action:*
+    In the GUI windows, switch to the "Load Generator" tab, click the first
+    "Load" button in the toolbar to load your query network file or exsit
+    distribution file.  Expand the left tree. Check and configure your
+    distribution file. When you are satisfied, click the first "Send"
+    button in the toolbar. It will send tuples to Borealis.  To stop
+    sending tuples to Borealis, click "stop" button in the toolbar.
+
+4. *Aim:*
+    This step is to save the distribution file.
+
+   *Action:*
+    When you are satisfied with the current distribution, you can click the
+    first "Save" button in the toolbar to save the current distribution
+    file.
+
+
+*[To change the rate]*
+   *Aim:*
+    This step is to change the rate.
+
+   *Action:*
+    Drag the rate slider in the bottom pane. Click the "Send" button in the
+    right bottom.
+
+   *Discription:*
+    The default rate is "1".
+
+*[To save the tuples]*
+   *Aim:* 
+    This step is to save all the tuples that have just sent to Borealis.
+
+   *Action:*
+    Click the second "Save" button in the toolbar.
+    It will save all the tuples to a binary file which you can use it later.
+
+*[To send the exist tuples]*
+   *Aim:*
+    This step is to send the existing tuples to Borealis.
+
+   *Action:*
+    Click the second "Load" button in the toolbar to load your exist tuple
+    files(binary files).
+
+    Click the second "Send" button in the toolbar to send the exist tuples
+    to Borealis.
+
+   *Discription:*
+    Sorry for a bug. Don't send exist tuples when you just run GUI.
+    After run GUI, please send some new tuples to Borealis and stop.
+    And then, you can send any exist tuple files freely.
+    I am trying to fix it.

@@ -1,0 +1,243 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>Building and Running Borealis and Applications</TITLE>
+   <LINK REV="made" HREF="mailto:borealis-support@list.cs.brown.edu">
+   <LINK REL="stylesheet" TYPE="text/css" HREF="style_borealis.css">
+</HEAD>
+<BODY BGCOLOR="#000000"  TEXT="#00FF00"
+      LINK="#70FF98"  VLINK="#FFCCFF"  ALINK="#FFFFFF">
+
+<PRE><H3><CENTER>Building and Running Borealis and Applications</CENTER></H3></PRE>
+
+<PRE><H5><CENTER><SPAN class=white>Summer Release 2008</SPAN></CENTER></H4></PRE>
+
+<BR><H4>Before You Begin</H4>
+
+<P CLASS="body">
+Borealis has been built on Debian, Red Hat, Fedora Core 2, and
+Mandrake GNU/Linux.  Although we are unaware of any dependencies that
+may prevent it from installing and running cleanly on other varients
+of GNU/Linux, we can make no such assurances.  We have performed a
+partial installation on the Mac Os X Darwin release.  The versions for
+some packages used in this effort are listed in case someone wants to
+attempt to complete the installation for the Mac.  It can not run on a
+Mac as is.
+</P>
+
+<P CLASS="body">
+The installation process is complex.  The software depends on external packages,
+Unix environemts vary from site to site, and people have their own ways of
+setting up their environments.  Consequently we can not provide rote
+instructions for installing and running Borealis systems.  You will need to
+read about and understand the processes related to each component and
+determine how to apply them in your environment.
+</P>
+
+<P CLASS="body">
+Read through these instructions and develop an installation plan.  Determine
+which optional packages you'll want to install.  Locate and read documentation
+for the external packages.  You should have a good idea how you want to lay out
+the primary directories and check space requirements.  You'll also want to
+determine settings for environment variables you'll be introducing for the
+build process.
+</P>
+
+<P CLASS="body">
+Primary directories are needed for your application development, the
+Borealis software, the NMSTL library, Borealis utilities, and external
+package binaries and their build areas.  You may want the directory
+for the Borealis source tree to be your home directory or a separate
+work area.  External packages, their build areas, the NMSTL library,
+and Borealis utilities can be located in areas common to multiple
+users or in a private work area.
+</P>
+
+<BR><H4>Installing Borealis</H4>
+
+<P CLASS="body">
+First install the external <A HREF="install.external.html">Packages
+Needed For Borealis</A>.
+</P>
+
+<P CLASS="body">
+Borealis relies heavily on the Networks, Messaging, Servers, and
+Threading Library (NMSTL), a portable C++ library for writing
+networking and messaging components.  We distribute the NMSTL package
+along with the Borealis software.  Although <A
+HREF="http://nmstl.sourceforge.net">NMSTL is publically available</A>,
+the public version is unsupported and has been modified slightly for Borealis.
+Only the version that is distributed with Borealis should be used.
+</P>
+
+<P CLASS="body">
+Choose a directory where you'd like to install Borealis and NMSTL.  You may
+want to put it in your home directory or a separate work area.  Unroll the
+distribution tar file for Borealis and there will be two top-level directories:
+<KBD>nmstl/</KBD> and <KBD>borealis/</KBD>
+</P>
+
+<BR><H4>Building Borealis</H4>
+<P CLASS="body">
+The Borealis software and it's subsystems can all be built with the script:
+<KBD>borealis/utility/unix/build.borealis.sh</KBD>
+</P>
+
+<P CLASS="body">
+Carefully read the comments at the top of script and setup your environment
+accordingly.  Here are some sample commands for login scripts that may help
+you set up a <A HREF="login.cshrc.html">.cshrc login</A> or a
+<A HREF="login.bashrc.html">.bashrc login</A> file.
+</P>
+
+<P CLASS="body">
+You can build Borealis only with gcc 3.3.5 and above.
+There is a spurious warning was issued in gcc versions 3.3.6 through
+4.0.4 that was fixed in the 4.1.1 compiler.  If you are using an
+afflicted compiler you will need to use the gcc <KBD>-w</KBD> option
+to suppress warnings.  Note that this means you might not see some
+useful warnings, so you might want to install a newer compiler.
+</P>
+
+<P CLASS="body">
+You can use ccache speed up Borealis builds.  Install ccache and set the
+environment variable:
+</P>
+
+<UL><PRE><B>CXX="ccache g++"; export  CXX         #sh shell
+CXX="ccache g++ -w"; export  CXX      #sh shell; gcc 3.3.6 to 4.0.4
+setenv  CXX  "ccache g++"             #csh shell
+setenv  CXX  "ccache  g++  -w"        #csh shell; gcc 3.3.6 to 4.0.4
+</B></PRE></UL>
+
+<P CLASS="body">
+Running the build script with no arguments builds the core system and nmstl.
+</P>
+
+<UL><PRE><B>&gt; build.borealis.sh
+</B></PRE></UL>
+
+<P CLASS="body">
+When NMSTL is built it creates an installed copy in:
+<KBD>${HOME}/install_nmstl/</KBD>
+</P>
+
+<P CLASS="body">
+Once NMSTL is built you can use the copy you just built.  You can leave it
+under your home directory or copy it to a common area such as the place where
+all the other packages were installed.  After that you can avoid rebuilding it
+by passing the location in the <KBD>INSTALL_NMSTL</KBD> variable or with
+the <KBD>-nmstl</KBD> command argument.
+</P>
+
+<P CLASS="body">
+At a minimum you will also want to build the client code, the Head, and
+the marshaling tool.
+</P>
+
+<UL><PRE><B>&gt; build.borealis.sh  -client  -tool.marshal  -tool.head
+</B></PRE></UL>
+
+<P CLASS="body">
+In order to run the tools, directories containing the Head and marshaling
+tool need to be included in your PATH variable.  You can either copy them to
+a directory already on the PATH variable or add the tool directories
+<KBD>borealis/tool/head/</KBD> and <KBD>borealis/tool/marshal/</KBD>
+to the PATH.
+</P>
+
+
+<BR><H4>Testing Borealis</H4>
+
+<P CLASS="body">
+To see that Borealis runs properly, build and run the automated test suite.
+It will run a few simple tests to ensure that basic operations are working.
+Read the comments in the <KBD>borealis/test/valid/validate.go.sh</KBD> script
+to see how to set up reference output for regression testing.
+</P>
+
+<UL><PRE><B>borealis&gt; build.borealis.sh  -test.valid
+borealis&gt; test/valid/validate.go.sh  -rebase   # Establish reference output.
+validate.go.sh:  Rebasing output to:  /pro/borealis/utility/valid
+validate.go.sh:  Running the catalog test ...
+   ... The catalog test ran successfully.
+validate.go.sh:  Running the system test ...
+       Skipping as there is no output to rebase.
+   ... The system test ran successfully.
+validate.go.sh:  Running the move test ...
+       Skipping as there is no output to rebase.
+   ... The move test ran successfully.
+validate.go.sh:  Running the two_chains test ...
+       Skipping as there is no output to rebase.
+   ... The two_chains test ran successfully.
+validate.go.sh:  Running the global test ...
+   ... The global test ran successfully.
+
+validate.go.sh:  ****  All validation tests were rebased successfully.  ****
+borealis&gt; test/valid/validate.go.sh            # Run all validation tests.
+validate.go.sh:  Running the catalog test ...
+   ... The catalog test ran successfully.
+validate.go.sh:  Running the system test ...
+   ... The system test ran successfully.
+validate.go.sh:  Running the move test ...
+   ... The move test ran successfully.
+validate.go.sh:  Running the two_chains test ...
+   ... The two_chains test ran successfully.
+validate.go.sh:  Running the global test ...
+   ... The global test ran successfully.
+
+validate.go.sh:  ****  All validation tests ran successfully.  ****
+</B></PRE></UL>
+
+
+<br><h4>Running simple applications</h4> 
+
+<P CLASS="body">You can write your Borealis applications in either C++ or Java.
+
+<P CLASS="body">All sample applications are located under <kbd>borealis/test/</kbd>.
+You can compile all the sample applications as follows
+
+<UL><PRE><B>
+> build.borealis.sh  -test.simple       # Build tests in:  borealis/test/simple/
+</B></PRE></UL>
+
+<P CLASS="body">
+Or you can follow the usual manual instructions:
+
+<UL><PRE><B>
+> cd borealis/test/
+> ./setup
+> wtf configure [--with-nmstl=/my/location] [...]
+> make
+</B></PRE></UL>
+
+<P CLASS="body">
+To see how to run simple C++ Borealis applications see the
+examples in the <KBD>borealis/test/simple/</KBD> directory. The
+examples include both single site and distributed applications.
+A README file explains how to run the examples.
+
+<P CLASS="body">
+
+The <A HREF="viewer_guide.html">Stream Viewer</A> is a graphical user interface
+included in the Borealis code base.  Please consult the &quotBorealis
+Application Programmer's Guide&quot for further information about writing
+Borealis applications.
+
+</P>
+
+<BR><BR><H4>Support Has Been Discontinued</H4>
+
+<P CLASS="body">
+Borealis is a collaborative research project developed by professors,
+students, and staff at Brown, MIT, Brandeis, and the University of Washington.
+The project has been retired and we are no longer able to provide support.
+</P>
+
+<P CLASS="body">
+Thanks for your interest in our software! 
+</P>
+
+<CENTER><SPAN class=white>Last modified: Tuesday August, 12, 2008</SPAN></CENTER>
+
+</BODY></HTML>

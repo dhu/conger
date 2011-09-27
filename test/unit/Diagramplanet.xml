@@ -1,0 +1,354 @@
+<borealis>
+
+  <schema name="pl_site_cpu">
+    <field name="ip"            type="string" size="16"/>
+    <field name="port"          type="int"/>
+    <field name="creation_time" type="double" />
+    <field name="cpu_load"      type="single"/>
+
+  </schema>
+
+  <schema name="pl_site_mem">
+    <field name="ip"            type="string" size="16"/>
+    <field name="port"          type="int"/>
+    <field name="creation_time" type="double" />
+    <field name="mem_used"      type="single"/>
+
+  </schema>
+
+  <schema name="pl_resource_usage">
+    <field name="ip"            type="string" size="16"/>
+    <field name="port"          type="int"/>
+    <field name="creation_time" type="double" />
+    <field name="cpu_load"      type="single"/>
+    <field name="mem_used"      type="single"/>
+
+  </schema>
+
+
+  <!-- mit + harvard -->
+  <input
+    stream="mit_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="mit_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+
+  <input
+    stream="harv_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="harv_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <!-- cambridge + bristol -->
+  <input
+    stream="cam_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="cam_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <input
+    stream="bris_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="bris_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <!-- sics + hut --> 
+  <input
+    stream="sics_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="sics_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <input
+    stream="hut_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="hut_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <!-- cmu + upenn --> 
+  <input
+    stream="cmu_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="cmu_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <input
+    stream="upenn_cpu_load"
+    schema="pl_site_cpu"
+    endpoint="15000"/>
+
+  <input
+    stream="upenn_mem_used"
+    schema="pl_site_mem"
+    endpoint="15000"/>
+
+  <output
+    stream="union_heavily_used"
+    schema="pl_resource_usage"
+    endpoint="25000"/>
+
+
+  <!-- mit + harvard -->
+  <!-- node = planetlab5.csail.mit.edu -->
+
+  <query name="group1" node="128.31.1.15">
+    <box name="group1_cpu_union" type="union">
+      <in stream="mit_cpu_load"/>
+      <in stream="harv_cpu_load"/>
+      <out stream="group1_cpu_load"/>
+    </box>
+
+    <box name="group1_mem_union" type="union">
+      <in stream="mit_mem_used"/>
+      <in stream="harv_mem_used"/>
+      <out stream="group1_mem_used"/>
+    </box>
+
+    <box name="group1_filter_cpu" type="filter">
+      <in  stream="group1_cpu_load"/>
+      <out stream="group1_filter_cpu_load"/>
+      <parameter name="expression.0" value="cpu_load &gt; 20.0"/>
+    </box>
+
+    <box name="group1_filter_mem" type="filter">
+      <in        stream="group1_mem_used"/>
+      <out       stream="group1_filter_mem"/>
+      <parameter name="expression.0"      value="mem_used &gt; 100.0"/>
+    </box>
+
+    <box name="group1_join_cpu_mem" type="join">
+
+      <in        stream="group1_filter_cpu_load"/>
+      <in        stream="group1_filter_mem"/>
+      <out       stream="group1_heavily_used"/>
+
+      <parameter name="predicate"         value="left.ip = right.ip and left.port = right.port"/>
+      <parameter name="right-buffer-size" value="1"/>
+      <parameter name="right-order-by"    value="TUPLES"/>
+      <parameter name="left-buffer-size"  value="1"/>
+      <parameter name="left-order-by"     value="TUPLES"/>
+      <parameter name="out-field-name.0"  value="ip"/>
+      <parameter name="out-field.0"       value="left.ip"/>
+      <parameter name="out-field-name.1"  value="port"/>
+      <parameter name="out-field.1"       value="left.port"/>
+      <parameter name="out-field-name.2"  value="creation_time" />
+      <parameter name="out-field.2"       value="min(left.creation_time, right.creation_time)" />
+      <parameter name="out-field-name.3"  value="cpu_load" />
+      <parameter name="out-field.3"       value="left.cpu_load" />
+      <parameter name="out-field-name.4"  value="mem_used"/>
+      <parameter name="out-field.4"       value="right.mem_used"/>
+
+    </box>
+
+  </query>
+
+ <!-- cambridge + bristol -->
+ <!-- node = pli1-br-2.hpl.hp.com -->
+
+  <query name="group2" node="192.6.10.50">
+
+    <box name="group2_cpu_union" type="union">
+      <in stream="cam_cpu_load"/>
+      <in stream="bris_cpu_load"/>
+      <out stream="group2_cpu_load"/>
+    </box>
+
+    <box name="group2_mem_union" type="union">
+      <in stream="cam_mem_used"/>
+      <in stream="bris_mem_used"/>
+      <out stream="group2_mem_used"/>
+    </box>
+
+    <box name="group2_filter_cpu_box" type="filter">
+      <in  stream="group2_cpu_load"/>
+      <out stream="group2_filter_cpu"/>
+      <parameter name="expression.0" value="cpu_load &gt; 20.0"/>
+    </box>
+    
+    <box name="group2_filter_mem_box" type="filter">
+      <in        stream="group2_mem_used"/>
+      <out       stream="group2_filter_mem"/>
+      <parameter name="expression.0"      value="mem_used &gt; 100.0"/>
+    </box>
+
+
+    <box name="group2_join_cpu_mem_box" type="join">
+
+      <in        stream="group2_filter_cpu"/>
+      <in        stream="group2_filter_mem"/>
+      <out       stream="group2_heavily_used"/>
+
+      <parameter name="predicate"         value="left.ip = right.ip and left.port = right.port"/>
+      <parameter name="left-buffer-size"  value="1"/>
+      <parameter name="left-order-by"     value="TUPLES"/>
+      <parameter name="right-buffer-size" value="1"/>
+      <parameter name="right-order-by"    value="TUPLES"/>
+      <parameter name="out-field-name.0"  value="ip"/>
+      <parameter name="out-field.0"       value="left.ip"/>
+      <parameter name="out-field-name.1"  value="port"/>
+      <parameter name="out-field.1"       value="left.port"/>
+      <parameter name="out-field-name.2"  value="creation_time" />
+      <parameter name="out-field.2"       value="min(left.creation_time, right.creation_time)" />
+      <parameter name="out-field-name.3"  value="cpu_load" />
+      <parameter name="out-field.3"       value="left.cpu_load" />
+      <parameter name="out-field-name.4"  value="mem_used"/>
+      <parameter name="out-field.4"       value="right.mem_used"/>
+    </box>
+
+  </query>
+
+ <!-- sics + hut -->
+ <!-- node = planetlab1.sics.se -->
+
+  <query name="group3" node="193.10.64.35">
+
+    <box name="group3_cpu_union" type="union">
+      <in stream="sics_cpu_load"/>
+      <in stream="hut_cpu_load"/>
+      <out stream="group3_cpu_load"/>
+    </box>
+
+    <box name="group3_mem_union" type="union">
+      <in stream="sics_mem_used"/>
+      <in stream="hut_mem_used"/>
+      <out stream="group3_mem_used"/>
+    </box>
+
+    <box name="group3_filter_cpu_box" type="filter">
+      <in  stream="group3_cpu_load"/>
+      <out stream="group3_filter_cpu"/>
+      <parameter name="expression.0" value="cpu_load &gt; 20.0"/>
+    </box>
+    
+    <box name="group3_filter_mem_box" type="filter">
+      <in        stream="group3_mem_used"/>
+      <out       stream="group3_filter_mem"/>
+      <parameter name="expression.0"      value="mem_used &gt; 100.0"/>
+    </box>
+
+
+    <box name="group3_join_cpu_mem_box" type="join">
+
+      <in        stream="group3_filter_cpu"/>
+      <in        stream="group3_filter_mem"/>
+      <out       stream="group3_heavily_used"/>
+
+      <parameter name="predicate"         value="left.ip = right.ip and left.port = right.port"/>
+      <parameter name="left-buffer-size"  value="1"/>
+      <parameter name="left-order-by"     value="TUPLES"/>
+      <parameter name="right-buffer-size" value="1"/>
+      <parameter name="right-order-by"    value="TUPLES"/>
+      <parameter name="out-field-name.0"  value="ip"/>
+      <parameter name="out-field.0"       value="left.ip"/>
+      <parameter name="out-field-name.1"  value="port"/>
+      <parameter name="out-field.1"       value="left.port"/>
+      <parameter name="out-field-name.2"  value="creation_time" />
+      <parameter name="out-field.2"       value="min(left.creation_time, right.creation_time)" />
+      <parameter name="out-field-name.3"  value="cpu_load" />
+      <parameter name="out-field.3"       value="left.cpu_load" />
+      <parameter name="out-field-name.4"  value="mem_used"/>
+      <parameter name="out-field.4"       value="right.mem_used"/>
+    </box>
+
+  </query>
+
+
+ <!-- cmu + upenn -->
+ <!-- node = planetlab2.cis.upenn.edu -->
+
+  <query name="group4" node="158.130.6.253">
+
+    <box name="group4_cpu_union" type="union">
+      <in stream="cmu_cpu_load"/>
+      <in stream="upenn_cpu_load"/>
+      <out stream="group4_cpu_load"/>
+    </box>
+
+    <box name="group4_mem_union" type="union">
+      <in stream="cmu_mem_used"/>
+      <in stream="upenn_mem_used"/>
+      <out stream="group4_mem_used"/>
+    </box>
+
+    <box name="group4_filter_cpu_box" type="filter">
+      <in  stream="group4_cpu_load"/>
+      <out stream="group4_filter_cpu"/>
+      <parameter name="expression.0" value="cpu_load &gt; 20.0"/>
+    </box>
+    
+    <box name="group4_filter_mem_box" type="filter">
+      <in        stream="group4_mem_used"/>
+      <out       stream="group4_filter_mem"/>
+      <parameter name="expression.0"      value="mem_used &gt; 100.0"/>
+    </box>
+
+
+    <box name="group4_join_cpu_mem_box" type="join">
+
+      <in        stream="group4_filter_cpu"/>
+      <in        stream="group4_filter_mem"/>
+      <out       stream="group4_heavily_used"/>
+
+      <parameter name="predicate"         value="left.ip = right.ip and left.port = right.port"/>
+      <parameter name="left-buffer-size"  value="1"/>
+      <parameter name="left-order-by"     value="TUPLES"/>
+      <parameter name="right-buffer-size" value="1"/>
+      <parameter name="right-order-by"    value="TUPLES"/>
+      <parameter name="out-field-name.0"  value="ip"/>
+      <parameter name="out-field.0"       value="left.ip"/>
+      <parameter name="out-field-name.1"  value="port"/>
+      <parameter name="out-field.1"       value="left.port"/>
+      <parameter name="out-field-name.2"  value="creation_time" />
+      <parameter name="out-field.2"       value="min(left.creation_time, right.creation_time)" />
+      <parameter name="out-field-name.3"  value="cpu_load" />
+      <parameter name="out-field.3"       value="left.cpu_load" />
+      <parameter name="out-field-name.4"  value="mem_used"/>
+      <parameter name="out-field.4"       value="right.mem_used"/>
+    </box>
+
+  </query>
+
+  <!-- union all the sites together -->
+  <!-- planetlab1.ucsd.edu -->
+  <query name="union_sites" node="132.239.17.224">
+
+   <box name="union_heavily_used" type="union">
+      <in       stream="group1_heavily_used"/>
+      <in       stream="group2_heavily_used"/>
+      <in       stream="group3_heavily_used"/>
+      <in       stream="group4_heavily_used"/>
+      <out      stream="union_heavily_used" />
+   </box>
+
+  </query>
+
+</borealis>

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<project name="Borealis Gui" default="build" basedir=".">
+
+   <property file="build.properties"/>
+
+   <!-- Copy medusaXmlRpc.jar from utility/client/java/lib/
+     -->
+   <property name="medusaxmlrpc.path"  value="lib/medusaXmlRpc.jar"/>
+   <property name="jdom.path"          value="lib/jdom.jar"/>
+   <property name="jcommon.path"       value="lib/jcommon-1.0.0-pre2.jar"/>
+   <property name="jfreechart.path"    value="lib/jfreechart-1.0.0-pre2.jar"/>
+   <property name="jgraph.path"        value="lib/jgraph.jar"/>
+   <property name="jgraphaddons.path"  value="lib/jgraphaddons.jar"/>
+
+   <property name="libraries"          value="./lib/"/>
+   <property name="classes"            value="./classes/"/>
+
+   <property name="client.lib.dir"     value="lib"/>
+
+   <path id="class.path">
+      <fileset dir=".">
+         <include name="${medusaxmlrpc.path}"/>
+         <include name="${jdom.path}"/>
+         <include name="${jcommon.path}"/>
+         <include name="${jfreechart.path}"/>
+         <include name="${jgraph.path}"/>
+         <include name="${jgraphaddons.path}"/>
+         <include name="${classes}"/>
+      </fileset>
+   </path>
+
+   <target name="build" description="Compiles all Java files">
+      <mkdir dir="classes"/>
+         <javac debug="true" deprecation="on" destdir="./classes" >
+            <src path="."/>
+            <classpath refid="class.path"/>
+         </javac>
+   </target>
+
+   <target name="lint" description="Compiles all Java files with lint">
+      <mkdir dir="classes"/>
+         <javac debug="true" deprecation="on" destdir="./classes" >
+            <src path="."/>
+            <classpath refid="class.path"/>
+
+            <compilerarg value="-Xlint:unchecked"/>
+         </javac>
+   </target>
+
+   <target name="runverbose" depends="build" description="Runs the java files with verbose set to true">
+      <echo message="...."/>
+      <java classname="borgui.client.ClientMain" fork="yes">
+         <classpath>
+            <pathelement path="${jdom.path}"/>
+            <pathelement path="${medusaxmlrpc.path}"/>
+            <pathelement path="${jcommon.path}"/>
+            <pathelement path="${jfreechart.path}"/>
+            <pathelement path="${jgraph.path}"/>
+            <pathelement path="${jgraphaddons.path}"/>
+            <pathelement path="${classes}"/>
+         </classpath>
+
+         <jvmarg value="-Djava.library.path=${client.lib.dir}"/>
+         <jvmarg value="-Xmx256m"/>
+         <arg value="-verbose"/>
+      </java>
+   </target>
+
+   <target name="run" depends="build" description="Runs the java files">
+      <echo message="...."/>
+      <java classname="borgui.client.ClientMain" fork="yes">
+         <classpath>
+            <pathelement path="${jdom.path}"/>
+            <pathelement path="${medusaxmlrpc.path}"/>
+            <pathelement path="${jcommon.path}"/>
+            <pathelement path="${jfreechart.path}"/>
+            <pathelement path="${jgraph.path}"/>
+            <pathelement path="${jgraphaddons.path}"/>
+            <pathelement path="${classes}"/>
+         </classpath>
+      <jvmarg value="-Djava.library.path=${client.lib.dir}"/>
+      </java>
+   </target>
+
+   <target name="clean"    description="clean up" >
+      <!-- Delete the ${classes} directory trees -->
+      <delete dir="${classes}"/>
+   </target>
+
+   <target name="rebuild"  depends="clean,build"  description="clean up and build" >
+   </target>
+
+   <target name="relint"  depends="clean,lint"  description="clean up and build with lint" >
+   </target>
+
+</project>

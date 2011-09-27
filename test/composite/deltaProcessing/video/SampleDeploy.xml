@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../../src/src/borealis.dtd">
+
+<!-- Sample Borealis deployment diagram. -->
+
+<deploy>
+    <publish    stream="CcdStream"  />
+    <publish stream="CcdChunked" />  
+    <subscribe  stream="ccddeltas" />
+
+    <node   endpoint=":15000"     query="DeltaDetector ChunkAssembler" />
+</deploy>

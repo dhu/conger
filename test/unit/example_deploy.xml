@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<deploy>
+    <publish  stream="s1" />
+    <publish  stream="s4" />
+
+    <subscribe stream="s3"  endpoint=":60000" />
+    <subscribe stream="s6"  endpoint=":60000" />
+
+    <node   endpoint=":15000"  query="b1 b4" />
+    <node   endpoint=":15100"  query="b2 b3" />
+
+    <region  node=":15000" />
+    <region  node=":15100" />
+</deploy>

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  nh_ls_two -->
+
+<borealis>
+
+    <schema name="InputSchema">
+        <field name="time"        type="int"/>
+        <field name="sensor_id"   type="int"/>
+        <field name="temperature" type="int"/>
+    </schema>
+
+    <schema name="OutputSchema">
+        <field name="time"        type="int"/>
+        <field name="sensor_id"   type="int"/>
+        <field name="temperature" type="int"/>
+    </schema>
+
+    <input  stream="Input1"  schema="InputSchema"/>
+    <input  stream="Input2"  schema="InputSchema"/>
+    <output stream="Output1" schema="OutputSchema"/>
+    <output stream="Output2" schema="OutputSchema"/>
+
+    <query name="Server1">
+
+        <box name="box_1_1" type="delay">
+            <in  stream="Input1"/>
+            <out stream="box_1_1_output"/>
+            <parameter name="delay-ms" value="10"/>
+            <parameter name="churn"    value="1"/>
+        </box>
+
+        <box name="box_2_1" type="delay">
+            <in  stream="Input2"/>
+            <out stream="box_2_1_output"/>
+            <parameter name="delay-ms" value="50"/>
+            <parameter name="churn"    value="1"/>
+        </box>
+
+    </query>
+
+    <query name="Server5">
+
+        <box name="box_1_2" type="delay">
+            <in  stream="box_1_1_output"/>
+            <out stream="Output1"/>
+            <parameter name="delay-ms" value="50"/>
+            <parameter name="churn"    value="1"/>
+        </box>
+
+        <box name="box_2_2" type="delay">
+            <in  stream="box_2_1_output"/>
+            <out stream="Output2"/>
+            <parameter name="delay-ms" value="10"/>
+            <parameter name="churn"    value="1"/>
+        </box>
+
+    </query>
+</borealis>

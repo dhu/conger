@@ -1,0 +1,10 @@
+# Experiment duration. Replication: REPLICA/NO_REPLICA. Depth (nb nodes). 
+# Failure duration.
+# State size. Per stream input rate (nb streams fixed). 
+# Interval boundary. Max delay. Checkpoint interval. 
+# Delay tentative or not.
+
+60000 REPLICA    1 10000 20 175 100 2000  200 NO_DELAY
+60000 REPLICA    1 10000 20 175 100 2000  200 DELAY
+60000 REPLICA    2 10000 20 175 100 2000  200 NO_DELAY
+60000 REPLICA    2 10000 20 175 100 2000  200 DELAY

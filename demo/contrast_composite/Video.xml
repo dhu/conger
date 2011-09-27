@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Sample Borealis query diagram. -->
+
+<borealis>
+    <schema name="ccd_schema" >
+        <field name="contrast"   type="string" size="48"/>
+	<field name="ccd_frame"  type="byte(0...351, 0...287, 0...2)"  />   
+    </schema>
+
+    <schema name="ir_schema" >
+	 <field name="ir_frame"  type="byte(0...351, 0...287, 0...2)" />  
+    </schema>
+
+    <schema name="joined_schema" >
+        <field name="contrast"   type="string" size="48"/>
+	<field name="ccd_frame"  type="byte(0...351, 0...287, 0...2)"  />  
+	<field name="ir_frame"   type="byte(0...351, 0...287, 0...2)"  />  
+    </schema>
+
+    <schema name="selected_schema" >
+         <field name="contrast"   type="string" size="48"/>
+	 <field name="selected_frame"  type="byte(0...351, 0...287, 0...2)" />  
+    </schema>
+
+    <input  stream="CcdStream"  schema="ccd_schema"  />
+    <input  stream="IrStream"  schema="ir_schema"  />    
+    <input  stream="JoinedStream"   schema="joined_schema"  />
+    <input  stream="ContrastStream" schema="joined_schema" />
+    <output stream="SelectedStream" schema="selected_schema" /> 
+ 
+    <box  name="FrameJoiner"  type="join" >
+        <in       stream="CcdStream"       />
+	<in       stream="IrStream"       />
+        <out      stream="JoinedStream" /> 
+        <parameter  name="predicate"  value="1=1" />
+        <parameter  name="left-buffer-size"  value="1"/>
+        <parameter  name="right-buffer-size" value="1"/>
+        <parameter  name="left-order-by"     value="TUPLES"/>
+        <parameter  name="right-order-by"    value="TUPLES"/>
+    </box>
+
+   <box name="ContrastCalculator" type="contrast_composite">
+       <in      stream="JoinedStream" /> 
+       <out     stream="ContrastStream" />
+       <parameter  name="expression.0"  value="1=1" />
+   </box>
+
+   <box name="FrameSelecter" type="map_frame_composite">
+       <in      stream="ContrastStream" /> 
+       <out     stream="SelectedStream" />
+       <parameter  name="expression.0"  value="1=1" /> 
+       <parameter  name="contrast_threshold"  value="30" />
+   </box> 
+
+</borealis>

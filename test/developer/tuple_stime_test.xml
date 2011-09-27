@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  tuple_stime.cc -->
+
+<borealis>
+   
+    <input   stream="Trivial"    schema="TrivialTuple"/>
+    <input   stream="Trivial2"   schema="TrivialTuple"/>
+    <output  stream="Aggregate"  schema="AggregateTuple"/>
+    <output  stream="Union"      schema="TrivialTuple"  />
+    <output  stream="FilterMap"  schema="TrivialTuple"  />
+    <output  stream="Join"       schema="JoinTuple"  />
+    <output  stream="ControlOutput"       schema="EmptyTuple"  />
+
+    <schema name="EmptyTuple">
+    </schema>
+
+    <schema name="TrivialTuple">
+        <field  name="time"                  type="int" />
+        <field  name="join_attribute"        type="int" />
+    </schema>
+
+    <schema name="AggregateTuple">
+        <field  name="time"        type="int" />
+        <field  name="count"       type="int" />
+    </schema>
+
+    <schema name="JoinTuple">
+        <field  name="time1"            type="int" />
+        <field  name="time2"            type="int" />
+        <field  name="join_attribute"  type="int" />
+    </schema>
+
+    <box name="my_aggregate"   type="aggregate" >
+        <in   stream="Trivial"    />
+        <out  stream="Aggregate" />
+
+        <parameter   name="aggregate-function.0"  value="count()"  />
+        <parameter   name="aggregate-function-output-name.0" value="count"  />
+        <parameter   name="window-size-by"        value="VALUES"   />
+        <parameter   name="window-size"           value="10"        />
+        <parameter   name="advance"               value="10"        />
+        <parameter   name="independent-window-alignment" value="1" /> 
+        <parameter   name="drop-empty-outputs"    value="1"   />
+        <parameter   name="order-by"              value="FIELD"    />
+        <parameter   name="order-on-field"        value="time"     />
+    </box>
+
+    <box name="my_union"   type="union" >
+        <in   stream="Trivial"    />
+        <in   stream="Trivial2"    />
+        <out  stream="Union" />
+    </box>
+
+    <box name="my_filter"   type="filter" >
+        <in   stream="Trivial"    />
+        <out  stream="Filter" />
+        <parameter name="expression.0" value="time > 0"/>
+    </box>
+
+    <box name="my_map"   type="map" >
+        <in   stream="Filter"    />
+        <out  stream="FilterMap" />
+        <parameter name="expression.0" value="time" />
+        <parameter name="output-field-name.0" value="time" />
+        <parameter name="expression.1" value="join_attribute" />
+        <parameter name="output-field-name.1" value="join_attribute" />
+    </box>
+
+
+  <query name="sunion-sjoin">
+
+    <box name="my_sunion_pre_join"   type="sunion" >
+        <in   stream="Trivial"    />
+        <in   stream="Trivial2"    />
+        <parameter name="location" value="input"/>
+        <parameter name="interval" value="500"/>
+        <parameter name="stagger" value="0"/>
+        <parameter name="max-delay.0" value="5000"/>
+        <parameter name="max-delay.1" value="5000"/>
+        <parameter name="benchmark" value="sunion_boundary"/>
+        <out  stream="ControlOutput" />
+        <out  stream="TrivialB" />
+        <out  stream="TrivialB2" />
+    </box>
+
+    <box name="my_join"   type="sjoin" >
+        <in   stream="TrivialB" />
+        <in   stream="TrivialB2" />
+        <out  stream="Join" />
+        <parameter name="predicate" value="left.join_attribute=right.join_attribute"/>
+        <parameter name="left-order-by" value="VALUES"/>
+        <parameter name="right-order-by" value="VALUES"/>
+        <parameter name="left-order-on-field" value="time"/>
+        <parameter name="right-order-on-field" value="time"/>
+        <parameter name="left-buffer-size" value="1"/>
+        <parameter name="right-buffer-size" value="1"/>
+        <parameter name="out-field.0" value="left.time" />
+        <parameter name="out-field-name.0" value="time1" />
+        <parameter name="out-field.1" value="right.time" />
+        <parameter name="out-field-name.1" value="time2" />
+        <parameter name="out-field.2" value="left.join_attribute" />
+        <parameter name="out-field-name.2" value="join_attribute" />
+    </box>
+
+    </query>
+</borealis>

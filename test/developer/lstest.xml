@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<borealis>
+
+    <schema name="IntTuple">
+        <field name="f1" type="int" />
+        <field name="f2" type="int" />
+    </schema>
+
+    <input stream="input1" schema="IntTuple" />
+    <input stream="input2" schema="IntTuple" />
+    <output stream="output1" schema="IntTuple" />
+    <output stream="output2" schema="IntTuple" />
+
+    <query name="query1">
+        <box name="box1_1" type = "union">
+            <in stream="input1" />
+            <out stream="output1" />
+        </box>
+        <box name="box2_1" type = "delay">
+            <in stream="input2" />
+            <out stream="output2" />
+            <parameter name="delay-ms" value="10"/>
+            <parameter name="churn" value="1"/>
+        </box>
+    </query>
+
+</borealis>
+

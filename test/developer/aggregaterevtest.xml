@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  aggregate_test.cc -->
+
+<borealis>
+    <input   stream="Packet"   schema="PacketTuple"  />
+    <output  stream="Result"   schema="PacketTuple"  />
+
+    <schema name="PacketTuple" >
+        <field  name="time"       type="int" />
+        <field  name="quote"      type="string" size="4" />
+        <field  name="price"      type="int" />
+    </schema>
+
+    <box name="RevisionAggregate"  type="revisionaggregate" >
+        <in   stream="Packet"    />
+        <out  stream="Result" />
+
+        <parameter name="aggregate-function.0"  value="sum(price)" />
+        <parameter name="aggregate-function.1"  value="avg(price)" />
+        <parameter name="aggregate-function.2"  value="count()"    />
+        <parameter name="window-size-by"        value="VALUES"     />
+        <parameter name="window-size"           value="5"          />
+        <parameter name="advance"               value="3"          />
+        <parameter name="order-by"              value="FIELD"      />
+        <parameter name="order-on-field"        value="time"       />
+        <parameter name="group-by"              value="time"       />
+    <parameter name="processing-mode"   value="UPSTREAM"   />
+    </box>
+
+    <connection_point_view  name="view"  stream="Packet" >
+        <order  field="time" />
+        <size   value="25"     />
+    <radius value="4" />
+    </connection_point_view>
+
+</borealis>

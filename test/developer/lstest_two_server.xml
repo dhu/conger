@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "../../src/src/borealis.dtd">
+
+<!-- Borealis query diagram for:  lstest_two_server.cc -->
+
+<borealis>
+
+    <input  stream="input" schema="Schema" />
+    <output stream="count" schema="CountSchema"/>
+    <output stream="distance" schema="DistanceSchema"/>
+    <!--
+    <output stream="distance" schema="Schema" />
+    -->
+
+    <schema name="Schema">
+        <field name="clientnum" type="int"/>
+        <field name="timestamp" type="long"/>
+        <field name="x" type="int"/>
+        <field name="y" type="int"/>
+        <field name="z" type="int"/>
+        <field name="seq_no" type="int"/>
+    </schema>
+ 
+    <schema name="CountSchema">
+        <field name="seq_no" type="int"/>
+        <field name="timestamp" type="long"/>
+        <field name="count" type="int"/>
+    </schema>
+  
+    <schema name="DistanceSchema">
+        <field name="timestamp" type="long"/>
+        <field name="distance" type="int"/>
+        <field name="seq_no" type="int"/>
+    </schema>
+  
+    <query name="Query1">
+        <box name="fltr.x.y.z" type="filter">
+            <in  stream="input"/>
+            <out stream="f1"/>
+            <parameter name="expression.0" value="x >= 1500 and x &lt;= 2400"/>
+        </box>
+        <box name="fltr.id=1" type="filter">
+            <in  stream="input"/>
+            <out stream="f2"/>
+            <parameter name="expression.0" value="clientnum == 1"/>
+        </box>
+        <box name="fltr.id=2" type="filter">
+            <in  stream="input"/>
+            <out stream="f3"/>
+            <parameter name="expression.0" value="clientnum == 2"/>
+        </box>
+    </query>
+
+    <query name="Query2">
+        <box name="aggr.count" type="aggregate">
+            <in  stream="f1"/>
+            <out stream="count"/>
+            <parameter name="aggregate-function.0" value="firstval(seq_no)" />
+            <parameter name="aggregate-function-output-name.0" value="seq_no" />
+            <parameter name="aggregate-function.1" value="firstval(timestamp)" />
+            <parameter name="aggregate-function-output-name.1" value="timestamp" />
+            <parameter name="aggregate-function.2" value="count_distinct(clientnum)" />
+            <parameter name="aggregate-function-output-name.2" value="count" />
+            <parameter name="window-size-by" value="VALUES" />
+            <parameter name="window-size" value="10" />
+            <parameter name="advance" value="1" />
+            <parameter name="order-by" value="FIELD" />
+            <parameter name="order-on-field" value="seq_no" />
+        </box>
+        <box name="join.distance" type="join">
+            <in  stream="f2"/>
+            <in  stream="f3"/>
+            <out stream="distance"/>
+            <parameter name="predicate"         value="true" />
+            <parameter name="left-buffer-size"  value="1" />
+            <parameter name="left-order-by"     value="TUPLES" />
+            <parameter name="right-buffer-size" value="1" />
+            <parameter name="right-order-by"    value="TUPLES" />
+            <parameter name="out-field-name.0"  value="timestamp" />
+            <parameter name="out-field.0"       value="max(left.timestamp, right.timestamp)" />
+            <parameter name="out-field-name.1"  value="distance" />
+            <parameter name="out-field.1"       value="(left.x-right.x)*(left.x-right.x)+(left.y-right.y)*(left.y-right.y)+(left.z-right.z)*(left.z-right.z)" />
+            <parameter name="out-field-name.2"  value="seq_no" />
+            <parameter name="out-field.2"       value="left.seq_no" />
+        </box>
+        <!--
+        <box name="myunion" type="union" >
+            <in stream="f2" />
+            <in stream="f3" />
+            <out stream="distance" />
+        </box>
+        -->
+    </query>
+    
+</borealis>
