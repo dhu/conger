@@ -2,6 +2,9 @@
 
 #include <dirent.h>
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include <unistd.h>
 #include <netdb.h>
 #include <netinet/in.h>
