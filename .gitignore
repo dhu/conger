@@ -1,2 +1,26 @@
+# 隐藏文件
 .*
+
+# 文件编辑器的自动备份文件
+*~
+
+# 编译生成的文件
 *.lo
+*.la
+*.o
+*.class
+
+# autotools 生成的文件
+Makefile*
+tool/marshal/marshal
+tool/head/BigGiantHead
+src/src/monitor
+src/src/borealis
+
+# NMSTL rpc 自动生成的文件
+rpc_*.h
+src/modules/queryProcessor/UpdateServer.cc
+
+# antlr 生成的文件
+Expr*pp
+src/modules/queryProcessor/expr/ExprParserTokenTypes.txt
