@@ -9,6 +9,11 @@
 *.la
 *.o
 *.class
+utility/client/global/GlobalView
+utility/client/java/lib/clientApi.jar
+utility/client/java/lib/medusaXmlRpc.jar
+utility/client/java/src/classjava.stamp	
+utility/client/java/src/subscribe
 
 # autotools 生成的文件
 Makefile*
@@ -16,6 +21,18 @@ tool/marshal/marshal
 tool/head/BigGiantHead
 src/src/monitor
 src/src/borealis
+*/aclocal.m4
+*/autom4te.cache*
+*/config/*
+*/config.h
+*/config.h.in
+*/config.log
+*/config.status
+*/configure
+*/Makefile
+*/Makefile.in
+*/libtool
+*/stamp-h1
 
 # NMSTL rpc 自动生成的文件
 rpc_*.h
