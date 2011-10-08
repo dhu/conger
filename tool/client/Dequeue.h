@@ -12,22 +12,11 @@
 #include "MedusaClient.h"
 #include "NMSTL/ptr"
 #include "NMSTL/debug"
+#include "Tuple.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
 class Dequeue {
-public:
-	struct AggregateTuple
-	{
-		int32 time;
-		float maxprice;
-	}__attribute__((__packed__));
-
-	struct InputTuple
-	{
-		int32 time;
-		float price;
-	}__attribute__((__packed__));
 
 public:
 	Dequeue();

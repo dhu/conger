@@ -14,23 +14,12 @@
 #include "NMSTL/ptr"
 #include "MedusaClient.h"
 #include <list>
+#include "Tuple.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
 class Enqueue
 {
-public:
-	struct AggregateTuple
-	{
-		int32 time;
-		float maxprice;
-	}__attribute__((__packed__));
-
-	struct InputTuple : public TupleHeader
-	{
-		int32 time;
-		float price;
-	}__attribute__((__packed__));
 
 public:
 	Enqueue();

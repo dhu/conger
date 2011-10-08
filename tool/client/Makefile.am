@@ -27,7 +27,7 @@ INCLUDES = @XERCESCINCLUDE@  @NMSTLINCLUDE@                            \
            -I ../../utility/client/region                              \
            -I ../../utility/client/rpc
 
-enqueue_SOURCES = Enqueue.cc Enqueue.h
+enqueue_SOURCES = Enqueue.cc Enqueue.h Tuple.h
 
-dequeue_SOURCES = Dequeue.cc Dequeue.h
+dequeue_SOURCES = Dequeue.cc Dequeue.h Tuple.h
 
