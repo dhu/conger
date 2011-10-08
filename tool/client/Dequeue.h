@@ -12,7 +12,7 @@
 #include "MedusaClient.h"
 #include "NMSTL/ptr"
 #include "NMSTL/debug"
-#include "Tuple.h"
+#include "StockTuple.h"
 
 BOREALIS_NAMESPACE_BEGIN
 

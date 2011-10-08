@@ -74,10 +74,10 @@ void Enqueue::start()
 		eventPacket = ptr<StreamEvent>(new StreamEvent("packet"));
 		eventPacket->_inject = true;
 		InputTuple tuple = data.front();
-		data.pop_back();
+		data.pop_front();
 		eventPacket->insert_bin(string((const char *) &tuple), sizeof(tuple));
 		medusaClient->fast_post_event(eventPacket);
-		DEBUG << "sending " << tuple.time << " ...";
+		DEBUG << "sending " << tuple.time << " " << tuple.price;
 	}
 	INFO << "data sent...";
 }

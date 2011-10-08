@@ -1,12 +1,12 @@
 /*
- * Tuple.h
+ * StockTuple.h
  *
  *  Created on: Oct 8, 2011
  *      Author: jj
  */
 
-#ifndef TUPLE_H_
-#define TUPLE_H_
+#ifndef STOCK_TUPLE_H_
+#define STOCK_TUPLE_H_
 
 #include "TupleHeader.h"
 
@@ -24,4 +24,4 @@ struct InputTuple: public TupleHeader
 	float price;
 }__attribute__((__packed__));
 
-#endif /* TUPLE_H_ */
+#endif /* STOCK_TUPLE_H_ */
