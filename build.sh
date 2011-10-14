@@ -12,8 +12,12 @@ export CVS_SANDBOX=$HOME/Workspace/borealis_summer_2008
 export BOREALIS_HOME=$CVS_SANDBOX/polaris
 export BOREALIS_TOOL=/opt/borealis-tools
 
+# NMSTL 调试输出的级别
+export LOG_LEVEL="2"
+
 source $BOREALIS_TOOL/rc
 
+# 确保没有重复导入
 if [ "x$TOOL_PATH_SET" = "x" ]; then
     export TOOL_PATH_SET="tool_path_already_set"
     export PATH=/home/jj/Workspace/borealis_summer_2008/polaris/tool/marshal:$PATH
