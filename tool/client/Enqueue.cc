@@ -61,7 +61,8 @@ void Enqueue::start()
 	/* load data from csv file */
 	this->loadData();
 	medusaClient = ptr<MedusaClient>(new MedusaClient(InetAddress()));
-	Status status = medusaClient->set_data_path(64000, "127.0.0.1", 15000);
+	Status status = medusaClient->set_data_path(640000,
+			Util::get_host_address("127.0.0.1"), 15000);
 	if (!status)
 	{
 		WARN << "set data path error...";
@@ -71,7 +72,7 @@ void Enqueue::start()
 	while (!data.empty())
 	{
 		eventPacket.reset();
-		eventPacket = ptr<StreamEvent>(new StreamEvent("packet"));
+		eventPacket = ptr<StreamEvent>(new StreamEvent("aggregate"));
 		eventPacket->_inject = true;
 		InputTuple tuple = data.front();
 		data.pop_front();
@@ -79,6 +80,7 @@ void Enqueue::start()
 		medusaClient->fast_post_event(eventPacket);
 		DEBUG << "sending " << tuple.time << " " << tuple.price;
 	}
+	medusaClient->run();
 	INFO << "data sent...";
 }
 

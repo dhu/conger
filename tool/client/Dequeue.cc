@@ -9,6 +9,8 @@
 
 using namespace Borealis;
 
+Status handleOutput(ptr<StreamEvent> event);
+
 Dequeue::Dequeue()
 {
 
@@ -16,13 +18,20 @@ Dequeue::Dequeue()
 void Dequeue::start()
 {
 	medusaClient = ptr<MedusaClient>(new MedusaClient(InetAddress()));
-	Status status = medusaClient->set_data_handler(
-			InetAddress("127.0.0.1:25000"), wrap(&handleOutput));
+	Status status;
+//	status = medusaClient->set_data_path(64000,
+//			Util::get_host_address("127.0.1.1"), 15000);
+//	DEBUG << status;
+	status = medusaClient->set_data_handler(
+			InetAddress(Util::form_endpoint("127.0.0.1:25000",25000)),
+			wrap(&handleOutput));
+	DEBUG << status;
 	medusaClient->run();
 }
 
-Status Dequeue::handleOutput(ptr<StreamEvent> event)
+Status handleOutput(ptr<StreamEvent> event)
 {
+	DEBUG << event->_stream.as_string();
 	if (event->_stream == Name("aggregate"))
 	{
 		uint32 offset = 0;

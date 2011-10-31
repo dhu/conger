@@ -1,12 +1,10 @@
 grammar SQL;
 
 options {
-  k = 2;
   language=C;
   ASTLabelType=pANTLR3_BASE_TREE;
   output=AST;
-} // build trees
-
+}
 
 tokens {
 	TOK_CREATE_SCHEMA;

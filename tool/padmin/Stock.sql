@@ -1,6 +1,6 @@
-CREATE SCHEMA aggregate (time INT,currenttime INT,maxprice DOUBLE )
-CREATE SCHEMA packet (time INT,price DOUBLE )
-CREATE INPUT STREAM InputStream packet
-CREATE OUTPUT STREAM OutputStream aggregate
+CREATE INPUT STREAM Packet PacketTuple
+CREATE OUTPUT STREAM Aggregate AggregateTuple
+CREATE SCHEMA PacketTuple (time INT,price DOUBLE )
+CREATE SCHEMA AggregateTuple(time INT,maxprice DOUBLE ,currenttime INT)
 CREATE WINDOW Dimension1(SIZE 180 ADVANCE 10 ON time)
-SELECT max(time) AS currenttime,max(price) AS maxprice FROM InputStream[Dimension1] INTO OutputStream
+SELECT max(price) AS maxprice, max(time) AS currenttime FROM Packet[Dimension1] INTO Aggregate

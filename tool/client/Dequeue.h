@@ -23,8 +23,6 @@ public:
 
 	void start();
 
-	static Status handleOutput(ptr<StreamEvent> event);
-
 	virtual ~Dequeue();
 
 private:
