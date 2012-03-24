@@ -12,7 +12,7 @@ MAIN = mytest                                            \
        cptest          cp2test
 
 bin_PROGRAMS = $(MAIN)
-BOREALIS_SRC = ../@BOREALISROOT@
+BOREALIS_SRC = @BOREALISROOT@
 
 LDADD_EXTRAS = -ldl  @BOREALISLIB@  @EXTERNALLIB@
 

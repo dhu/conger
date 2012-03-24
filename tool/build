@@ -1,0 +1,1 @@
+./configure --with-xercesc=$INSTALL_XERCESC --with-antlr=$INSTALL_ANTLR --with-bdb=$INSTALL_BDB --with-ocv=$INSTALL_OCV --with-gsl=$INSTALL_GSL --with-nmstl=$INSTALL_NMSTL --with-borealis=$BOREALIS_HOME/src

@@ -577,15 +577,15 @@ BuildBorealis()    # Build Borealis.
 #...............................................................................
 
 
-if [ ! -d "${CVS_SANDBOX}/borealis" ]; then
+if [ ! -d "${CVS_SANDBOX}/polaris" ]; then
     echo  "ERROR:  You need to checkout borealis."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/borealis/src
+cd  ${CVS_SANDBOX}/polaris/src
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/borealis/src"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/src"
     exit  -1
 fi
 
@@ -680,15 +680,15 @@ BuildTest()    # Build the test area.
 #
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/borealis/test" ]; then
+if [ ! -d "${CVS_SANDBOX}/polaris/test" ]; then
     echo  "ERROR:  You need to checkout the Borealis test area."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/borealis/test
+cd  ${CVS_SANDBOX}/polaris/test
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/borealis/test"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/test"
     exit  -1
 fi
 
@@ -739,7 +739,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     echo "BUILD_TEST_DEVELOPER=${BUILD_TEST_DEVELOPER}"
 
     if [ ${BUILD_TEST_SIMPLE} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/test/simple
+        cd  ${CVS_SANDBOX}/polaris/test/simple
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -756,7 +756,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_COMPOSITE} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/test/composite
+        cd  ${CVS_SANDBOX}/polaris/test/composite
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -773,7 +773,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_UNIT} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/test/unit
+        cd  ${CVS_SANDBOX}/polaris/test/unit
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -790,7 +790,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_VALID} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/test/valid
+        cd  ${CVS_SANDBOX}/polaris/test/valid
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -807,7 +807,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_DEVELOPER} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/test/developer
+        cd  ${CVS_SANDBOX}/polaris/test/developer
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -838,15 +838,15 @@ BuildTool()    # Build the Borealis tools.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/borealis/tool" ]; then
+if [ ! -d "${CVS_SANDBOX}/polaris/tool" ]; then
     echo  "ERROR:  You need to checkout the Borealis tool directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/borealis/tool
+cd  ${CVS_SANDBOX}/polaris/tool
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/borealis/tool"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/tool"
     exit  -1
 fi
 
@@ -906,7 +906,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     echo "BUILD_TOOL_OPTIMIZER=${BUILD_TOOL_OPTIMIZER}"
 
     if [ ${BUILD_TOOL_MARSHAL} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/marshal
+        cd  ${CVS_SANDBOX}/polaris/tool/marshal
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -923,7 +923,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_HEAD} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/head
+        cd  ${CVS_SANDBOX}/polaris/tool/head
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -940,7 +940,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_STATS} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/statsView
+        cd  ${CVS_SANDBOX}/polaris/tool/statsView
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -957,7 +957,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_MONITOR} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/monitor
+        cd  ${CVS_SANDBOX}/polaris/tool/monitor
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -974,7 +974,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_LOAD} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/loadGenerator
+        cd  ${CVS_SANDBOX}/polaris/tool/loadGenerator
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -991,7 +991,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_OPTIMIZER} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/borealis/tool/optimizer
+        cd  ${CVS_SANDBOX}/polaris/tool/optimizer
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -1022,15 +1022,15 @@ BuildDemo()    # Build the Borealis demos.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/borealis/demo" ]; then
+if [ ! -d "${CVS_SANDBOX}/polaris/demo" ]; then
     echo  "ERROR:  You need to checkout the Borealis demo directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/borealis/demo
+cd  ${CVS_SANDBOX}/polaris/demo
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/borealis/demo"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/demo"
     exit  -1
 fi
 
@@ -1107,15 +1107,15 @@ BuildClient()    # Build the Borealis clients.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/borealis/utility/client" ]; then
+if [ ! -d "${CVS_SANDBOX}/polaris/utility/client" ]; then
     echo  "ERROR:  You need to checkout the Borealis client directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/borealis/utility/client
+cd  ${CVS_SANDBOX}/polaris/utility/client
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/borealis/utility/client"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/utility/client"
     exit  -1
 fi
 
@@ -1278,7 +1278,7 @@ if [ ${BUILD_TEST}   -eq 0 ]  &&                   \
     BUILD_SET="${BUILD_SET}Borealis "
 
 else
-    if [ ! -f "${CVS_SANDBOX}/borealis/src/src/borealis" ]; then
+    if [ ! -f "${CVS_SANDBOX}/polaris/src/src/borealis" ]; then
         BuildBorealis
         BUILD_SET="${BUILD_SET}Borealis, "
     fi
