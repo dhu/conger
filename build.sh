@@ -9,7 +9,7 @@ HELP_TEXT=" \n 1. 不带任何参数,或参数 help: 显示本帮助文档\n \
 #
 
 export CVS_SANDBOX=$HOME/Workspace/borealis_summer_2008
-export BOREALIS_HOME=$CVS_SANDBOX/polaris
+export BOREALIS_HOME=$CVS_SANDBOX/conger
 export BOREALIS_TOOL=/opt/borealis-tools
 
 # NMSTL 调试输出的级别
@@ -20,8 +20,8 @@ source $BOREALIS_TOOL/rc
 # 确保没有重复导入
 if [ "x$TOOL_PATH_SET" = "x" ]; then
     export TOOL_PATH_SET="tool_path_already_set"
-    export PATH=/home/jj/Workspace/borealis_summer_2008/polaris/tool/marshal:$PATH
-    export PATH=/home/jj/Workspace/borealis_summer_2008/polaris/tool/head:$PATH
+    export PATH=/home/jj/Workspace/borealis_summer_2008/conger/tool/marshal:$PATH
+    export PATH=/home/jj/Workspace/borealis_summer_2008/conger/tool/head:$PATH
 fi
 
 # 判断这个脚本是在独立的子进程中执行的，还是在当前进程通过 source 运行的.
