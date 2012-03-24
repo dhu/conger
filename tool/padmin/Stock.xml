@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE borealis SYSTEM "/home/jj/Workspace/borealis_summer_2008/borealis/src/src/borealis.dtd">
+<!-- Borealis query diagram for:  stock.cc -->
+<borealis>
+<input stream="Packet" schema="PacketTuple" />
+<output stream="Aggregate" schema="AggregateTuple" />
+<schema name="PacketTuple">
+	<field  name="time"  type="INT" />
+	<field  name="price"  type="DOUBLE" />
+</schema>
+<schema name="AggregateTuple">
+	<field  name="time"  type="INT" />
+	<field  name="maxprice"  type="DOUBLE" />
+	<field  name="currenttime"  type="INT" />
+</schema>
+<box name="mybox"   type="aggregate" >
+	<in   stream="Packet"    />
+	<out  stream="Aggregate" />
+	<parameter   name="aggregate-function.0"  value="max(price)"  />
+	<parameter   name="aggregate-function-output-name.0" value="maxprice"  />
+	<parameter   name="aggregate-function.1"  value="max(time)"  />
+	<parameter   name="aggregate-function-output-name.1" value="currenttime"  />
+	<parameter   name="window-size-by"        value="VALUES"   />
+	<parameter   name="window-size"           value="180"        />
+	<parameter   name="advance"               value="10"        />
+	<parameter   name="order-by"              value="FIELD"    />
+	<parameter   name="order-on-field"        value="time"     />
+</box>
+</borealis>

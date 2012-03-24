@@ -44,9 +44,9 @@ class  Util
                                     string   host = "");
 
 
-    /// Compose a complete cononical endpoint.
+    /// Compose a complete canonical endpoint.
     ///
-    static string  form_endpoint(/// An enpoint as:  [<ip address>][:<port>]
+    static string  form_endpoint(/// An endpoint as:  [<ip address>][:<port>]
                                  string   endpoint,
 
                                  /// A default port number.

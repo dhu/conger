@@ -1,0 +1,63 @@
+# 隐藏文件
+.*
+
+# 文件编辑器的自动备份文件
+*~
+
+# eclipse 自动生成的文件
+Debug*
+
+# 编译生成的文件
+*.lo
+*.la
+*.o
+*.class
+utility/client/global/GlobalView
+utility/client/java/lib/clientApi.jar
+utility/client/java/lib/medusaXmlRpc.jar
+utility/client/java/src/classjava.stamp	
+utility/client/java/src/subscribe
+tool/client/enqueue
+tool/client/dequeue
+tool/padmin/padmin
+
+# autotools 生成的文件
+Makefile.in
+tool/marshal/marshal
+tool/head/BigGiantHead
+src/src/monitor
+src/src/borealis
+*/aclocal.m4
+*/autom4te.cache*
+*/config/*
+*/config/
+*/config.h
+*/config.h.in
+*/config.log
+*/config.status
+*/configure
+*/Makefile
+Makefile
+*/Makefile.in
+*/libtool
+*/stamp-h1
+utility/client/aclocal.m4
+utility/client/autom4te.cache/
+utility/client/config.h
+utility/client/config.h.in
+utility/client/config.log
+utility/client/config.status
+utility/client/config/
+utility/client/configure
+utility/client/java/src/classjava.stamp
+utility/client/libtool
+utility/client/stamp-h1
+
+# NMSTL rpc 自动生成的文件
+rpc_*.h
+src/modules/queryProcessor/UpdateServer.cc
+
+# antlr 生成的文件
+Expr*pp
+src/modules/queryProcessor/expr/ExprParserTokenTypes.txt
+

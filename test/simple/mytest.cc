@@ -3,7 +3,7 @@
 
 using namespace Borealis;
 
-const uint32  SLEEP_TIME = 100;          // Delay between injections.
+const uint32  SLEEP_TIME = 1;          // Delay between injections.
 const uint32  BATCH_SIZE = 20;           // Number of input tuples per batch.
 const uint32  PROTOCOL_SIZE = 4;         // Number of elements in PROTOCOL.
 
