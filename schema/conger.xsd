@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://dhu.github.com/conger/cql"
+	xmlns:conger="http://dhu.github.com/conger/cql"
+	elementFormDefault="unqualified">
+
+    <xsd:annotation>
+        <xsd:documentation>
+        Schema from conger CQL
+        </xsd:documentation>
+    </xsd:annotation>    
+
+    <xsd:element name="include">
+        <xsd:complexType>
+            <xsd:attribute name="resource" type="xsd:string"></xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="schemas" type="conger:SchemasType"></xsd:element>
+    
+    <xsd:element name="streams" type="conger:StreamsType"></xsd:element>
+    
+    <xsd:element name="querys" type="conger:QuerysType"></xsd:element>
+
+    <xsd:complexType name="SchemasType">
+    	<xsd:sequence>
+    		<xsd:element name="schema" type="conger:SchemaType" maxOccurs="unbounded">
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SchemaType">
+        <xsd:sequence>
+            <xsd:element name="field" type="conger:SchemaFieldType" maxOccurs="unbounded" />
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string"</xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="SchemaFieldType">
+        <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="type" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="StreamsType">
+        <xsd:sequence>
+            <xsd:element name="stream" type="conger:StreamType" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="StreamType">
+        <xsd:attribute name="type" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="schema" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="QuerysType">
+        <xsd:sequence>
+            <xsd:element name="query" type="conger:QueryType" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="QueryType">
+        <xsd:sequence>
+            <xsd:element name="cql" type="xsd:string"></xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="in" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="out" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+    
+</xsd:schema>
