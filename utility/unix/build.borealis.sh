@@ -577,15 +577,15 @@ BuildBorealis()    # Build Borealis.
 #...............................................................................
 
 
-if [ ! -d "${CVS_SANDBOX}/polaris" ]; then
+if [ ! -d "${CVS_SANDBOX}/conger" ]; then
     echo  "ERROR:  You need to checkout borealis."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/polaris/src
+cd  ${CVS_SANDBOX}/conger/src
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/src"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/conger/src"
     exit  -1
 fi
 
@@ -680,15 +680,15 @@ BuildTest()    # Build the test area.
 #
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/polaris/test" ]; then
+if [ ! -d "${CVS_SANDBOX}/conger/test" ]; then
     echo  "ERROR:  You need to checkout the Borealis test area."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/polaris/test
+cd  ${CVS_SANDBOl}/conger/test
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/test"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/conger/test"
     exit  -1
 fi
 
@@ -739,7 +739,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     echo "BUILD_TEST_DEVELOPER=${BUILD_TEST_DEVELOPER}"
 
     if [ ${BUILD_TEST_SIMPLE} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/test/simple
+        cd  ${CVS_SANDBOX}/conger/test/simple
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -756,7 +756,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_COMPOSITE} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/test/composite
+        cd  ${CVS_SANDBOX}/conger/test/composite
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -773,7 +773,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_UNIT} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/test/unit
+        cd  ${CVS_SANDBOX}/conger/test/unit
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -790,7 +790,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_VALID} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/test/valid
+        cd  ${CVS_SANDBOX}/conger/test/valid
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -807,7 +807,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TEST_DEVELOPER} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/test/developer
+        cd  ${CVS_SANDBOX}/conger/test/developer
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -838,15 +838,15 @@ BuildTool()    # Build the Borealis tools.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/polaris/tool" ]; then
+if [ ! -d "${CVS_SANDBOX}/conger/tool" ]; then
     echo  "ERROR:  You need to checkout the Borealis tool directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/polaris/tool
+cd  ${CVS_SANDBOX}/conger/tool
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/tool"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/conger/tool"
     exit  -1
 fi
 
@@ -906,7 +906,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     echo "BUILD_TOOL_OPTIMIZER=${BUILD_TOOL_OPTIMIZER}"
 
     if [ ${BUILD_TOOL_MARSHAL} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/marshal
+        cd  ${CVS_SANDBOX}/conger/tool/marshal
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -923,7 +923,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_HEAD} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/head
+        cd  ${CVS_SANDBOX}/conger/tool/head
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -940,7 +940,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_STATS} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/statsView
+        cd  ${CVS_SANDBOX}/conger/tool/statsView
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -957,7 +957,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_MONITOR} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/monitor
+        cd  ${CVS_SANDBOX}/conger/tool/monitor
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -974,7 +974,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_LOAD} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/loadGenerator
+        cd  ${CVS_SANDBOX}/conger/tool/loadGenerator
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -991,7 +991,7 @@ if [ ${CONFIGURE_ONLY} -eq 0 ]; then
     fi
 
     if [ ${BUILD_TOOL_OPTIMIZER} -ne 0 ]; then
-        cd  ${CVS_SANDBOX}/polaris/tool/optimizer
+        cd  ${CVS_SANDBOX}/conger/tool/optimizer
         make  clean
 
         if [ $? -ne 0 ]; then
@@ -1022,15 +1022,15 @@ BuildDemo()    # Build the Borealis demos.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/polaris/demo" ]; then
+if [ ! -d "${CVS_SANDBOX}/conger/demo" ]; then
     echo  "ERROR:  You need to checkout the Borealis demo directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/polaris/demo
+cd  ${CVS_SANDBOX}/conger/demo
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/demo"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/conger/demo"
     exit  -1
 fi
 
@@ -1107,15 +1107,15 @@ BuildClient()    # Build the Borealis clients.
 
 #  Run setup to generate a fresh configure script.
 #
-if [ ! -d "${CVS_SANDBOX}/polaris/utility/client" ]; then
+if [ ! -d "${CVS_SANDBOX}/conger/utility/client" ]; then
     echo  "ERROR:  You need to checkout the Borealis client directory."
     exit  -1
 fi
 
-cd  ${CVS_SANDBOX}/polaris/utility/client
+cd  ${CVS_SANDBOX}/conger/utility/client
 
 if [ $? -ne 0 ]; then
-    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/polaris/utility/client"
+    echo  "ERROR:  Could not:  cd  ${CVS_SANDBOX}/conger/utility/client"
     exit  -1
 fi
 
@@ -1278,7 +1278,7 @@ if [ ${BUILD_TEST}   -eq 0 ]  &&                   \
     BUILD_SET="${BUILD_SET}Borealis "
 
 else
-    if [ ! -f "${CVS_SANDBOX}/polaris/src/src/borealis" ]; then
+    if [ ! -f "${CVS_SANDBOX}/conger/src/src/borealis" ]; then
         BuildBorealis
         BUILD_SET="${BUILD_SET}Borealis, "
     fi
