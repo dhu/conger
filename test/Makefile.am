@@ -1,1 +1,3 @@
-SUBDIRS = simple  unit  composite  valid  developer
+# SUBDIRS = simple  unit  composite  valid  developer
+SUBDIRS = cql
+
