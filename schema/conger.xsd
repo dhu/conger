@@ -33,7 +33,7 @@
         <xsd:sequence>
             <xsd:element name="field" type="conger:SchemaFieldType" maxOccurs="unbounded" />
         </xsd:sequence>
-        <xsd:attribute name="name" type="xsd:string"</xsd:attribute>
+        <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
 
     <xsd:complexType name="SchemaFieldType">
@@ -48,7 +48,7 @@
     </xsd:complexType>
     
     <xsd:complexType name="StreamType">
-        <xsd:attribute name="type" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="schema" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
     
@@ -60,10 +60,11 @@
     
     <xsd:complexType name="QueryType">
         <xsd:sequence>
-            <xsd:element name="cql" type="xsd:string"></xsd:element>
+            <xsd:element name="in" type="xsd:string" maxOccurs="unbounded"/>
+            <xsd:element name="out" type="xsd:string"/>
+            <xsd:element name="cql" type="xsd:string"/>
         </xsd:sequence>
-        <xsd:attribute name="in" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="out" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="name" type="xsd:string"/>
     </xsd:complexType>
     
 </xsd:schema>

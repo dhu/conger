@@ -33,7 +33,8 @@ DEPENDENCIES = $(BOREALIS_SRC)/modules/common/libborealiscommon.la
 
 cql_test_DEPENDENCIES = 
 
-cql_test_SOURCES = 
+cql_test_SOURCES = cql_test.cc cql_test.h
+
                  
 
              ###########################################

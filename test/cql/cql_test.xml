@@ -3,6 +3,10 @@
 <conger xmlns="http://dhu.github.com/conger/cql"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://dhu.github.com/conger/cql ../../schema/conger.xsd">
+    
+    <deploy>
+        <deploy-name>conger cql test</deploy-name>
+    </deploy>
 
     <schemas>
         <schema name="PositionRequest">
@@ -45,7 +49,6 @@
         </query>
 
     </querys>
-
 
 </conger>
 
