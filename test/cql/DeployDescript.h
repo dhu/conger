@@ -22,7 +22,9 @@ typedef struct DeployDescriptStruct
     /* std::map<streamName, schema> streams */
     std::map<std::string, std::string> streams;
 
-    /* std::map<queryName, std::map<parament, value> > querys */
+    /* std::map<queryName, std::map<parament, value> > querys
+     * 如果有多个输入流，则多个输入流用冒号隔开,例: <in, stream1:stream2>
+     */
     std::map<std::string, std::map<std::string, std::string> > querys;
 
 } DeployDescript;

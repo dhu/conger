@@ -24,10 +24,12 @@ private:
 
 	DeployDescript deploy;
 
-	void parseDeployName(xercesc::DOMDocument& deployNameDOM);
-	void parseSchemas(xercesc::DOMDocument& schemasDOM);
-	void parseStreams(xercesc::DOMDocument& streamsDOM);
-	void parseQuerys(xercesc::DOMDocument& querysDOM);
+	void parseDeployName(xercesc::DOMNode* deployNameDOM);
+	void parseSchemas(xercesc::DOMNode* schemasDOM);
+	void parseStreams(xercesc::DOMNode* streamsDOM);
+	void parseQuerys(xercesc::DOMNode* querysDOM);
+
+	std::string getChildText(xercesc::DOMNode* node);
 };
 
 #endif /* DEPLOYPARSER_H_ */

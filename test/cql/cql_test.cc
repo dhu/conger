@@ -6,50 +6,16 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
+#include "DeployParser.h"
+#include "DeployDescript.h"
+
 using namespace std;
 using namespace xercesc;
 
 int main()
 {
-    try 
-    {
-        XMLPlatformUtils::Initialize();
-    }
-    catch (const XMLException& toCatch)
-    {
-        char* message = XMLString::transcode(toCatch.getMessage());
-        cout << "Failed to initialize xml: " << message <<  endl;
-        XMLString::release(&message);
-        exit(1);
-    }
-    
-    XercesDOMParser* parser = new XercesDOMParser();
+    DeployParser parser;
+    DeployDescript deploy = parser.parse("cql_test.xml");
 
-    char* cqlXmlFilename = "cql_test.xml";
-    try 
-    {
-        parser->parse(cqlXmlFilename);
-    }
-    catch (...)
-    {
-        cout << "I catch something" << endl;
-    }
-
-    DOMDocument *document = parser->getDocument();
-    DOMElement *element = document->getDocumentElement();
-    
-    const XMLCh* tagNameXML = element->getTagName();
-    char *tagName = XMLString::transcode(tagNameXML);
-    cout << tagName << endl;
-    XMLString::release(&tagName);
-
-    XMLCh* attributeName = XMLString::transcode("xmlns");
-    const XMLCh* attributeXML = element->getAttribute(attributeName);
-    char *attribute = XMLString::transcode(attributeXML);
-    cout << attribute << endl;
-    XMLString::release(&attribute);
-    XMLString::release(&attributeName);
-
-    delete parser;
     return 0;
 }
