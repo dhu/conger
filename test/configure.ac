@@ -356,5 +356,5 @@ AC_SUBST(BOREALISINCLUDE)
 
 
 dnl AC_OUTPUT(Makefile simple/Makefile unit/Makefile valid/Makefile  valid/catalog/Makefile valid/system/Makefile valid/move/Makefile valid/two_chains/Makefile valid/global/Makefile valid/connect/Makefile valid/revisions/Makefile valid/array/Makefile valid/deploy/Makefile composite/Makefile composite/fault/Makefile composite/sunion/Makefile composite/sunion/src/Makefile composite/loadnetwork/Makefile composite/updates/Makefile composite/NHLoadShedder/Makefile composite/GlobalLoadShedder/Makefile composite/GlobalLoadShedder/chain/Makefile composite/revision/Makefile developer/Makefile composite/deltaProcessing/Makefile composite/deltaProcessing/video/Makefile composite/deltaProcessing/ais/Makefile composite/deltaProcessing/stars/Makefile)
-AC_OUTPUT(Makefile cql/Makefile)
+AC_OUTPUT(Makefile cql/Makefile simple/Makefile)
 

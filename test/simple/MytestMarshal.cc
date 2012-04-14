@@ -144,7 +144,7 @@ void  MytestMarshal::connectPacket()
 
     // Starting to produce events on input stream.
     //
-    if (!_client->set_data_path(MAX_BUFFER, Util::get_host_address("127.0.1.1"), 15000))
+    if (!_client->set_data_path(MAX_BUFFER, Util::get_host_address("127.0.0.1"), 15000))
     {   ERROR << "Failed setting data path";
     }
     else

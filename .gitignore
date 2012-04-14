@@ -20,6 +20,7 @@ utility/client/java/src/subscribe
 tool/client/enqueue
 tool/client/dequeue
 tool/padmin/padmin
+src/src/conger
 
 # autotools 生成的文件
 Makefile.in
@@ -60,4 +61,52 @@ src/modules/queryProcessor/UpdateServer.cc
 # antlr 生成的文件
 Expr*pp
 src/modules/queryProcessor/expr/ExprParserTokenTypes.txt
+
+# 自动生成的文件及可执行文件 
+test/simple/Aggregate_TestMarshal.cc
+test/simple/Aggregate_TestMarshal.h
+test/simple/Aurorajoin_TestMarshal.cc
+test/simple/Aurorajoin_TestMarshal.h
+test/simple/Cp2TestMarshal.cc
+test/simple/Cp2TestMarshal.h
+test/simple/CptestMarshal.cc
+test/simple/CptestMarshal.h
+test/simple/Join_TestMarshal.cc
+test/simple/Join_TestMarshal.h
+test/simple/Joinstatic_TestMarshal.cc
+test/simple/Joinstatic_TestMarshal.h
+test/simple/Marshal.cc
+test/simple/Marshal.h
+test/simple/Movebox_TestMarshal.cc
+test/simple/Movebox_TestMarshal.h
+test/simple/Table_TestMarshal.cc
+test/simple/Table_TestMarshal.h
+test/simple/Update_Queue1Marshal.cc
+test/simple/Update_Queue1Marshal.h
+test/simple/Update_Queue2Marshal.cc
+test/simple/Update_Queue2Marshal.h
+test/simple/Update_QueueMarshal.cc
+test/simple/Update_QueueMarshal.h
+test/simple/aggregate_test
+test/simple/aurorajoin_test
+test/simple/borealis-127.0.0.1:15000.log
+test/simple/cp2test
+test/simple/cptest
+test/simple/join_test
+test/simple/joinstatic_test
+test/simple/movebox_test
+test/simple/mytest.log
+test/simple/mytestdist
+test/simple/mytestout.log
+test/simple/table_test
+test/simple/update_queue
+test/simple/update_queue1
+test/simple/update_queue2
+test/simple/mytest
+tool/client/enqueueAndDequeue
+
+
+
+
+
 

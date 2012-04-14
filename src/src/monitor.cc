@@ -66,6 +66,7 @@ int main(int argc, const char* argv[])
                 vector<Stats> stats = *result;
                 double input_rate = total_input_rate(stats);
                 WARN << "Total input rate for node " << name << " is " << input_rate;
+                WARN << stats.front()._cpu_usage;
             }
         }
 

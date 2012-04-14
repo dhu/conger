@@ -12,16 +12,18 @@
 
 using namespace Borealis;
 
-struct AggregateTuple
+/* 这里的类型一定要 double */
+struct AggregateTuple: public TupleHeader
 {
 	int32 time;
-	float maxprice;
-}__attribute__((__packed__));
+	double maxprice;
+	int32 currenttime;
+ }__attribute__((__packed__));
 
-struct InputTuple: public TupleHeader
+struct StockInputTuple: public TupleHeader
 {
 	int32 time;
-	float price;
-}__attribute__((__packed__));
+	double price;
+} __attribute__((__packed__));
 
 #endif /* STOCK_TUPLE_H_ */

@@ -26,13 +26,14 @@ public:
 
 	void start();
 	void loadData();
+	void sendPacket();
 
 	virtual ~Enqueue();
 
 private:
 	ptr<MedusaClient> medusaClient;
 	ptr<StreamEvent> eventPacket;
-	list<InputTuple> data;
+	list<StockInputTuple> data;
 };
 
 BOREALIS_NAMESPACE_END

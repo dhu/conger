@@ -2,7 +2,7 @@ MYFLAGS =
 AM_CFLAGS = @CFLAGS@ $(MYFLAGS)
 AM_CXXFLAGS = @CXXFLAGS@ $(MYFLAGS)
 
-MAIN = enqueue dequeue enqueueAndDequeue
+MAIN = enqueue dequeue #enqueueAndDequeue
 
 bin_PROGRAMS = $(MAIN)
 

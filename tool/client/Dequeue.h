@@ -16,17 +16,18 @@
 
 BOREALIS_NAMESPACE_BEGIN
 
-class Dequeue {
+class Dequeue
+{
 
 public:
-	Dequeue();
+    Dequeue();
 
-	void start();
+    void start();
 
-	virtual ~Dequeue();
+    virtual ~Dequeue();
 
 private:
-	ptr<MedusaClient> medusaClient;
+    ptr<MedusaClient> medusaClient;
 
 };
 

@@ -2,7 +2,7 @@ MYFLAGS     =
 AM_CFLAGS   = $(MYFLAGS)
 AM_CXXFLAGS = $(MYFLAGS)
 
-MAIN = borealis     monitor
+MAIN = borealis     monitor	conger
 
 bin_PROGRAMS = $(MAIN)
 
@@ -57,3 +57,8 @@ borealis_DEPENDENCIES =                                                     \
 monitor_LDADD = $(LDADD) $(LDADD_EXTRAS) 
 monitor_DEPENDENCIES = $(DEPENDENCIES)
 monitor_SOURCES = monitor.cc
+
+conger_LDADD = $(borealis_LDADD)
+conger_DEPENDENCIES = $(borealis_DEPENDENCIES)
+conger_SOURCES = $(borealis_SOURCES)
+
