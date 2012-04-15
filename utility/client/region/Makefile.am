@@ -8,20 +8,20 @@ AM_CXXFLAGS = @CXXFLAGS@ $(MYFLAGS)
 
 LDADD_EXTRAS = @XERCESCLIB@   @NMSTLLIB@
 
-LDADD = -L ../@BOREALISROOT@/modules/common          -lborealiscommon  \
-        -L ../@BOREALISROOT@/modules/util            -lborealisutil    \
+LDADD = -L @BOREALISROOT@/modules/common          -lborealiscommon  \
+        -L @BOREALISROOT@/modules/util            -lborealisutil    \
         -L .                                         -lborealisregion  \
         $(LDADD_EXTRAS)
 
 INCLUDES = @XERCESCINCLUDE@  @NMSTLINCLUDE@          -I ../rpc         \
-           -I ../@BOREALISROOT@/modules/common                         \
-           -I ../@BOREALISROOT@/modules/util                           \
-           -I ../@BOREALISROOT@/modules/catalog                        \
-           -I ../@BOREALISROOT@/modules/rpc                            \
-           -I ../@BOREALISROOT@/modules/queryProcessor/statsMgr        
+           -I @BOREALISROOT@/modules/common                         \
+           -I @BOREALISROOT@/modules/util                           \
+           -I @BOREALISROOT@/modules/catalog                        \
+           -I @BOREALISROOT@/modules/rpc                            \
+           -I @BOREALISROOT@/modules/queryProcessor/statsMgr        
 
-DEPENDENCIES = ../@BOREALISROOT@/modules/common/libborealiscommon.la   \
-  ../@BOREALISROOT@/modules/catalog/libborealiscatalog.la
+DEPENDENCIES = @BOREALISROOT@/modules/common/libborealiscommon.la   \
+  @BOREALISROOT@/modules/catalog/libborealiscatalog.la
 
 lib_LTLIBRARIES = libborealisregion.la
 

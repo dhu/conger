@@ -45,7 +45,7 @@ AC_MSG_CHECKING([for Borealis])
 
 # sensible default if nothing specified
 if test "x$with_borealis" = x; then
-    with_borealis=../src
+    with_borealis=$BOREALIS_HOME/src
 fi
 
 if test -f "$with_borealis/src/borealis.cc"; then
