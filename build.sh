@@ -20,8 +20,8 @@ source $BOREALIS_TOOL/rc
 # 确保没有重复导入
 if [ "x$TOOL_PATH_SET" = "x" ]; then
     export TOOL_PATH_SET="tool_path_already_set"
-    export PATH=/home/jj/Workspace/borealis_summer_2008/conger/tool/marshal:$PATH
-    export PATH=/home/jj/Workspace/borealis_summer_2008/conger/tool/head:$PATH
+    export PATH=$BOREALIS_HOME/tool/marshal:$PATH
+    export PATH=$BOREALIS_HOME/tool/head:$PATH
 fi
 
 # 判断这个脚本是在独立的子进程中执行的，还是在当前进程通过 source 运行的.
