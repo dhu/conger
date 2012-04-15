@@ -140,6 +140,8 @@ class MedusaClient :
     }
 
 
+    using Remote<QueryProcessor>::add_conger_string;
+
 
     // Update XML
     //

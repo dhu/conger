@@ -38,6 +38,10 @@ class DeployDiagram : public RegionalCatalog
                                           Boolean   dynamic = False)
                            throw(AuroraBadEntityException);
 
+    void deploy_conger(string conger_config)
+    {
+        _node->_client->add_conger_string(conger_config);
+    }
 
   private:
 

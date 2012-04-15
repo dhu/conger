@@ -72,6 +72,14 @@ class QueryProcessor : public BasicComponent
                                   // Provide access to the QueryProcessor.
                                   QueryProcessor   &query_processor);
     
+    AsyncRPC<void> add_conger_string(string conger_config)
+    {
+        INFO << conger_config;
+        AsyncRPC<void> completion;
+        completion.post(true);
+        return completion;
+    }
+
  private:
 
     ////////////////////////////////////////////////////////////////////////////

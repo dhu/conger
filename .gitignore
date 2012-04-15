@@ -104,7 +104,18 @@ test/simple/update_queue1
 test/simple/update_queue2
 test/simple/mytest
 tool/client/enqueueAndDequeue
-
+tool/loadGenerator/simple/InputGenerator
+tool/loadGenerator/simple/NetworkTrafficQueryGen
+tool/loadGenerator/simple/OutputReceiver
+tool/loadGenerator/simple/test
+tool/loadGenerator/simple/xmlgen
+tool/loadGenerator/wlgen/workloadGenerator
+tool/monitor/lib/monitor.jar
+tool/monitor/src/classjava.stamp
+tool/optimizer/loadManager/LoadManager
+tool/optimizer/loadManager/test
+tool/statsView/lib/
+tool/statsView/src/classjava.stamp
 
 
 
