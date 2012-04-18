@@ -30,8 +30,8 @@
     </schemas>
 
     <streams>
-        <stream name="PositionStream" schema="PositionRequest" />            
-        <stream name="SpeedStatisticsStream" schema="SpeedStatistics"/>
+        <stream name="PositionStream" type="input" schema="PositionRequest" />            
+        <stream name="SpeedStatisticsStream" type="output" schema="SpeedStatistics"/>
     </streams>
 
     <querys>
