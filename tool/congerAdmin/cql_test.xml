@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<conger xmlns="http://dhu.github.com/conger/cql"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://dhu.github.com/conger/cql ../../schema/conger.xsd">
+    
+    <deploy>
+        <deploy-name>conger cql test</deploy-name>
+    </deploy>
+
+    <schemas>
+        <schema name="PositionRequest">
+            <field name="vid" type="int"/>
+            <field name="speed" type="int"/>
+            <field name="xway" type="int"/>
+            <field name="segment" type="int"/>
+            <field name="lane" type="int"/>
+            <field name="direction" type="int"/>
+        </schema>
+
+        <schema name="SpeedStatistics">
+            <field name="vid" type="int"/>
+            <field name="speed" type="int"/>
+            <field name="xway" type="int"/>
+            <field name="segment" type="int"/>
+            <field name="lane" type="int"/>
+            <field name="direction" type="int"/>
+        </schema>
+
+    </schemas>
+
+    <streams>
+        <stream name="PositionStream" schema="PositionRequest" />            
+        <stream name="SpeedStatisticsStream" schema="SpeedStatistics"/>
+    </streams>
+
+    <querys>
+
+        <query name="MaxSpeed">
+            <in>PositionStream</in>            
+            <out>SpeedStatisticsStream</out>
+            <cql>
+                <![CDATA[
+                SELECT * 
+                FROM PositionStream[RANGE 1 MINUTES SLIDE 3 SECONDS]
+                ORDER BY speed DESC ROWS 10
+                ]]>
+            </cql>
+        </query>
+
+    </querys>
+
+</conger>
+
+

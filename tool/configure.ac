@@ -385,4 +385,9 @@ BOREALISINCLUDE="$NMSTLINCLUDE $XERCESCINCLUDE $ANTLRINCLUDE"
 AC_SUBST(BOREALISINCLUDE)
 
 
-AC_OUTPUT(Makefile marshal/Makefile head/Makefile statsView/Makefile statsView/src/Makefile monitor/Makefile monitor/src/Makefile optimizer/Makefile optimizer/loadManager/Makefile optimizer/loadShedder/Makefile loadGenerator/Makefile loadGenerator/simple/Makefile loadGenerator/wlgen/Makefile client/Makefile padmin/Makefile)
+AC_OUTPUT(Makefile marshal/Makefile head/Makefile statsView/Makefile \
+        statsView/src/Makefile monitor/Makefile monitor/src/Makefile \
+        optimizer/Makefile optimizer/loadManager/Makefile \
+        optimizer/loadShedder/Makefile loadGenerator/Makefile \
+        loadGenerator/simple/Makefile loadGenerator/wlgen/Makefile \
+        client/Makefile padmin/Makefile congerAdmin/Makefile)
