@@ -21,4 +21,5 @@ libborealiscatalog_la_SOURCES = Catalog.cc          Catalog.h             \
                                 CatalogView.cc      CatalogView.h         \
                                 SchemaArray.cc      SchemaArray.h         \
                                                     SchemaField.h         \
-                                                    CatalogSubscription.h
+                                                    CatalogSubscription.h \
+                                CongerDiagram.cc    CongerDiagram.h

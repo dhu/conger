@@ -14,7 +14,8 @@
 #include "PendingQuery.h"
 #include "Diagram.h"
 #include "UpdateClient.h"
-
+#include "congerDeploy/DeployDescript.h"
+#include "CongerDiagram.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -52,6 +53,37 @@ class QueryProcessor : public BasicComponent
 
  public:
 
+    /////////////////////////////////////////////////
+    /// conger deploy interface       by hellojinjie
+    ///.............................................
+
+    /// 这个方法在 CongerProcessor.cc 里实现
+    ///
+    AsyncRPC<void> add_conger_string(string conger_config);
+
+ private:
+    /// add schema to catalog
+    ///
+    void add_conger_schema(DeployDescript deploy_descript);
+
+    /// add input stream to catalog
+    ///
+    void add_conger_input(DeployDescript deploy_descript);
+
+    /// add query or box to catalog
+    ///
+    void add_conger_query(DeployDescript deploy_descript);
+
+    /// 先用 add_conger_query 把一个 CQL 拆分成若干个 Box，再用这个方法add box
+    ///
+    void add_conger_box(string box_name, map<string, string> box_parameters);
+
+    /// add subscribe to catalog
+    ///
+    void add_conger_subscribe(DeployDescript deploy_descript);
+
+ public:
+
     //////////////////////////////////////////////////
     ///
     /// XML catalog interface.
@@ -71,10 +103,6 @@ class QueryProcessor : public BasicComponent
 
                                   // Provide access to the QueryProcessor.
                                   QueryProcessor   &query_processor);
-    
-    /// 这个方法在 CongerProcessor.cc 里实现 by hellojinjie
-    ///
-    AsyncRPC<void> add_conger_string(string conger_config);
 
  private:
 
@@ -436,8 +464,10 @@ class QueryProcessor : public BasicComponent
 
  private:
 
-    // The slice of the catalog of objects deployed to this node.
-    Diagram  _local_catalog;
+    /// The slice of the catalog of objects deployed to this node.
+    /// 由 Diagram 改成 CongerDiagram  by hellojinjie
+    ///
+    CongerDiagram  _local_catalog;
 
 
     /// We may want to move the_region_client and _head_client into Diagram:

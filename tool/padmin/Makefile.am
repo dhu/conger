@@ -15,7 +15,7 @@ LDADD = -L../@BOREALISROOT@/modules/catalog               -lborealiscatalog  \
         -L../../utility/client/region                     -lborealisregion   \
         -L../@BOREALISROOT@/modules/common                -lborealiscommon   \
         -L../@BOREALISROOT@/modules/util                  -lborealisutil     \
-        -L.												  -lantlr3c			 \
+        -L.                                               -lantlr3c          \
         $(LDADD_EXTRAS)
 
 INCLUDES = @XERCESCINCLUDE@  @NMSTLINCLUDE@                            \
@@ -26,7 +26,7 @@ INCLUDES = @XERCESCINCLUDE@  @NMSTLINCLUDE@                            \
            -I../@BOREALISROOT@/modules/queryProcessor/statsMgr        \
            -I../@BOREALISROOT@/modules/rpc                            \
            -I../../utility/client/region                              \
-           -I../../utility/client/rpc								   \
+           -I../../utility/client/rpc                                 \
            -I/opt/antlr3c/include
 
 padmin_SOURCES = PolarisAdmin.h PolarisAdmin.cc DeployDiagram.h HeadServer.h \

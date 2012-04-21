@@ -11,6 +11,7 @@
 
 using namespace std;
 using namespace xercesc;
+using namespace Borealis;
 
 int main()
 {

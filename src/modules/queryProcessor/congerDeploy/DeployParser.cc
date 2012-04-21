@@ -11,7 +11,9 @@
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
 #include <NMSTL/debug>
+#include <NMSTL/ptr>
 #include <iostream>
 
 
@@ -41,12 +43,17 @@ DeployParser::~DeployParser()
     XMLPlatformUtils::Terminate();
 }
 
-DeployDescript DeployParser::parse(string deployFilename)
+DeployDescript DeployParser::parse(string conger_string)
 {
      XercesDOMParser* parser = new XercesDOMParser();
      try
      {
-         parser->parse(deployFilename.c_str());
+         MemBufInputSource input_source(
+                 (XMLByte*) conger_string.c_str(),
+                 strlen(conger_string.c_str()),
+                 "conger_deploy_string"
+         );
+         parser->parse(input_source);
      }
      catch (...)
      {

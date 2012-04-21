@@ -23,7 +23,7 @@ public:
 	DeployParser();
 	virtual ~DeployParser();
 
-	DeployDescript parse(std::string deployFilename);
+	DeployDescript parse(std::string conger_string);
 
 private:
 

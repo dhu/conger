@@ -9,12 +9,11 @@ AM_CXXFLAGS = $(MYFLAGS)
 INCLUDES= @BOREALISINCLUDE@   @EXTERNALINCLUDE@                            \
           -I../common       -I../util         -I../rpc                     \
           -I../catalog      -I../optimizer/nhopt                           \
-          -I./runtime       -I./storageMgr    -I./statsMgr    -I./expr	   \
-          -I./congerDeploy  -I/opt/antlr3c/include
+          -I./runtime       -I./storageMgr    -I./statsMgr    -I./expr
 
-lib_LTLIBRARIES = libborealisqp.la 
+lib_LTLIBRARIES = libcongercql.la 
 
-libborealisqp_la_SOURCES =                                 \
+libcongercql_la_SOURCES =                                 \
            ConsistencyMngr.cc       ConsistencyMngr.h      \
            DataPath.cc              DataPath.h             \
            DynamicArray.cc          DynamicArray.h         \
@@ -26,10 +25,7 @@ libborealisqp_la_SOURCES =                                 \
            AdminCatalog.cc                                 \
                                     UpdateClient.h         \
                                     UpdateServer.h         \
-                                    PendingQuery.h         \
-           CongerProcessor.cc				   \
-           congerDeploy/DeployParser.cc          congerDeploy/DeployParser.h         \
-                                    congerDeploy/DeployDescript.h
+                                    PendingQuery.h
 #           QueryProcessorWithoutHA.cc
 
 LDADD_MODULES = @NMSTLLIB@                                             \
@@ -37,10 +33,9 @@ LDADD_MODULES = @NMSTLLIB@                                             \
                 -L../modules/optimizer/local        -lborealislopt     \
                 -L../modules/optimizer/nhopt        -lborealisnhopt    \
                 -L../modules/queryProcessor         -lborealisqp       \
-                -L../modules/util                   -lborealisutil     \
-                -L.                                 -lantlr3c          
+                -L../modules/util                   -lborealisutil
 
-libborealisqp_la_LIBADD =                                  \
+libcongercql_la_LIBADD =                                  \
            expr/libborealisqpexpr.la                       \
            runtime/libborealisqpruntime.la                 \
            storageMgr/libborealisqpstore.la                \

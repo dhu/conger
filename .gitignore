@@ -61,6 +61,7 @@ src/modules/queryProcessor/UpdateServer.cc
 # antlr 生成的文件
 Expr*pp
 src/modules/queryProcessor/expr/ExprParserTokenTypes.txt
+src/modules/cql/output/
 
 # 自动生成的文件及可执行文件 
 test/simple/Aggregate_TestMarshal.cc
@@ -117,7 +118,7 @@ tool/optimizer/loadManager/test
 tool/statsView/lib/
 tool/statsView/src/classjava.stamp
 
-
+src/modules/queryProcessor/libantlr3c.so
 
 
 
