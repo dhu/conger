@@ -10,7 +10,7 @@ INCLUDES= @BOREALISINCLUDE@   @EXTERNALINCLUDE@                            \
           -I../common       -I../util         -I../rpc                     \
           -I../catalog      -I../optimizer/nhopt                           \
           -I./runtime       -I./storageMgr    -I./statsMgr    -I./expr	   \
-          -I./congerDeploy  -I/opt/antlr3c/include
+          -I./congerDeploy 
 
 lib_LTLIBRARIES = libborealisqp.la 
 
@@ -27,6 +27,8 @@ libborealisqp_la_SOURCES =                                 \
                                     UpdateClient.h         \
                                     UpdateServer.h         \
                                     PendingQuery.h         \
+           CongerCQLLexer.c         CongerCQLLexer.h       \
+           CongerCQLParser.c        CongerCQLParser.h      \
            CongerProcessor.cc				   \
            congerDeploy/DeployParser.cc          congerDeploy/DeployParser.h         \
                                     congerDeploy/DeployDescript.h
@@ -37,8 +39,8 @@ LDADD_MODULES = @NMSTLLIB@                                             \
                 -L../modules/optimizer/local        -lborealislopt     \
                 -L../modules/optimizer/nhopt        -lborealisnhopt    \
                 -L../modules/queryProcessor         -lborealisqp       \
-                -L../modules/util                   -lborealisutil     \
-                -L.                                 -lantlr3c          
+                -L../modules/util                   -lborealisutil   
+   
 
 libborealisqp_la_LIBADD =                                  \
            expr/libborealisqpexpr.la                       \

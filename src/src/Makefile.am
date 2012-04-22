@@ -17,7 +17,7 @@ LDADD = -L../modules/queryProcessor        -lborealisqp          \
         -L../modules/optimizer/nhopt       -lborealisnhopt       \
         -L../modules/optimizer/local       -lborealislopt        \
         -L../modules/common                -lborealiscommon      \
-        -L../modules/util                  -lborealisutil
+        -L../modules/util                  -lborealisutil        
 
 INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@               \
            -I../modules/common                                 \

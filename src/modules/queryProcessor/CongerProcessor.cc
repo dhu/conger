@@ -9,6 +9,8 @@
 #include "DeployParser.h"
 #include "DeployDescript.h"
 #include "antlr3.h"
+#include "CongerCQLLexer.h"
+#include "CongerCQLParser.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -216,22 +218,22 @@ void QueryProcessor::add_conger_subscribe(DeployDescript deploy_descript)
 }
 
 void parse_select(string cql_string)
-{/*
+{
     pANTLR3_INPUT_STREAM input;
-    pSQLLexer lxr;
+    pCongerCQLLexer lxr;
     pANTLR3_COMMON_TOKEN_STREAM tstream;
-    pSQLParser psr;
+    pCongerCQLParser psr;
 
     const char * inputString = cql_string.c_str();
 
     input = antlr3StringStreamNew((uint8_t *) inputString, ANTLR3_ENC_UTF8,
             strlen(inputString), (uint8_t *) "test_statement");
-    lxr = SQLLexerNew(input);
+    lxr = CongerCQLLexerNew(input);
     tstream = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT,
             TOKENSOURCE(lxr));
-    psr = SQLParserNew(tstream);
+    psr = CongerCQLParserNew(tstream);
 
-    SQLParser_statement_return statementAST = psr->statement(psr);
+    CongerCQLParser_statement_return statementAST = psr->statement(psr);
 
     pANTLR3_BASE_TREE root = statementAST.tree;
     pANTLR3_BASE_TREE treeNode;
@@ -248,8 +250,8 @@ void parse_select(string cql_string)
     lxr->free(lxr);
     tstream->free(tstream);
     psr->free(psr);
-    return result;
-    */
+    return ;
+
 }
 
 BOREALIS_NAMESPACE_END

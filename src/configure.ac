@@ -66,6 +66,33 @@ AC_SUBST(ANTLR_JAR_FILE)
 ])
 
 
+dnl ***************************
+dnl     Looking for ANTLR3 
+dnl ***************************
+AC_DEFUN([AC_ANTLR3],
+[AC_ARG_WITH(antlr3, [  --with-antlr3], , )
+AC_MSG_CHECKING([for ANTLR3])
+
+# sensible default if nothing specified
+if test "x$with_antlr3" = x; then
+    with_antlr3=/opt/borealis-tools/antlr3c
+fi
+
+if test -f "$with_antlr3/include/antlr3.h"; then
+    ANTLR3DIR=$with_antlr3
+    ANTLR3LIB="$ANTLR3DIR/lib/libantlr3c.a "
+    ANTLR3INCLUDE="-I$ANTLR3DIR/include"
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_RESULT([no])
+    AC_ERROR($with_antlr3/include/antlr3.h does not exist)
+fi
+AC_SUBST(ANTLR3INCLUDE)
+AC_SUBST(ANTLR3LIB)
+])
+
+AC_ANTLR3
+
 dnl *************************************
 dnl     Looking for Berkeley-DB
 dnl *************************************
@@ -419,10 +446,10 @@ fi
 AC_SUBST(EXTERNALLIB)
 AC_SUBST(EXTERNALINCLUDE)
 
-BOREALISLIB="$NMSTLLIB $XERCESCLIB $ANTLRLIB"
+BOREALISLIB="$NMSTLLIB $XERCESCLIB $ANTLRLIB $ANTLR3LIB"
 AC_SUBST(BOREALISLIB)
 
-BOREALISINCLUDE="$NMSTLINCLUDE $XERCESCINCLUDE $ANTLRINCLUDE"
+BOREALISINCLUDE="$NMSTLINCLUDE $XERCESCINCLUDE $ANTLRINCLUDE $ANTLR3INCLUDE"
 AC_SUBST(BOREALISINCLUDE)
 
 AC_OUTPUT(Makefile modules/Makefile external/Makefile external/udb/Makefile external/udb/stub/Makefile external/bdb/Makefile external/bdb/stub/Makefile external/array/Makefile external/array/stub/Makefile src/Makefile modules/rpc/Makefile modules/ha/Makefile modules/availMon/Makefile modules/common/Makefile modules/util/Makefile modules/queryProcessor/Makefile modules/queryProcessor/runtime/Makefile modules/queryProcessor/storageMgr/Makefile modules/queryProcessor/boxes/Makefile modules/queryProcessor/expr/Makefile modules/queryProcessor/statsMgr/Makefile modules/optimizer/Makefile modules/optimizer/nhopt/Makefile modules/optimizer/local/Makefile modules/catalog/Makefile)

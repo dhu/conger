@@ -542,11 +542,12 @@ static void     CongerCQLParserReset (pCongerCQLParser ctx);
  * we need a function that knows how to free a return scope when the list is destroyed.
  * We cannot just use ANTLR3_FREE because in debug tracking mode, this is a macro.
  */
+/*
 static	void ANTLR3_CDECL freeScope(void * scope)
 {
     ANTLR3_FREE(scope);
 }
-
+*/
 /** \brief Name of the grammar file that generated this code
  */
 static const char fileName[] = "CongerCQL.g";
@@ -718,12 +719,12 @@ parser
  * number as the index).
  *
  * \return Pointer to first char * in the table.
- */
+ *//*
 static pANTLR3_UINT8    *getTokenNames()
 {
         return CongerCQLParserTokenNames;
 }
-
+*/
 
 /* Declare the bitsets
  */
@@ -941,8 +942,8 @@ static  ANTLR3_BITSET_LIST FOLLOW_null_spec_in_orderterm903	= { FOLLOW_null_spec
 static	ANTLR3_BITWORD FOLLOW_KW_NULLS_in_null_spec953_bits[]	= { ANTLR3_UINT64_LIT(0x0800000000000000), ANTLR3_UINT64_LIT(0x0000000000001000) };
 static  ANTLR3_BITSET_LIST FOLLOW_KW_NULLS_in_null_spec953	= { FOLLOW_KW_NULLS_in_null_spec953_bits, 2	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_set_in_null_spec955  */
-static	ANTLR3_BITWORD FOLLOW_set_in_null_spec955_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000002) };
-static  ANTLR3_BITSET_LIST FOLLOW_set_in_null_spec955	= { FOLLOW_set_in_null_spec955_bits, 1	};
+//static	ANTLR3_BITWORD FOLLOW_set_in_null_spec955_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000002) };
+//static  ANTLR3_BITSET_LIST FOLLOW_set_in_null_spec955	= { FOLLOW_set_in_null_spec955_bits, 1	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_attr_in_order_expr972  */
 static	ANTLR3_BITWORD FOLLOW_attr_in_order_expr972_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000002) };
 static  ANTLR3_BITSET_LIST FOLLOW_attr_in_order_expr972	= { FOLLOW_attr_in_order_expr972_bits, 1	};
@@ -1190,14 +1191,14 @@ static  ANTLR3_BITSET_LIST FOLLOW_KW_INTERVAL_in_interval_value1722	= { FOLLOW_K
 static	ANTLR3_BITWORD FOLLOW_const_string_in_interval_value1724_bits[]	= { ANTLR3_UINT64_LIT(0x0000600000000000) };
 static  ANTLR3_BITSET_LIST FOLLOW_const_string_in_interval_value1724	= { FOLLOW_const_string_in_interval_value1724_bits, 1	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_set_in_interval_value1726  */
-static	ANTLR3_BITWORD FOLLOW_set_in_interval_value1726_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000000), ANTLR3_UINT64_LIT(0x0010000000000000) };
-static  ANTLR3_BITSET_LIST FOLLOW_set_in_interval_value1726	= { FOLLOW_set_in_interval_value1726_bits, 2	};
+//static	ANTLR3_BITWORD FOLLOW_set_in_interval_value1726_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000000), ANTLR3_UINT64_LIT(0x0010000000000000) };
+//static  ANTLR3_BITSET_LIST FOLLOW_set_in_interval_value1726	= { FOLLOW_set_in_interval_value1726_bits, 2	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_KW_TO_in_interval_value1734  */
 static	ANTLR3_BITWORD FOLLOW_KW_TO_in_interval_value1734_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000000), ANTLR3_UINT64_LIT(0x0000C00000000000) };
 static  ANTLR3_BITSET_LIST FOLLOW_KW_TO_in_interval_value1734	= { FOLLOW_KW_TO_in_interval_value1734_bits, 2	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_set_in_interval_value1736  */
-static	ANTLR3_BITWORD FOLLOW_set_in_interval_value1736_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000002) };
-static  ANTLR3_BITSET_LIST FOLLOW_set_in_interval_value1736	= { FOLLOW_set_in_interval_value1736_bits, 1	};
+//static	ANTLR3_BITWORD FOLLOW_set_in_interval_value1736_bits[]	= { ANTLR3_UINT64_LIT(0x0000000000000002) };
+//static  ANTLR3_BITSET_LIST FOLLOW_set_in_interval_value1736	= { FOLLOW_set_in_interval_value1736_bits, 1	};
 /** Bitset defining follow set for error recovery in rule state: FOLLOW_Integer_in_time_spec1751  */
 static	ANTLR3_BITWORD FOLLOW_Integer_in_time_spec1751_bits[]	= { ANTLR3_UINT64_LIT(0x0000600000000000), ANTLR3_UINT64_LIT(0x0000C0000F3C0006) };
 static  ANTLR3_BITSET_LIST FOLLOW_Integer_in_time_spec1751	= { FOLLOW_Integer_in_time_spec1751_bits, 2	};
@@ -7380,7 +7381,7 @@ non_mt_cond_list_main(pCongerCQLParser ctx)
             case LPAREN:
             	{
             		{
-            		    int LA24_17 = LA(2);
+            		  //  int LA24_17 = LA(2);
             		    if ( (synpred2_CongerCQL(ctx)))
             		    {
             		        alt24=2;

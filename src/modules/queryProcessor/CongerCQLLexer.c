@@ -20454,7 +20454,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_225;
 
-    	    ANTLR3_MARKER index21_225;
 
 
     		LA21_225 = LA(1);
@@ -20487,7 +20486,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_127;
 
-    	    ANTLR3_MARKER index21_127;
 
 
     		LA21_127 = LA(1);
@@ -20520,7 +20518,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_130;
 
-    	    ANTLR3_MARKER index21_130;
 
 
     		LA21_130 = LA(1);
@@ -20553,7 +20550,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_227;
 
-    	    ANTLR3_MARKER index21_227;
 
 
     		LA21_227 = LA(1);
@@ -20586,7 +20582,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_49;
 
-    	    ANTLR3_MARKER index21_49;
 
 
     		LA21_49 = LA(1);
@@ -20619,7 +20614,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_131;
 
-    	    ANTLR3_MARKER index21_131;
 
 
     		LA21_131 = LA(1);
@@ -20642,7 +20636,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_128;
 
-    	    ANTLR3_MARKER index21_128;
 
 
     		LA21_128 = LA(1);
@@ -20665,7 +20658,6 @@ static ANTLR3_INT32 dfa21_sst(pCongerCQLLexer ctx, pANTLR3_BASE_RECOGNIZER recog
     	{
     	    ANTLR3_UINT32 LA21_48;
 
-    	    ANTLR3_MARKER index21_48;
 
 
     		LA21_48 = LA(1);
@@ -26533,7 +26525,7 @@ void mCONCATENATE(pCongerCQLLexer ctx)
 static ANTLR3_INLINE
 void mLetter(pCongerCQLLexer ctx)
 {
-	ANTLR3_UINT32	_type;
+	//ANTLR3_UINT32	_type;
 
 
     // CongerCQL.g:504:5: ( 'a' .. 'z' | 'A' .. 'Z' )
@@ -26580,7 +26572,7 @@ void mLetter(pCongerCQLLexer ctx)
 static ANTLR3_INLINE
 void mHexDigit(pCongerCQLLexer ctx)
 {
-	ANTLR3_UINT32	_type;
+	//ANTLR3_UINT32	_type;
 
 
     // CongerCQL.g:509:5: ( 'a' .. 'f' | 'A' .. 'F' )
@@ -26627,7 +26619,7 @@ void mHexDigit(pCongerCQLLexer ctx)
 static ANTLR3_INLINE
 void mDigit(pCongerCQLLexer ctx)
 {
-	ANTLR3_UINT32	_type;
+	//ANTLR3_UINT32	_type;
 
 
     // CongerCQL.g:514:5: ( '0' .. '9' )
@@ -26674,7 +26666,7 @@ void mDigit(pCongerCQLLexer ctx)
 static ANTLR3_INLINE
 void mExponent(pCongerCQLLexer ctx)
 {
-	ANTLR3_UINT32	_type;
+	//ANTLR3_UINT32	_type;
 
 
     // CongerCQL.g:520:5: ( 'e' ( PLUS | MINUS )? ( Digit )+ )
@@ -26821,7 +26813,7 @@ void mExponent(pCongerCQLLexer ctx)
 static ANTLR3_INLINE
 void mRegexComponent(pCongerCQLLexer ctx)
 {
-	ANTLR3_UINT32	_type;
+	//ANTLR3_UINT32	_type;
 
 
     // CongerCQL.g:526:5: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | PLUS | STAR | QUESTION | MINUS | DOT | LPAREN | RPAREN | LSQUARE | RSQUARE | LCURLY | RCURLY | BITWISEXOR | BITWISEOR | DOLLAR )
