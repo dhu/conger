@@ -22,10 +22,13 @@ public:
     virtual ~CongerDiagram();
 
 public:
+
+    typedef std::pair<std::string, std::string> SchemaFieldType;
+
     /// add a single schema to catalog
     ///
     CatalogSchema* add_conger_schema(string schema_name,
-            map<string, string> schema_fields);
+            list<SchemaFieldType> schema_fields);
 
     /// add a single stream to catalog
     ///
@@ -35,9 +38,14 @@ public:
     ///
     void add_conger_query(string query_name, map<string, string> query_parameters);
 
-    CatalogBox* add_conger_box(string box_name, map<string, string> box_parameters);
+    CatalogBox* add_conger_box(string box_name, string type, string in_streams,
+            string out_stream, map<string, string> box_parameters);
 
-    CatalogSubscription* add_conger_subsribe();
+    CatalogSubscription add_conger_subsribe(string stream,
+            string endpoint, string gap);
+
+    CatalogBox::InQueue parse_conger_inqueue(map<string, string> box_parameters,
+            CatalogBox::InQueue in_queue);
 };
 
 BOREALIS_NAMESPACE_END

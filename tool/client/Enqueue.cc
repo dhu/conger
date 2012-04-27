@@ -33,26 +33,26 @@ void Enqueue::loadData()
 	while (stream.good())
 	{
 	    StockInputTuple tuple;
-            char other[100];
-            stream.getline(other, 100);
-            if (strlen(other) == 0)
-            {
-                    break;
-            }
-            char tmpchar[50];
-            /* parse time */
-            int firstcommapostion = strchr(other, ',') - other;
-            strncpy(tmpchar, other, firstcommapostion);
-            tmpchar[firstcommapostion] = '\0';
-            tuple.time = atoi(tmpchar);
+        char other[100];
+        stream.getline(other, 100);
+        if (strlen(other) == 0)
+        {
+                break;
+        }
+        char tmpchar[50];
+        /* parse time */
+        int firstcommapostion = strchr(other, ',') - other;
+        strncpy(tmpchar, other, firstcommapostion);
+        tmpchar[firstcommapostion] = '\0';
+        tuple.time = atoi(tmpchar);
 
-            /* parse price */
-            int secondcommapostion = strchr(other + firstcommapostion + 1, ',')
-                            - other - firstcommapostion - 1;
-            strncpy(tmpchar, other + firstcommapostion + 1, secondcommapostion);
-            tmpchar[secondcommapostion] = '\0';
-            tuple.price = atof(tmpchar);
-            data.push_back(tuple);
+        /* parse price */
+        int secondcommapostion = strchr(other + firstcommapostion + 1, ',')
+            - other - firstcommapostion - 1;
+        strncpy(tmpchar, other + firstcommapostion + 1, secondcommapostion);
+        tmpchar[secondcommapostion] = '\0';
+        tuple.price = atof(tmpchar);
+        data.push_back(tuple);
 	}
 	INFO << "data loaded...";
 }
@@ -82,7 +82,7 @@ void Enqueue::sendPacket()
     if (!data.empty())
     {
         eventPacket.reset();
-        eventPacket = ptr<StreamEvent>(new StreamEvent("packet"));
+        eventPacket = ptr<StreamEvent>(new StreamEvent("inputstream"));
         eventPacket->_inject = true;
         StockInputTuple tuple = data.front();
         data.pop_front();

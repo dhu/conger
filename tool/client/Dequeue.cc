@@ -25,7 +25,7 @@ void Dequeue::start()
                             DEFAULT_MONITOR_PORT)), wrap(&handleOutput));
     DEBUG << status;
 
-    //status = medusaClient->subscribe("aggregate");
+    //status = medusaClient->subscribe("outputstream");
     DEBUG << status;
     medusaClient->run();
 }
@@ -33,7 +33,7 @@ void Dequeue::start()
 Status handleOutput(ptr<StreamEvent> event)
 {
     DEBUG << event->_stream.as_string();
-    if (event->_stream == Name("aggregate"))
+    if (event->_stream == Name("outputstream"))
     {
         uint32 offset = 0;
         int32 index;
@@ -48,7 +48,7 @@ Status handleOutput(ptr<StreamEvent> event)
             AggregateTuple *tuple =
                     (AggregateTuple *) &event->_bin_tuples[offset];
             offset += sizeof(AggregateTuple);
-            INFO << tuple->currenttime << " " << tuple->maxprice;
+            INFO << tuple->time << " " << tuple->price;
         }
 
     }

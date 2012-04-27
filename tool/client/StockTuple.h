@@ -16,8 +16,7 @@ using namespace Borealis;
 struct AggregateTuple: public TupleHeader
 {
 	int32 time;
-	double maxprice;
-	int32 currenttime;
+	double price;
  }__attribute__((__packed__));
 
 struct StockInputTuple: public TupleHeader

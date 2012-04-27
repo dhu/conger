@@ -23,7 +23,7 @@ CongerDiagram::~CongerDiagram()
  * 简化的 add schema，没有考虑设定 type size 的情况，也没有考虑 array 的情况
  */
 CatalogSchema* CongerDiagram::add_conger_schema(string schema_name,
-        map<string, string> schema_fields)
+        list<SchemaFieldType> schema_fields)
 {
     TypeArray::iterator             in_array;
 
@@ -42,12 +42,12 @@ CatalogSchema* CongerDiagram::add_conger_schema(string schema_name,
 
         begin_schema(name);
 
-        map<string, string>::iterator field_iterator = schema_fields.begin();
+        list<SchemaFieldType>::iterator field_iterator = schema_fields.begin();
         for ( ; field_iterator != schema_fields.end(); field_iterator++)
         {
             name = field_iterator->first;
             type = field_iterator->second;
-
+            DEBUG << "add schema: " << name << " type: " << type;
             lowercase(name);
             data_size = data.from_string(type);
             add_field(name, data, data_size);
@@ -100,17 +100,19 @@ void CongerDiagram::add_conger_query(string query_name,
 
 }
 
-CatalogBox* CongerDiagram::add_conger_box(string box_name,
-        map<string, string> box_parameters)
+CatalogBox* CongerDiagram::add_conger_box(string box_name, string type,
+        string in_streams, string out_stream, map<string, string> box_parameters)
 {
-    /*
-    vector<DOMElement *>            in, out, parameter, access;
-    vector<DOMElement *>::iterator  item;
+    CatalogSchema::SchemaMap* schema_map = get_schema_map();
+    CatalogSchema::SchemaMap::iterator iter = schema_map->begin();
+    for (; iter != schema_map->end(); iter++)
+    {
+        DEBUG << "list schema map:  " << iter->first << "  " << iter->second.get_schema_name();
+    }
 
     string   message;
     string   name;
     string   table;
-    string   type;
     string   update;
     string   key;
     string   stream;
@@ -122,9 +124,7 @@ CatalogBox* CongerDiagram::add_conger_box(string box_name,
 
     try
     {
-        xml_expect_tag(box, "box");
-        name = xml_attribute(box, "name", ATTR_REQUIRED);
-        type = xml_attribute(box, "type", ATTR_REQUIRED);
+        name = box_name;
 
         lowercase(name);
         lowercase(type);
@@ -149,18 +149,20 @@ CatalogBox* CongerDiagram::add_conger_box(string box_name,
         // Inherit default queue parameters from the query.
         //
         _add_box->set_box_in_queue(
-                     parse_in_queue(box, _add_query->get_in_queue()));
+                parse_conger_inqueue(box_parameters, _add_query->get_in_queue()));
 
         // _add_box->set_box_node(_add_node);  // Inherit the node???
-        string node = xml_attribute(box, "node", ATTR_NOT_REQUIRED);
+        // XXX 这里没有处理好。。。
+        string node = box_parameters["node"];
 
         if (!node.empty())
-        {   node = Util::form_endpoint(node, DEFAULT_BOREALIS_PORT);
-           lowercase(node);
+        {
+            node = Util::form_endpoint(node, DEFAULT_BOREALIS_PORT);
+            lowercase(node);
 
-           _add_box->set_box_node(node);
+            _add_box->set_box_node(node);
 
-           DEBUG  << "<box  name=\"" << name
+            DEBUG  << "<box  name=\"" << name
                   << "\"  type=\""   << type
                   << "\"  node=\""   << node << "\"/>";
         }
@@ -171,83 +173,45 @@ CatalogBox* CongerDiagram::add_conger_box(string box_name,
                   <<   "\"  type=\"" << type << "\"/>";
         }
 
-        xml_child_elements(in, box, "in");
-
-        for (item = in.begin(); item != in.end(); item++)
+        char* in_char = const_cast<char* >(in_streams.c_str());
+        char* pch;
+        pch = strtok(in_char, ":");
+        while (pch != NULL)
         {
-           // Parse the in stream name.
-           //
-           stream = xml_attribute(*item, "stream", ATTR_REQUIRED);
-           lowercase(stream);
-
-           // if there is a view on the input of this box, what is it?
-           // we'll create CatalogView after the box is done
-           cpview = xml_attribute( *item, "connection_point_view", ATTR_NOT_REQUIRED );
-           lowercase(cpview);
-
-           if (cpview != "")
-           {
-               DEBUG << "  <in  stream=\"" << stream << "\" connection_point_view=\"" << cpview << "\" />";
-           }
-           else
-           {
-               DEBUG << "  <in  stream=\"" << stream << "\" />";
-           }
-
-           add_in(stream,
-                  parse_in_queue(*item, _add_box->get_box_in_queue()),
-                  dynamic);
+            stream = string(pch);
+            add_in(stream,
+                    parse_conger_inqueue(box_parameters, _add_query->get_in_queue()),
+                    False);
+            DEBUG << "connect stream " << stream << " to box " << name;
+            pch = strtok(NULL, ":");
         }
 
-        xml_child_elements( out, box, "out" );
+        add_out(out_stream);
 
-        for (item = out.begin(); item != out.end(); ++item)
+        // add_parameter_element(box);
+        // box 的参数
+        //....................................................
+        string   message;
+        string   name;
+        string   value;
+
+
+        try
         {
-           // Parse the out stream name.
-           //
-           stream = xml_attribute( *item, "stream", ATTR_REQUIRED );
-           lowercase(stream);
-
-           DEBUG << "  <out  stream=\"" << stream << "\"/>";
-           add_out(stream);
+            map<string, string>::iterator iter = box_parameters.begin();
+            for (; iter != box_parameters.end(); iter++)
+            {
+                add_parameter(iter->first, iter->second);
+            }
         }
+        catch(AuroraException  &e)
+        {   message = "Failed parsing a parameter from XML:\n   " + e.as_string();
+            DEBUG << message;
 
-        add_parameter_element(box);
-
-        xml_child_elements(access, box, "access");
-
-        for (item = access.begin(); item != access.end(); ++item)
-        {
-           table = xml_attribute(*item, "table", ATTR_REQUIRED);
-           lowercase(table);
-
-           DEBUG << "  <access  table=\"" << table << "\"/>";
-           add_table(table);
+            Throw(AuroraBadEntityException, message);
         }
-
-        // iter through in's again to create the views
-        // creating that CatalogView if there is a cpview on any "in" stream
-        xml_child_elements(in, box, "in");
-
-        for (item = in.begin(); item != in.end(); ++item)
-        {
-           //    cpview = "";
-           // Parse the in stream name.
-           //
-           stream = xml_attribute( *item, "stream", ATTR_REQUIRED );
-           lowercase( stream );
-
-           // if there is a view on the input of this box, what is it?
-           cpview = xml_attribute( *item, "connection_point_view", ATTR_NOT_REQUIRED );
-           lowercase( cpview );
-
-           // add the view
-           if ( cpview != "" )
-           {
-               _add_box->set_cpview(stream, cpview);
-               add_view(cpview, name, stream);
-           }
-        }
+        //......................................................
+        // end box 参数
 
         add_box = _add_box;
 
@@ -263,9 +227,213 @@ CatalogBox* CongerDiagram::add_conger_box(string box_name,
 
        Throw(AuroraBadEntityException, message);
     }
-*/
-   // return  add_box;
-    return NULL;
+    return  add_box;
+}
+
+
+CatalogBox::InQueue CongerDiagram::parse_conger_inqueue(
+        map<string, string> box_parameters,
+        CatalogBox::InQueue in_queue)
+{
+    string      update_queue;
+    string      queue_type;
+    string      key;
+    string      message;
+
+    CatalogBox::InQueue  result;
+
+
+    try
+    {
+      queue_type = "*";
+
+      key = "*";
+    }
+    catch(AuroraException  &e)
+    {   message = "Failed parsing an update queue from XML:\n   " + e.as_string();
+
+      DEBUG << message;
+      Throw(AuroraBadEntityException, message);
+    }
+
+    result._update_queue = in_queue._update_queue;
+    result._queue_type = in_queue._queue_type;
+
+    if (update_queue == "0")
+    {   result._update_queue = False;
+    }
+    else if (update_queue == "1")
+    {   result._update_queue = True;
+    }
+    else if (!update_queue.empty())
+    {   message = "update_queue attribute must be 0 or 1.";
+
+      DEBUG << message;
+      Throw(AuroraBadEntityException, message);
+    }
+
+    if (queue_type == "*")
+    {
+      result._queue_type = in_queue._queue_type;
+    }
+    else if (queue_type == "0")
+    {
+      result._queue_type = 0;
+    }
+    else if (queue_type == "1")
+    {
+      result._queue_type = 1;
+    }
+    else if (queue_type == "2")
+    {
+      result._queue_type = 2;
+    }
+    else if (queue_type == "3")
+    {
+      result._queue_type = 3;
+    }
+    else if (queue_type == "4")
+    {
+      result._queue_type = 4;
+    }
+    else if (queue_type == "5")
+    {
+      result._queue_type = 5;
+    }
+    else if (queue_type == "6")
+    {
+      result._queue_type = 6;
+    }
+    else if (queue_type == "7")
+    {
+      result._queue_type = 7;
+    }
+    else if (queue_type == "8")
+    {
+      result._queue_type = 8;
+    }
+    else
+    {
+      message = "queuetype attribute must be 0-8.";
+      DEBUG << message;
+      Throw(AuroraBadEntityException, message);
+    }
+
+    if (key == "*")
+    {   result._key = in_queue._key;
+    }
+    else
+    {   result._key = key;
+    }
+
+    DEBUG << "update=" << int(result._update_queue);
+    DEBUG << " queue_type=" << result._queue_type;
+    DEBUG << " key=" << result._key;
+
+    if ((update_queue == "0")  &&  (key != "*"))
+    {   message = "Invalid:  update_queue=0 and key=\""
+              + to_string(result._key) + "\"";
+
+      DEBUG << message;
+      Throw(AuroraBadEntityException, message);
+    }
+
+    if ((update_queue == "0")  && (queue_type != "*"))
+    {
+      message = "Invalid:  update_queue=0 and queue_type=\""
+              + to_string(result._queue_type) + "\"";
+
+      DEBUG << message;
+      Throw(AuroraBadEntityException, message);
+    }
+
+    return  result;
+}
+
+CatalogSubscription CongerDiagram::add_conger_subsribe(string stream,
+        string endpoint, string gap)
+{
+
+    string    message;
+
+    uint16    size;
+    CatalogSubscription  subscription;
+//
+//  <subscribe  stream=<output name>  [endpoint=<monitor>  [gap=<size>]] />
+//..............................................................................
+
+
+    try
+    {
+        DEBUG << "*** <subscribe  stream=\"" << stream
+              << "\" endpoint=\"" << endpoint
+              << "\"      gap=\"" << gap << "\" />";
+
+        if (gap.empty())
+        {   size = 0xFFFF;
+        }
+        else
+        {   size = atoi(gap.c_str());
+        }
+
+        if (_client_monitor.empty())
+        {   endpoint = form_endpoint(endpoint, DEFAULT_MONITOR_PORT);
+        }
+        else
+        {   if (!endpoint.empty())
+            {   DEBUG << "A subscribe element within a client may not specify an endpoint.";
+
+                Throw(AuroraBadEntityException,
+                      "A subscribe element within a client may not specify an endpoint.");
+            }
+
+            DEBUG << "endpoint=" << endpoint << "  _client_monitor=" << _client_monitor;
+            endpoint = _client_monitor;
+        }
+
+        DEBUG << "<subscribe  stream=\"" << stream
+              << "\" endpoint=\"" << endpoint
+              << "\"      gap=\"" << gap << "\" />";
+
+        lowercase(stream);
+
+        ///////////////////////////////////  experimental
+        vector<Name>  list;
+
+        split_name(endpoint, list);
+
+        if (list.size() > 1)
+        {   DEBUG << "output stream=" << stream << " partition=" << list.size();
+            _partition_output[stream] = endpoint;
+        }
+        /////////////////////////////////////////
+
+        subscription = add_subscribe(stream, endpoint, size);
+        subscription.set_sink_flag();
+        DEBUG << "sink flag = " << subscription.get_sink_flag();
+
+        // Brad says: We may want to move this into the regional.
+        //
+        if (!get_stream( Name(stream)))
+        {   DEBUG << "Invalid stream: " << stream;
+
+            Throw( AuroraBadEntityException,
+                   "Invalid stream: " + stream );
+        }
+        else
+        {   get_stream( Name( stream ))->
+                subscribe_sink( get_subscriber( InetAddress( endpoint ),
+                                                Name( stream )));
+        }
+    }
+    catch(AuroraException  &e)
+    {   message = "Failed parsing an XML subscribe element:\n   " + e.as_string();
+        DEBUG << message;
+
+        Throw(AuroraBadEntityException, message);
+    }
+
+    return  subscription;
 }
 
 BOREALIS_NAMESPACE_END

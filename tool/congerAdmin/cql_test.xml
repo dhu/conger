@@ -9,41 +9,33 @@
     </deploy>
 
     <schemas>
-        <schema name="PositionRequest">
-            <field name="vid" type="int"/>
-            <field name="speed" type="int"/>
-            <field name="xway" type="int"/>
-            <field name="segment" type="int"/>
-            <field name="lane" type="int"/>
-            <field name="direction" type="int"/>
+        <schema name="inputpacket">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
         </schema>
 
-        <schema name="SpeedStatistics">
-            <field name="vid" type="int"/>
-            <field name="speed" type="int"/>
-            <field name="xway" type="int"/>
-            <field name="segment" type="int"/>
-            <field name="lane" type="int"/>
-            <field name="direction" type="int"/>
+        <!-- 
+        <schema name="outputpacket">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
         </schema>
-
+        -->
     </schemas>
 
     <streams>
-        <stream name="PositionStream" type="input" schema="PositionRequest" />            
-        <stream name="SpeedStatisticsStream" type="output" schema="SpeedStatistics"/>
+        <stream name="inputstream" type="input" schema="inputpacket" />            
+        <stream name="outputstream" type="output" schema="outputpacket"/>
     </streams>
 
     <querys>
 
-        <query name="MaxSpeed">
-            <in>PositionStream</in>            
-            <out>SpeedStatisticsStream</out>
+        <query name="MaxPrice">
+            <in>inputstream</in>            
+            <out>outputstream</out>
             <cql>
                 <![CDATA[
-                SELECT * 
-                FROM PositionStream[RANGE 1 MINUTES SLIDE 3 SECONDS]
-                ORDER BY speed DESC ROWS 10
+                SELECT MAX(price)  
+                FROM inputstream[RANGE 9 MINUTES SLIDE 9 SECONDS]
                 ]]>
             </cql>
         </query>

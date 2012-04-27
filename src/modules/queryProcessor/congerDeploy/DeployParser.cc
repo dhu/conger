@@ -128,7 +128,7 @@ void DeployParser::parseSchemas(xercesc::DOMNode* schemasDOM)
                 ->getValue();
         string schemaName = XMLString::transcode(schemaNameXML);
         DOMNodeList* fieldNodeList = schemaNode->getChildNodes();
-        map<string, string> schemaMap;
+        list<SchemaFieldType> schemaList;
         for (int j = 0; j < (int) fieldNodeList->getLength(); j++)
         {
             if (fieldNodeList->item(j)->getNodeType() != DOMNode::ELEMENT_NODE)
@@ -138,22 +138,20 @@ void DeployParser::parseSchemas(xercesc::DOMNode* schemasDOM)
             string name;
             string type;
             DOMNamedNodeMap* fieldAttributes = fieldNodeList->item(j)->getAttributes();
-            for (unsigned int k = 0; k < fieldAttributes->getLength(); k++)
-            {
-                const XMLCh* nameXML = fieldAttributes
-                        ->getNamedItem(XMLString::transcode("name"))->getNodeValue();
-                const XMLCh* typeXML = fieldAttributes
-                        ->getNamedItem(XMLString::transcode("type"))->getNodeValue();
-                schemaMap[string(XMLString::transcode(nameXML))]
-                          = string(XMLString::transcode(typeXML));
-            }
+            const XMLCh* nameXML = fieldAttributes
+                    ->getNamedItem(XMLString::transcode("name"))->getNodeValue();
+            const XMLCh* typeXML = fieldAttributes
+                    ->getNamedItem(XMLString::transcode("type"))->getNodeValue();
+            SchemaFieldType schema_field(string(XMLString::transcode(nameXML)),
+                    string(XMLString::transcode(typeXML)));
+            schemaList.push_back(schema_field);
         }
         DEBUG << "schema name: " << schemaName;
-        for (map<string, string>::iterator iterator =  schemaMap.begin(); iterator != schemaMap.end(); iterator++)
+        for (list<SchemaFieldType>::iterator iterator =  schemaList.begin(); iterator != schemaList.end(); iterator++)
         {
             DEBUG << iterator->first << " " << iterator->second;
         }
-        this->deploy.schemas[schemaName] = schemaMap;
+        this->deploy.schemas[schemaName] = schemaList;
     }
 }
 
@@ -178,20 +176,20 @@ void DeployParser::parseStreams(xercesc::DOMNode* streamsDOM)
         string schema = string(XMLString::transcode(schemaXML));
         if (type == "input")
         {
-            if (this->deploy.inputStreams.find(name) != this->deploy.inputStreams.end())
+            if (this->deploy.inputStreams.find(name) == this->deploy.inputStreams.end())
             {
                 this->deploy.inputStreams[name] = schema;
             }
         }
         else if (type == "output")
         {
-            if (this->deploy.outputStreams.find(name) != this->deploy.outputStreams.end())
+            if (this->deploy.outputStreams.find(name) == this->deploy.outputStreams.end())
             {
                 this->deploy.outputStreams[name] = schema;
             }
         }
 
-        DEBUG << "stream name: " << name << " schema " << schema << " type" << type;
+        DEBUG << "stream name: " << name << " schema " << schema << " type " << type;
     }
 }
 

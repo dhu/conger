@@ -556,7 +556,12 @@ Status  CatalogBox::infer_aggregate_out(// In stream.
             }
         }
         else if (order_on_field)
-        {   index = in_schema->index_of_field(value);
+        {
+            DEBUG << "order-on-field value: " << value;
+            DEBUG << "in_scheam == NULL " << (in_schema == NULL);
+            DEBUG << "field count of schema " << in_schema->get_schema_name()
+                    << " " << in_schema->get_schema_field().size();
+            index = in_schema->index_of_field(value);
 
             if (index < 0)
             {   status = "Invalid order-on-field name (" + value + ")";

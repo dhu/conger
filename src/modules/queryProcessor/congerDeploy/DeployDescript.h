@@ -12,12 +12,14 @@
 #include <map>
 #include <list>
 
+typedef std::pair<std::string, std::string> SchemaFieldType;
+
 typedef struct DeployDescriptStruct
 {
     std::string deployName;
 
     /* std::map<schemaName, std::map<fieldName, fieldType> > schemas */
-    std::map<std::string, std::map<std::string, std::string> > schemas;
+    std::map<std::string, std::list<SchemaFieldType> > schemas;
 
     /* std::map<streamName, schema> streams */
     std::map<std::string, std::string> inputStreams;
@@ -30,5 +32,5 @@ typedef struct DeployDescriptStruct
 
 } DeployDescript;
 
-#endif /* DEPLOYDESCRIPT_H_ */
 
+#endif /* DEPLOYDESCRIPT_H_ */

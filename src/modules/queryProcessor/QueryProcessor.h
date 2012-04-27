@@ -76,7 +76,8 @@ class QueryProcessor : public BasicComponent
 
     /// 先用 add_conger_query 把一个 CQL 拆分成若干个 Box，再用这个方法add box
     ///
-    void add_conger_box(string box_name, map<string, string> box_parameters);
+    void add_conger_box(string box_name, string type, string in_streams,
+            string out_stream, map<string, string> box_parameters);
 
     /// add subscribe to catalog
     ///

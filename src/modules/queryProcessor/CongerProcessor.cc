@@ -14,14 +14,45 @@
 
 BOREALIS_NAMESPACE_BEGIN
 
-void parse_select(string cql_string);
+typedef struct CQLWindowStruct
+{
+    int range;
+    int slide;
+} CQLWindow;
+
+typedef struct CQLSelectStruct
+{
+    string function;
+    string field;
+} CQLSelect;
+
+typedef struct CQLContextStruct
+{
+    string cql;
+    list<CQLSelect> select_list;
+    list<string> from_list;
+    CQLWindow window;
+
+} CQLContext;
+
+CQLContext parse_select(string cql_string);
+
+void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node);
 
 AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
 {
     INFO << conger_config;
 
+    AsyncRPC<void> completion;
+    completion.post(true);
+
     DeployParser deploy_parser;
     DeployDescript deploy_descript = deploy_parser.parse(conger_config);
+
+    if (deploy_descript.deployName == "Unspecified Deploy Name")
+    {
+        return completion;
+    }
 
     _ongoing_dynamic_modification = true;
 
@@ -32,24 +63,33 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
 
     _ongoing_dynamic_modification = false;
 
-    AsyncRPC<void> completion;
-    completion.post(true);
     return completion;
 }
 
 void QueryProcessor::add_conger_schema(DeployDescript deploy_descript)
 {
-    map<string, map<string, string> >::iterator schema_iterator;
+    typedef std::pair<std::string, std::string> SchemaFieldType;
+    map<string, list<SchemaFieldType> >::iterator schema_iterator;
     for (schema_iterator = deploy_descript.schemas.begin();
             schema_iterator != deploy_descript.schemas.end();
             schema_iterator++)
     {
-        map<string, string> schema_fields = schema_iterator->second;
+        list<SchemaFieldType> schema_fields = schema_iterator->second;
         string schema_name = schema_iterator->first;
 
         CatalogSchema *add_schema;
 
         add_schema = _local_catalog.add_conger_schema(schema_name, schema_fields);
+
+        vector<SchemaField> fields = add_schema->get_schema_field();
+
+        DEBUG << "schema fields size: " << fields.size() << " schema name "
+                << add_schema->get_schema_name();
+        vector<SchemaField>::iterator iter = fields.begin();
+        for (; iter != fields.end(); iter++)
+        {
+            DEBUG << "field name: " << iter->get_name() << " type: " << iter->get_type();
+        }
 
         // add schema to engine's structures
         vector<CatalogSchema*> schemas;
@@ -62,13 +102,14 @@ void QueryProcessor::add_conger_schema(DeployDescript deploy_descript)
 
 void QueryProcessor::add_conger_input(DeployDescript deploy_descript)
 {
+    DEBUG << "we have " << deploy_descript.inputStreams.size() << " input stream";
     map<string, string>::iterator input_iterator;
     for (input_iterator = deploy_descript.inputStreams.begin();
             input_iterator != deploy_descript.inputStreams.end();
             input_iterator++)
     {
-        string stream_name = input_iterator->second;
-        string schema_name = input_iterator->first;
+        string stream_name = input_iterator->first;
+        string schema_name = input_iterator->second;
 
         CatalogStream *new_stream;
 
@@ -104,11 +145,26 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
         map<string, string> query_parameters = query_iterator->second;
 
         string cql = query_parameters["cql"];
+        CQLContext context = parse_select(cql);
+        DEBUG << "context.cql: " << context.cql;
+        DEBUG << "context.from: " << context.from_list.front();
 
+        map<string, string> box_parameters;
+        box_parameters["aggregate-function.0"] = "max(price)";
+        box_parameters["aggregate-function-output-name.0"] = "price";
+        box_parameters["window-size-by"] = "VALUES";
+        box_parameters["window-size"] = "180";
+        box_parameters["advance"] = "13";
+        box_parameters["order-by"] = "FIELD";
+        box_parameters["order-on-field"] = "time";
+
+        add_conger_box("cql_test", "aggregate", "inputstream",
+                "outputstream", box_parameters);
     }
 }
 
-void QueryProcessor::add_conger_box(string box_name, map<string, string> box_parameters)
+void QueryProcessor::add_conger_box(string box_name, string type, string in_streams,
+        string out_stream, map<string, string> box_parameters)
 {
     Status       status = true;
     Query        query;
@@ -123,7 +179,8 @@ void QueryProcessor::add_conger_box(string box_name, map<string, string> box_par
 
     // yna -- by default all additions into the engine are considered as dynamic
     // since the scheduler thread always runs....
-    add_box = _local_catalog.add_conger_box(box_name, box_parameters);
+    add_box = _local_catalog.add_conger_box(box_name, type, in_streams,
+            out_stream, box_parameters);
 
     DEBUG  << "box=" << add_box->get_box_name();
     status = add_box->infer_box_out(_local_catalog.get_schema_map());
@@ -206,18 +263,25 @@ void QueryProcessor::add_conger_box(string box_name, map<string, string> box_par
 
 void QueryProcessor::add_conger_subscribe(DeployDescript deploy_descript)
 {
-    /*
+
     CatalogSubscription subscriber;
-    subscriber = _local_catalog.add_subscribe_element(sub);
+    subscriber = _local_catalog.add_conger_subsribe("outputstream", "127.0.0.1:25000", "");
 
     vector<CatalogSubscription>  subs;
     subs.push_back(subscriber);
 
+    AsyncRPC<void> completion;
+    completion.post(true);
     local_subscribe_streams(completion, subs);
-    */
+
 }
 
-void parse_select(string cql_string)
+void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node)
+{
+
+}
+
+CQLContext parse_select(string cql_string)
 {
     pANTLR3_INPUT_STREAM input;
     pCongerCQLLexer lxr;
@@ -241,16 +305,132 @@ void parse_select(string cql_string)
     treeNode = (pANTLR3_BASE_TREE) root->getChild(root, 0);
 
     ANTLR3_UINT32 treeType = treeNode->getType(treeNode);
-    string result;
-    switch (treeType)
+    if (treeType == TOK_SFW)
     {
-
+        DEBUG << "this is a SFW token";
     }
+    else
+    {
+        DEBUG << "this is not SFW token. it is " << treeType;
+    }
+
+    CQLContext context;
+    /* 对 TOK_SFW 的子节点进行遍历 */
+    DEBUG << "TOK_SFW 的子节点个数: " << treeNode->getChildCount(treeNode);
+    pANTLR3_BASE_TREE sfwNode = treeNode;
+    for (uint32 i = 0; i < sfwNode->getChildCount(sfwNode); i++)
+    {
+        pANTLR3_BASE_TREE currentNode;
+        pANTLR3_BASE_TREE parentNode;
+        currentNode = (pANTLR3_BASE_TREE) sfwNode->getChild(sfwNode, i);
+        treeType = currentNode->getType(currentNode);
+
+        DEBUG << "tree node type: " << treeType;
+
+        ANTLR3_UINT32 currentType;
+        CQLSelect cql_select;
+        CQLWindow window;
+        string from_field;
+        context.cql = cql_string;
+        switch (treeType)
+        {
+        case TOK_SELECT:
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_PROJTERM_LIST)
+            {
+                DEBUG << "unexpected token, we expect TOK_PROJTERM_LIST";
+            }
+            DEBUG << "we met TOK_PROJTERM_LIST";
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_PROJTERM)
+            {
+                DEBUG << "unexpected token, we expect TOK_PROJTERM";
+            }
+            DEBUG << "we met TOK_PROJTERM";
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_ARITH_EXPR)
+            {
+                DEBUG << "unexpected token, we expect TOK_ARITH_EXPR";
+            }
+            DEBUG << "we met TOK_ARITH_EXPR";
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_AGGR)
+            {
+                DEBUG << "unexpected token, we expect TOK_AGGR";
+            }
+            DEBUG << "we met TOK_AGGR";
+            parentNode = currentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != KW_MAX)
+            {
+                DEBUG << "unexpected token, we expect KW_MAX";
+            }
+            DEBUG << "we met KW_MAX";
+            cql_select.function = "max";
+            *currentNode = *parentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_ARITH_EXPR)
+            {
+                DEBUG << "unexpected token, we expect TOK_ARITH_EXPR";
+            }
+            DEBUG << "we met TOK_ARITH_EXPR";
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            cql_select.field = (char*)currentNode->getText(currentNode)->chars;
+            context.select_list.push_back(cql_select);
+            break;
+        case TOK_FROM:
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_RELATION_LIST)
+            {
+                DEBUG << "unexpected token, we expect TOK_RELATION_LIST";
+            }
+            DEBUG << "we met TOK_RELATION_LIST";
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            currentType = currentNode->getType(currentNode);
+            if (currentType != TOK_RELATION_VARIABLE)
+            {
+                DEBUG << "unexpected token, we expect TOK_RELATION_VARIABLE";
+            }
+            DEBUG << "we met TOK_RELATION_VARIABLE";
+            parentNode = currentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
+            from_field = string((char*)currentNode->getText(currentNode)->chars);
+            context.from_list.push_back(from_field);
+
+            currentNode = parentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
+            if (currentType != TOK_WINDOW)
+            {
+                DEBUG << "unexpected token, we expect TOK_WINDOW";
+            }
+            DEBUG << "we met TOK_WINDOW";
+            parentNode = currentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
+            DEBUG << "before atoi";
+            window.range = atoi((char*)currentNode->getText(currentNode)->chars);
+            currentNode = parentNode;
+            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 4);
+            window.slide = atoi((char*)currentNode->getText(currentNode)->chars);
+            context.window = window;
+            break;
+        default:
+            DEBUG << "unhandled tree type";
+            break;
+        }
+    }
+
     input->close(input);
     lxr->free(lxr);
     tstream->free(tstream);
     psr->free(psr);
-    return ;
+    return context;
 
 }
 

@@ -990,9 +990,16 @@ void  Catalog::add_in(// Name of the stream to connect.
     connect   = &_topology._stream_map[stream];      // Stream or add new stream.
 
     if (in_stream == _topology._stream_map.end())
-    {   connect->set_stream_name(stream);
+    {
+        DEBUG << "it is an intermediate stream " << stream;
+        connect->set_stream_name(stream);
         connect->set_stream_schema(NULL);       // Assume an intermedite stream.
         connect->set_stream_source(NULL, 0);    // Flag a disconnected stream.
+    }
+    else
+    {
+        DEBUG << "We add stream " << in_stream->second.get_stream_name()
+                << " it's schema " << in_stream->second.get_stream_schema();
     }
 
     //_add_box->get_box_in()->push_back(connect);

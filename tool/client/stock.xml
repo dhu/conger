@@ -4,35 +4,30 @@
 <!-- Borealis query diagram for:  stock.cc -->
 
 <borealis>
-    <input   stream="packet"     schema="PacketTuple"     />
-    <output  stream="aggregate"  schema="AggregateTuple"  />
+    <input   stream="inputstream"     schema="inputpacket"     />
+    <output  stream="outputstream"  schema="outputpacket"  />
 
-    <schema name="PacketTuple">
+    <schema name="inputpacket">
         <field  name="time"        type="int" />
         <field  name="price"    type="double" />
     </schema>
 
-    <schema name="AggregateTuple">
+    <schema name="outputpacket">
         <field  name="time"        type="int" />
-        <field  name="maxprice"       type="double" />
-        <field  name="currenttime"       type="int" />
+        <field  name="price"       type="double" />
     </schema>
 
     <box name="mybox"   type="aggregate" >
-        <in   stream="packet"    />
-        <out  stream="aggregate" />
+        <in   stream="inputstream"    />
+        <out  stream="outputstream" />
 
         <parameter   name="aggregate-function.0"  value="max(price)"  />
         <parameter   name="aggregate-function-output-name.0"
-                    value="maxprice"  />
-                    
-        <parameter   name="aggregate-function.1"  value="max(time)"  />
-        <parameter   name="aggregate-function-output-name.1"
-                    value="currenttime"  />
+                    value="price"  />
 
         <parameter   name="window-size-by"        value="VALUES"   />
         <parameter   name="window-size"           value="180"        />
-        <parameter   name="advance"               value="10"        />
+        <parameter   name="advance"               value="13"        />
         <parameter   name="order-by"              value="FIELD"    />
         <parameter   name="order-on-field"        value="time"     />
     </box>
