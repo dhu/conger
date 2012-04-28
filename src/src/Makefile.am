@@ -60,5 +60,5 @@ monitor_SOURCES = monitor.cc
 
 conger_LDADD = $(borealis_LDADD)
 conger_DEPENDENCIES = $(borealis_DEPENDENCIES)
-conger_SOURCES = $(borealis_SOURCES)
+conger_SOURCES = conger.cc
 
