@@ -282,6 +282,9 @@ string DeployParser::getChildText(DOMNode* node)
             }
         }
     }
+    string delimiters = " \f\n\r\t\v";
+    text.erase( text.find_last_not_of( delimiters ) + 1 );
+    text.erase( 0, text.find_first_not_of( delimiters ) );
     return text;
 }
 

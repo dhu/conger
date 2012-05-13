@@ -34,8 +34,7 @@
             <out>outputstream</out>
             <cql>
                 <![CDATA[
-                SELECT MAX(price)  
-                FROM inputstream[RANGE 9 MINUTES SLIDE 9 SECONDS]
+                SELECT MAX(price) FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
                 ]]>
             </cql>
         </query>

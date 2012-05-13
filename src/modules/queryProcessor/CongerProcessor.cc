@@ -5,12 +5,12 @@
  *      Author: hellojinjie
  */
 #include "QueryProcessor.h"
-#include "CongerDiagram.h"
-#include "DeployParser.h"
-#include "DeployDescript.h"
-#include "antlr3.h"
-#include "CongerCQLLexer.h"
-#include "CongerCQLParser.h"
+#include "CongerDiagram.h"      // 继承自  Diagram
+#include "DeployParser.h"       // 用来解析 conger 的 xml 部署文件
+#include "DeployDescript.h"     // 用来描述部署信息的一个结构体， 该结构体可以由 DeployParser 生成
+#include "antlr3.h"             // antlr3 的 runtime 的头文件 /opt/borealis-tools/antlrs/include
+#include "CongerCQLLexer.h"     // antlr3 自动生成的文件
+#include "CongerCQLParser.h"    // antlr3 自动生成的文件
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -146,15 +146,15 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
 
         string cql = query_parameters["cql"];
         CQLContext context = parse_select(cql);
-        DEBUG << "context.cql: " << context.cql;
-        DEBUG << "context.from: " << context.from_list.front();
+        DEBUG << "context.cql: " << "\n" << context.cql;
+        DEBUG << "context.输入流: " << context.from_list.front();
 
         map<string, string> box_parameters;
         box_parameters["aggregate-function.0"] = "max(price)";
         box_parameters["aggregate-function-output-name.0"] = "price";
         box_parameters["window-size-by"] = "VALUES";
-        box_parameters["window-size"] = "180";
-        box_parameters["advance"] = "13";
+        box_parameters["window-size"] = "600";
+        box_parameters["advance"] = "10";
         box_parameters["order-by"] = "FIELD";
         box_parameters["order-on-field"] = "time";
 
@@ -181,7 +181,6 @@ void QueryProcessor::add_conger_box(string box_name, string type, string in_stre
     // since the scheduler thread always runs....
     add_box = _local_catalog.add_conger_box(box_name, type, in_streams,
             out_stream, box_parameters);
-
     DEBUG  << "box=" << add_box->get_box_name();
     status = add_box->infer_box_out(_local_catalog.get_schema_map());
 

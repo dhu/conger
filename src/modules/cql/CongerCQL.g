@@ -83,8 +83,8 @@ sfw_block
     | order_by_clause
     | opt_where_clause opt_group_by_clause? opt_having_clause?
 	)
-        -> ^(TOK_SFW select_clause from_clause order_by_clause? opt_where_clause? 
-            opt_group_by_clause? opt_having_clause?)
+        -> ^(TOK_SFW select_clause from_clause order_by_clause? 
+        opt_where_clause? opt_group_by_clause? opt_having_clause?)
 	;
 	
 select_clause
