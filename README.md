@@ -1,4 +1,4 @@
-Polaris 
+Conger 
 ===============
 
 Stream Process Engine based on Borealis
