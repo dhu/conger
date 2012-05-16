@@ -88,6 +88,7 @@ class QueryProcessor : public BasicComponent
     void try_map();
     void try_filter();
     void try_filter_map();
+    void try_union();
 
  public:
 

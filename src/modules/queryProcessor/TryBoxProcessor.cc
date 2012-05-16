@@ -24,8 +24,14 @@ void QueryProcessor::try_filter()
      */
     list<SchemaFieldType> schema_fields;
     SchemaFieldType schema_field;
+    schema_field.fieldName = "stock";
+    schema_field.typeName = "string";
+    schema_field.size = 6;
+    schema_fields.push_back(schema_field);
+
     schema_field.fieldName = "time";
     schema_field.typeName = "int";
+    schema_field.size = 0;
     schema_fields.push_back(schema_field);
 
     schema_field.fieldName = "price";
@@ -133,8 +139,14 @@ void QueryProcessor::try_map()
      */
     list<SchemaFieldType> schema_fields;
     SchemaFieldType schema_field;
+    schema_field.fieldName = "stock";
+    schema_field.typeName = "string";
+    schema_field.size = 6;
+    schema_fields.push_back(schema_field);
+
     schema_field.fieldName = "time";
     schema_field.typeName = "int";
+    schema_field.size = 0;
     schema_fields.push_back(schema_field);
 
     schema_field.fieldName = "price";
@@ -229,6 +241,11 @@ void QueryProcessor::try_map()
 
 }
 
+void QueryProcessor::try_union()
+{
+
+}
+
 void QueryProcessor::try_filter_map()
 {
     _ongoing_dynamic_modification = true;
@@ -245,8 +262,14 @@ void QueryProcessor::try_filter_map()
      */
     list<SchemaFieldType> schema_fields;
     SchemaFieldType schema_field;
+    schema_field.fieldName = "stock";
+    schema_field.typeName = "string";
+    schema_field.size = 6;
+    schema_fields.push_back(schema_field);
+
     schema_field.fieldName = "time";
     schema_field.typeName = "int";
+    schema_field.size = 0;
     schema_fields.push_back(schema_field);
 
     schema_field.fieldName = "price";

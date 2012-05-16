@@ -22,6 +22,7 @@ struct AggregateTuple: public TupleHeader
 
 struct StockFilterTuple: public TupleHeader
 {
+    char stock[6];
     int32 time;
     double price;
     int32 trade_volume;
@@ -33,6 +34,7 @@ struct StockFilterTuple: public TupleHeader
 
 struct StockMapTuple: public TupleHeader
 {
+    char stock[6];
     int32 time;
     double usd;
 }__attribute__((__packed__));
@@ -40,6 +42,7 @@ struct StockMapTuple: public TupleHeader
 
 struct StockInputTuple: public TupleHeader
 {
+    char stock[6];
     int32 time;
     double price;
     int32 trade_volume;
