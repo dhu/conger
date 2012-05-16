@@ -45,11 +45,17 @@ CatalogSchema* CongerDiagram::add_conger_schema(string schema_name,
         list<SchemaFieldType>::iterator field_iterator = schema_fields.begin();
         for ( ; field_iterator != schema_fields.end(); field_iterator++)
         {
-            name = field_iterator->first;
-            type = field_iterator->second;
+            name = field_iterator->fieldName;
+            type = field_iterator->typeName;
             DEBUG << "add schema: " << name << " type: " << type;
             lowercase(name);
+            /* 如果 type 是 string， 下面的方法会返回 0 */
             data_size = data.from_string(type);
+            if (data_size == 0)
+            {
+                /* 对于 string， field 的长度使用 xml 里定义的长度 */
+                data_size = field_iterator->size;
+            }
             add_field(name, data, data_size);
         }
     }

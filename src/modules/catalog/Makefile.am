@@ -4,7 +4,8 @@ AM_CXXFLAGS = $(MYFLAGS)
 
 INCLUDES = @BOREALISINCLUDE@                         \
            -I../common    -I../util    -I../rpc      \
-           -I../queryProcessor/expr
+           -I../queryProcessor/expr                  \
+           -I../queryProcessor/congerDeploy
 
 lib_LTLIBRARIES = libborealiscatalog.la
 

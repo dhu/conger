@@ -137,19 +137,30 @@ void DeployParser::parseSchemas(xercesc::DOMNode* schemasDOM)
             }
             string name;
             string type;
+            int size = 0;
             DOMNamedNodeMap* fieldAttributes = fieldNodeList->item(j)->getAttributes();
             const XMLCh* nameXML = fieldAttributes
                     ->getNamedItem(XMLString::transcode("name"))->getNodeValue();
             const XMLCh* typeXML = fieldAttributes
                     ->getNamedItem(XMLString::transcode("type"))->getNodeValue();
-            SchemaFieldType schema_field(string(XMLString::transcode(nameXML)),
-                    string(XMLString::transcode(typeXML)));
+            const XMLCh* sizeXML = fieldAttributes
+                    ->getNamedItem(XMLString::transcode("size"))->getNodeValue();
+            if (sizeXML != NULL)
+            {
+                size = atoi(XMLString::transcode(sizeXML));
+            }
+            SchemaFieldType schema_field;
+            schema_field.fieldName = string(XMLString::transcode(nameXML));
+            schema_field.typeName = string(XMLString::transcode(typeXML));
+            schema_field.size = size;
             schemaList.push_back(schema_field);
         }
         DEBUG << "schema name: " << schemaName;
-        for (list<SchemaFieldType>::iterator iterator =  schemaList.begin(); iterator != schemaList.end(); iterator++)
+        for (list<SchemaFieldType>::iterator iterator =  schemaList.begin();
+                iterator != schemaList.end(); iterator++)
         {
-            DEBUG << iterator->first << " " << iterator->second;
+            DEBUG << iterator->fieldName << " " << iterator->typeName
+                    << " " << iterator->size;
         }
         this->deploy.schemas[schemaName] = schemaList;
     }

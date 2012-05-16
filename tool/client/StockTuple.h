@@ -15,14 +15,37 @@ using namespace Borealis;
 /* 这里的类型一定要 double */
 struct AggregateTuple: public TupleHeader
 {
-	int32 time;
-	double price;
- }__attribute__((__packed__));
+    int32 time;
+    double price;
+}__attribute__((__packed__));
+
+
+struct StockFilterTuple: public TupleHeader
+{
+    int32 time;
+    double price;
+    int32 trade_volume;
+    int32 trade_amount;
+    /* bid 是买盘，ask 是卖盘, n 表示中性盘 */
+    char bid_ask;
+}__attribute__((__packed__));
+
+
+struct StockMapTuple: public TupleHeader
+{
+    int32 time;
+    double usd;
+}__attribute__((__packed__));
+
 
 struct StockInputTuple: public TupleHeader
 {
-	int32 time;
-	double price;
-} __attribute__((__packed__));
+    int32 time;
+    double price;
+    int32 trade_volume;
+    int32 trade_amount;
+    /* bid 是买盘，ask 是卖盘, n 表示中性盘 */
+    char bid_ask;
+}__attribute__((__packed__));
 
 #endif /* STOCK_TUPLE_H_ */

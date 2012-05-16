@@ -30,6 +30,7 @@ INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@               \
            -I../modules/ha                                     \
            -I../modules/queryProcessor                         \
            -I../modules/queryProcessor/runtime                 \
+           -I../modules/queryProcessor/congerDeploy            \
            -I../modules/queryProcessor/storageMgr              \
            -I../modules/queryProcessor/statsMgr                \
            -I../modules/queryProcessor/expr                    \
