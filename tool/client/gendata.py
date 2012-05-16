@@ -13,9 +13,10 @@ def stringToTimestamp(timestring):
     tm = time.struct_time((2011, 3, 15, hh, mm, ss, 0, 0, 0))
     return int(time.mktime(tm))
 
-def generatorData():
-    origin = file('sh600000_成交明细_2011-03-15.xls')
-    output = file('stock.csv', 'w')
+def generatorData(inputfile, outputfile):
+    
+    origin = file(inputfile)
+    output = file(outputfile, 'w')
 
     data = []
 
@@ -59,5 +60,7 @@ def generatorData():
     output.close()
 
 if __name__ == '__main__':
-    generatorData()
+
+    generatorData('sh600000_成交明细_2011-03-15.xls', 'stock600000.csv')
+    generatorData('sh600529_成交明细_2011-03-15.xls', 'stock600529.csv')
 
