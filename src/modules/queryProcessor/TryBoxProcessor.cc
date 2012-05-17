@@ -243,7 +243,133 @@ void QueryProcessor::try_map()
 
 void QueryProcessor::try_union()
 {
+    _ongoing_dynamic_modification = true;
 
+    /***************** 增加 schema ****************************/
+    /*
+     <schema name="inputpacket">
+     <field name="time" type="int"/>
+     <field name="price" type="double"/>
+     <field name="trade_volume" type="int"/>
+     <field name="trade_amount" type="int"/>
+     <field name="bid_ask" type="string" size="1"/>
+     </schema>
+     */
+    list<SchemaFieldType> schema_fields;
+    SchemaFieldType schema_field;
+    schema_field.fieldName = "stock";
+    schema_field.typeName = "string";
+    schema_field.size = 6;
+    schema_fields.push_back(schema_field);
+
+    schema_field.fieldName = "time";
+    schema_field.typeName = "int";
+    schema_field.size = 0;
+    schema_fields.push_back(schema_field);
+
+    schema_field.fieldName = "price";
+    schema_field.typeName = "double";
+    schema_field.size = 0;
+    schema_fields.push_back(schema_field);
+
+    schema_field.fieldName = "trade_volume";
+    schema_field.typeName = "int";
+    schema_field.size = 0;
+    schema_fields.push_back(schema_field);
+
+    schema_field.fieldName = "trade_amount";
+    schema_field.typeName = "int";
+    schema_field.size = 0;
+    schema_fields.push_back(schema_field);
+
+    schema_field.fieldName = "bid_ask";
+    schema_field.typeName = "string";
+    schema_field.size = 1;
+    schema_fields.push_back(schema_field);
+
+    CatalogSchema *add_schema;
+    add_schema = _local_catalog.add_conger_schema("inputpacket", schema_fields);
+
+    vector<SchemaField> fields = add_schema->get_schema_field();
+
+    DEBUG << "schema fields size: " << fields.size() << " schema name "
+    << add_schema->get_schema_name();
+    vector<SchemaField>::iterator iter = fields.begin();
+    for (; iter != fields.end(); iter++)
+    {
+        DEBUG << "field name: " << iter->get_name() << " type: " << iter->get_type();
+    }
+
+    // add schema to engine's structures
+    vector<CatalogSchema*> schemas;
+    schemas.push_back(add_schema);
+
+    _aurora.add_schema(schemas);
+
+    /*********************** begin input ***********************************/
+    string stream_name000 = "inputstream000";
+    string stream_name529 = "inputstream529";
+    string schema_name = "inputpacket";
+
+    CatalogStream *new_stream000;
+    new_stream000 = _local_catalog.add_conger_stream(stream_name000, schema_name);
+    DEBUG << "Opening a general purpose input data path for stream " << new_stream000->get_stream_name();
+
+    _data_path.add_input_path(new_stream000->get_stream_name());
+    try
+    {
+        // add stream to engine's structures -- yna
+        vector<CatalogStream*> stream;
+        stream.push_back(new_stream000);
+        _aurora.add_stream(stream);
+    }
+    catch (AuroraException &ae)
+    {
+        DEBUG << ae.getMessage();
+    }
+
+    CatalogStream *new_stream529;
+    new_stream529 = _local_catalog.add_conger_stream(stream_name529, schema_name);
+    DEBUG << "Opening a general purpose input data path for stream "
+            << new_stream529->get_stream_name();
+
+    _data_path.add_input_path(new_stream529->get_stream_name());
+    try
+    {
+        // add stream to engine's structures -- yna
+        vector<CatalogStream*> stream;
+        stream.push_back(new_stream529);
+        _aurora.add_stream(stream);
+    }
+    catch (AuroraException &ae)
+    {
+        DEBUG << ae.getMessage();
+    }
+    /********************************** end input  *******************/
+
+    /***************** begin query  *************************/
+    string query_name = "try_union";
+
+    map<string, string> box_parameters;
+
+    /* 多个输入流之间中冒号分隔，这种方式不好 */
+    add_conger_box("try_union", "union", "inputstream000:inputstream529",
+            "outputstream", box_parameters);
+    /*********************  end query  **************************/
+
+    /*******************   subscribe    *************************/
+    CatalogSubscription subscriber;
+    subscriber = _local_catalog.add_conger_subsribe("outputstream", "127.0.0.1:25000", "");
+
+    vector<CatalogSubscription> subs;
+    subs.push_back(subscriber);
+
+    AsyncRPC<void> completion;
+    completion.post(true);
+    local_subscribe_streams(completion, subs);
+
+    /* 和上面的 true 配对 */
+    _ongoing_dynamic_modification = false;
 }
 
 void QueryProcessor::try_filter_map()

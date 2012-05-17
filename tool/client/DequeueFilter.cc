@@ -22,6 +22,7 @@ void pretty_print(StockFilterTuple tuple)
 
     current_time = localtime((const time_t*) &tuple.time);
 
+    char stock[7];
     char time_string[100];
     char price_string[100];
 
@@ -29,7 +30,10 @@ void pretty_print(StockFilterTuple tuple)
     strftime(time_string, 100, "%H:%M:%S", current_time);
     sprintf(price_string, "%2.2f", tuple.price);
 
-    INFO << "当前时间: " << time_string << ", 价格: " << price_string;
+    memcpy(stock, tuple.stock, 6);
+    stock[6] = '\0';
+
+    INFO << "stock: " << stock << " 当前时间: " << time_string << ", 价格: " << price_string;
 }
 
 Status handleOutput(ptr<StreamEvent> event)

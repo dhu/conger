@@ -58,6 +58,10 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
     {
         this->try_filter_map();
     }
+    else if (conger_config == "union")
+    {
+        this->try_union();
+    }
     else
     {
         DeployParser deploy_parser;
