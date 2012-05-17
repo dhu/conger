@@ -10,28 +10,28 @@ dequeue
 
 ## 尝试 Borealis 基础的 Box
 运行方法
-首先运行 conger，然后运行对应的 dequeue 和 enqueue 就可以了
-每次运行之前都要重新运行 conger
+首先运行 conger，然后运行对应的 dequeue 和 enqueue 就可以了  
+每次运行之前都要重新运行 conger  
 
-# fitler
+### fitler
 ```
 ./dequeueFilter
 ./enqueue filter
 ```
 
-# map 
+### map 
 ```
 ./dequeueMap
 ./enqueue map
 ```
 
-# filter_map
+### filter_map
 ```
 ./dequeueMap
 ./enqueue filter_map
 ```
 
-# union
+### union
 ```
 ./dequeueFilter
 ./enqueueUnion
