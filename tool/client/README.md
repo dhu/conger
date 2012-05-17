@@ -40,3 +40,9 @@ dequeue
 ./dequeueFilter
 ./enqueueUnion
 ```
+
+### join
+```
+./dequeueJoin
+./enqueueUnion join
+```

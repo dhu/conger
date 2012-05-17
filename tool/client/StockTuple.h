@@ -32,6 +32,16 @@ struct StockFilterTuple: public TupleHeader
 }__attribute__((__packed__));
 
 
+struct StockJoinTuple: public TupleHeader
+{
+    int32 time;
+    char stock0[6];
+    double price0;
+    char stock1[6];
+    double price1;
+}__attribute__((__packed__));
+
+
 struct StockMapTuple: public TupleHeader
 {
     char stock[6];

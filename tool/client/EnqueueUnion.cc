@@ -187,7 +187,16 @@ int main(int argc, char** argv)
     ptr<MedusaClient> client = ptr<MedusaClient>(
             new MedusaClient(InetAddress("127.0.0.1", 15000)));
 
-    client->add_conger_string("union");
+    if (argc >= 2 && string(argv[1]) == "join")
+    {
+        cout << "It is join" << endl;
+        client->add_conger_string("join");
+    }
+    else
+    {
+        cout << "It is union" << endl;
+        client->add_conger_string("union");
+    }
     Borealis::EnqueueUnion enqueue;
     enqueue.start();
 }
