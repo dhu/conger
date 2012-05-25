@@ -2,7 +2,8 @@ MYFLAGS =
 AM_CFLAGS = @CFLAGS@ $(MYFLAGS)
 AM_CXXFLAGS = @CXXFLAGS@ $(MYFLAGS)
 
-MAIN = enqueue enqueueUnion dequeue dequeueFilter dequeueMap dequeueJoin dequeueAggregate#enqueueAndDequeue
+MAIN = enqueue enqueueUnion dequeue dequeueFilter dequeueMap \
+	dequeueJoin dequeueAggregate dequeueAggregateFilter #enqueueAndDequeue
 
 bin_PROGRAMS = $(MAIN)
 
@@ -42,3 +43,5 @@ dequeueJoin_SOURCES = DequeueJoin.cc StockTuple.h
 dequeueAggregate_SOURCES = DequeueAggregate.cc StockTuple.h
 
 enqueueUnion_SOURCES =EnqueueUnion.cc StockTuple.h
+
+dequeueAggregateFilter_SOURCES = DequeueAggregateFilter.cc StockTuple.h

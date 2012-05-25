@@ -25,6 +25,7 @@ tool/client/dequeueMap
 tool/client/dequeueJoin
 tool/client/dequeueFilter
 tool/client/dequeueAggregate
+tool/client/dequeueAggregateFilter
 tool/padmin/padmin
 src/src/conger
 

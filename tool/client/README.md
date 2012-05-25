@@ -46,3 +46,16 @@ dequeue
 ./dequeueJoin
 ./enqueueUnion join
 ```
+
+### aggregate
+```
+./dequeueAggregate
+./enqueue aggregate
+```
+
+### aggregate_filter
+```
+./dequeueAggregateFilter
+./enqueue aggregate_filter
+```
+
