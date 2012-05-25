@@ -41,6 +41,11 @@ struct StockJoinTuple: public TupleHeader
     double price1;
 }__attribute__((__packed__));
 
+struct StockAggregateTuple: public TupleHeader
+{
+    int32 time;
+    double price;
+}__attribute__((__packed__));
 
 struct StockMapTuple: public TupleHeader
 {

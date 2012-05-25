@@ -66,6 +66,14 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
     {
         this->try_join();
     }
+    else if (conger_config == "aggregate")
+    {
+        this->try_aggregate();
+    }
+    else if (conger_config == "aggregate_filter")
+    {
+        this->try_aggregate_filter();
+    }
     else
     {
         DeployParser deploy_parser;

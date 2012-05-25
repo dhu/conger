@@ -160,6 +160,14 @@ int main(int argc, char** argv)
         {
             client->add_conger_string("filter_map");
         }
+        else if (what == "aggregate")
+        {
+            client->add_conger_string("aggregate");
+        }
+        else if (what == "aggregate_filter")
+        {
+            client->add_conger_string("aggregate_filter");
+        }
     }
     Enqueue enqueue;
     enqueue.start();
