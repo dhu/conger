@@ -13,6 +13,7 @@
 #include <fstream>
 #include <errno.h>
 #include <cstring>
+#include <ctime>
 
 using namespace Borealis;
 using namespace std;
@@ -117,11 +118,12 @@ void Enqueue::sendPacket()
         StockInputTuple* pTuple = &tuple;
         string stringData(reinterpret_cast<const char *>(pTuple),
                 sizeof(StockInputTuple));
-        DEBUG << pTuple->time;
         DEBUG << "data size:" << stringData.size();
         eventPacket->insert_bin(stringData);
         medusaClient->fast_post_event(eventPacket);
-        DEBUG << "sending " << tuple.time << " " << tuple.price;
+        char price[100];
+        sprintf(price, "%.2f", tuple.price);
+        DEBUG << "sending " << "price： " << price << " 时间：" << ctime(&tuple.time);
     }
 
     (new CallbackTimer(medusaClient->get_loop(),

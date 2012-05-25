@@ -185,9 +185,10 @@ CatalogBox* CongerDiagram::add_conger_box(string box_name, string type,
         while (pch != NULL)
         {
             stream = string(pch);
+            /* True 和 False 的区别？ */
             add_in(stream,
                     parse_conger_inqueue(box_parameters, _add_query->get_in_queue()),
-                    False);
+                    True);
             DEBUG << "connect stream " << stream << " to box " << name;
             pch = strtok(NULL, ":");
         }
