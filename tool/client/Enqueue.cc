@@ -164,9 +164,9 @@ int main(int argc, char** argv)
         {
             client->add_conger_string("aggregate");
         }
-        else if (what == "aggregate_filter")
+        else if (what == "aggregate_join")
         {
-            client->add_conger_string("aggregate_filter");
+            client->add_conger_string("aggregate_join");
         }
     }
     Enqueue enqueue;

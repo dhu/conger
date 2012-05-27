@@ -53,9 +53,9 @@ dequeue
 ./enqueue aggregate
 ```
 
-### aggregate_filter
+### aggregate_join
 ```
-./dequeueAggregateFilter
-./enqueue aggregate_filter
+./dequeueAggregateJoin
+./enqueue aggregate_join
 ```
 

@@ -777,7 +777,7 @@ void QueryProcessor::try_aggregate()
 
 }
 
-void QueryProcessor::try_aggregate_filter()
+void QueryProcessor::try_aggregate_join()
 {
     _ongoing_dynamic_modification = true;
 
@@ -868,7 +868,7 @@ void QueryProcessor::try_aggregate_filter()
     }
 
     /*****************  query  *************************/
-    string query_name = "try_aggregate_filter";
+    string query_name = "try_aggregate_join";
 
     map<string, string> box_parameters;
     box_parameters["aggregate-function.0"] = "max(price)";
@@ -879,7 +879,7 @@ void QueryProcessor::try_aggregate_filter()
     box_parameters["order-by"] = "FIELD";
     box_parameters["order-on-field"] = "time";
 
-    add_conger_box("try_aggregate_filter_0", "aggregate", "inputstream",
+    add_conger_box("try_aggregate_join_0", "aggregate", "inputstream",
             "intermediate", box_parameters);
 
     box_parameters.clear();
@@ -906,7 +906,7 @@ void QueryProcessor::try_aggregate_filter()
     box_parameters["out-field.2"] = "left.time";
     box_parameters["out-field-name.2"] = "then";
 
-    add_conger_box("try_aggregate_filter_1", "join", "inputstream:intermediate",
+    add_conger_box("try_aggregate_join_1", "join", "inputstream:intermediate",
             "outputstream", box_parameters);
 
     /*******************   subscribe    *************************/

@@ -70,9 +70,9 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
     {
         this->try_aggregate();
     }
-    else if (conger_config == "aggregate_filter")
+    else if (conger_config == "aggregate_join")
     {
-        this->try_aggregate_filter();
+        this->try_aggregate_join();
     }
     else
     {
