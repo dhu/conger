@@ -83,6 +83,16 @@ class QueryProcessor : public BasicComponent
     ///
     void add_conger_subscribe(DeployDescript deploy_descript);
 
+    /// 下面的函数都是用来测试的，可以忽略
+    ///
+    void try_map();
+    void try_filter();
+    void try_filter_map();
+    void try_union();
+    void try_join();
+    void try_aggregate();
+    void try_aggregate_join();
+
  public:
 
     //////////////////////////////////////////////////

@@ -13,7 +13,8 @@ INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@                           \
            -I../queryProcessor/storageMgr                                  \
            -I../queryProcessor/statsMgr                                    \
            -I../catalog                                                    \
-           -I../optimizer/nhopt
+           -I../optimizer/nhopt	                                           \
+           -I../queryProcessor/congerDeploy	
 
 lib_LTLIBRARIES = libborealisha.la
 

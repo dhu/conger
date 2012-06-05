@@ -67,10 +67,10 @@ void run()
 
 void loadData()
 {
-	ifstream stream("stock.csv", ifstream::in);
+	ifstream stream("stock600000.csv", ifstream::in);
 	if (!stream.good())
 	{
-		perror("stock.csv");
+		perror("stock600000.csv");
 		exit(errno);
 	}
 	while (stream.good())
