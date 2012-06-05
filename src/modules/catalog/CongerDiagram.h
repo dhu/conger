@@ -12,6 +12,7 @@
 
 #include "Diagram.h"
 #include "util.h"
+#include "DeployDescript.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -22,8 +23,6 @@ public:
     virtual ~CongerDiagram();
 
 public:
-
-    typedef std::pair<std::string, std::string> SchemaFieldType;
 
     /// add a single schema to catalog
     ///

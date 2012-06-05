@@ -18,7 +18,15 @@ utility/client/java/lib/medusaXmlRpc.jar
 utility/client/java/src/classjava.stamp	
 utility/client/java/src/subscribe
 tool/client/enqueue
+tool/client/enqueueUnion
+tool/client/enqueueUnion
 tool/client/dequeue
+tool/client/dequeueMap
+tool/client/dequeueJoin
+tool/client/dequeueFilter
+tool/client/dequeueAggregate
+tool/client/dequeueAggregateFilter
+tool/client/dequeueAggregateJoin
 tool/padmin/padmin
 src/src/conger
 

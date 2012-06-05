@@ -12,13 +12,22 @@
 #include <map>
 #include <list>
 
-typedef std::pair<std::string, std::string> SchemaFieldType;
+typedef struct SchemaFieldTypeStruct
+{
+    std::string fieldName;
+    std::string typeName;
+    int size;
+    SchemaFieldTypeStruct()
+    {
+        size = 0;
+    }
+} SchemaFieldType;
 
 typedef struct DeployDescriptStruct
 {
     std::string deployName;
 
-    /* std::map<schemaName, std::map<fieldName, fieldType> > schemas */
+    /* std::map<schemaName, SchemaFieldType> schemas */
     std::map<std::string, std::list<SchemaFieldType> > schemas;
 
     /* std::map<streamName, schema> streams */

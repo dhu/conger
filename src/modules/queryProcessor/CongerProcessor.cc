@@ -46,29 +46,59 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
     AsyncRPC<void> completion;
     completion.post(true);
 
-    DeployParser deploy_parser;
-    DeployDescript deploy_descript = deploy_parser.parse(conger_config);
-
-    if (deploy_descript.deployName == "Unspecified Deploy Name")
+    if (conger_config == "filter")
     {
-        return completion;
+        this->try_filter();
     }
+    else if (conger_config == "map")
+    {
+        this->try_map();
+    }
+    else if (conger_config == "filter_map")
+    {
+        this->try_filter_map();
+    }
+    else if (conger_config == "union")
+    {
+        this->try_union();
+    }
+    else if (conger_config == "join")
+    {
+        this->try_join();
+    }
+    else if (conger_config == "aggregate")
+    {
+        this->try_aggregate();
+    }
+    else if (conger_config == "aggregate_join")
+    {
+        this->try_aggregate_join();
+    }
+    else
+    {
+        DeployParser deploy_parser;
+        DeployDescript deploy_descript = deploy_parser.parse(conger_config);
 
-    _ongoing_dynamic_modification = true;
+        if (deploy_descript.deployName == "Unspecified Deploy Name")
+        {
+            return completion;
+        }
 
-    add_conger_schema(deploy_descript);
-    add_conger_input(deploy_descript);
-    add_conger_query(deploy_descript);
-    add_conger_subscribe(deploy_descript);
+        _ongoing_dynamic_modification = true;
 
-    _ongoing_dynamic_modification = false;
+        add_conger_schema(deploy_descript);
+        add_conger_input(deploy_descript);
+        add_conger_query(deploy_descript);
+        add_conger_subscribe(deploy_descript);
+
+        _ongoing_dynamic_modification = false;
+    }
 
     return completion;
 }
 
 void QueryProcessor::add_conger_schema(DeployDescript deploy_descript)
 {
-    typedef std::pair<std::string, std::string> SchemaFieldType;
     map<string, list<SchemaFieldType> >::iterator schema_iterator;
     for (schema_iterator = deploy_descript.schemas.begin();
             schema_iterator != deploy_descript.schemas.end();
