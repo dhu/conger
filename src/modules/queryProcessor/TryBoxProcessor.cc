@@ -753,7 +753,7 @@ void QueryProcessor::try_aggregate()
     box_parameters["aggregate-function.0"] = "max(price)";
     box_parameters["aggregate-function-output-name.0"] = "price";
     box_parameters["window-size-by"] = "VALUES";
-    box_parameters["window-size"] = "600";
+    box_parameters["window-size"] = "50";
     box_parameters["advance"] = "10";
     box_parameters["order-by"] = "FIELD";
     box_parameters["order-on-field"] = "time";
@@ -874,7 +874,7 @@ void QueryProcessor::try_aggregate_join()
     box_parameters["aggregate-function.0"] = "max(price)";
     box_parameters["aggregate-function-output-name.0"] = "price";
     box_parameters["window-size-by"] = "VALUES";
-    box_parameters["window-size"] = "600";
+    box_parameters["window-size"] = "50";
     box_parameters["advance"] = "10";
     box_parameters["order-by"] = "FIELD";
     box_parameters["order-on-field"] = "time";
@@ -890,11 +890,11 @@ void QueryProcessor::try_aggregate_join()
     box_parameters["left-order-by"] = "VALUES";
     box_parameters["right-order-by"] = "VALUES";
     */
-    box_parameters["timeout"] = "500";
-    box_parameters["left-buffer-size"] = "100";
-    box_parameters["right-buffer-size"] = "100";
-    box_parameters["left-order-by"] = "TUPLES";
-    box_parameters["right-order-by"] = "TUPLES";
+    box_parameters["timeout"] = "10";
+    box_parameters["left-buffer-size"] = "50";
+    box_parameters["right-buffer-size"] = "1";
+    box_parameters["left-order-by"] = "VALUES";
+    box_parameters["right-order-by"] = "VALUES";
 
     box_parameters["left-order-on-field"] = "time";
     box_parameters["right-order-on-field"] = "time";
