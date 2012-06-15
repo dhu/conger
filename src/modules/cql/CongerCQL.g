@@ -53,15 +53,7 @@ statement
 
 query
 	: sfw_block
-	| idstream_clause LPAREN sfw_block RPAREN using_clause
-        -> ^(TOK_IDSTREAM sfw_block using_clause)
-	| rstream LPAREN sfw_block RPAREN
-        -> ^(TOK_RSTREAM sfw_block)
 	| binary
-	| idstream_clause LPAREN binary RPAREN using_clause
-        -> ^(TOK_IDSTREAM binary using_clause)
-	| rstream LPAREN binary RPAREN
-        -> ^(TOK_RSTREAM binary)
 	;
 
 binary
@@ -70,17 +62,12 @@ binary
 	;
 
 binary_operator
-	: KW_EXCEPT
-	| KW_MINUS
-	| KW_INTERSECT
-	| KW_UNION KW_ALL?
-	| KW_NOT? KW_IN
+	: KW_UNION 
 	;
 
 sfw_block
 	: select_clause from_clause 
 	(opt_group_by_clause? opt_having_clause?
-    | order_by_clause
     | opt_where_clause opt_group_by_clause? opt_having_clause?
 	)
         -> ^(TOK_SFW select_clause from_clause order_by_clause? 
@@ -88,8 +75,8 @@ sfw_block
 	;
 	
 select_clause
-	: KW_SELECT KW_DISTINCT? (STAR | non_mt_projterm_list)
-        -> ^(TOK_SELECT KW_DISTINCT? STAR? non_mt_projterm_list?)
+	: KW_SELECT (STAR | non_mt_projterm_list)
+        -> ^(TOK_SELECT STAR? non_mt_projterm_list?)
 	;
 
 non_mt_projterm_list
@@ -118,38 +105,9 @@ arith_expr_main
 	| aggr_expr
 	| aggr_distinct_expr
 	| func_expr
-    // 不支持正负, 这个歧义如何消除
+    // 不支持正负, 这个歧义如何消除?
 	// | (PLUS | MINUS) arith_expr
 	| LPAREN arith_expr RPAREN
-	;
-	
-order_by_clause
-	: KW_ORDER KW_BY order_by_list
-        -> ^(TOK_ORDER_BY order_by_list)
-	;
-
-order_by_list
-	: orderterm (options{greedy=true;}: COMMA order_by_list)*
-        -> orderterm*
-	;
-
-orderterm
-	: order_expr asc_desc? null_spec?
-        -> ^(TOK_ORDER_EXPR order_expr asc_desc? null_spec?)
-	;
-
-asc_desc
-	: KW_ASC
-	| KW_DESC
-	;
-
-null_spec
-	: KW_NULLS (KW_FIRST | KW_LAST)
-	;
-
-order_expr
-	: attr
-	| const_int
 	;
 
 opt_where_clause
@@ -169,10 +127,9 @@ opt_group_by_clause
 
 from_clause
 	: KW_FROM non_mt_relation_list 
-	(((KW_LEFT | KW_RIGHT)? KW_OUTER)? KW_JOIN relation_variable KW_ON non_mt_cond_list)? 
-	// XXX 只能连接两张表吗？
+	(KW_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT timeout=Integer)?)? 
         -> ^(TOK_FROM non_mt_relation_list 
-            ^(TOK_JOIN relation_variable KW_ON non_mt_cond_list KW_LEFT? KW_RIGHT? KW_OUTER?)?)
+            ^(TOK_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT $timeout)?)?)
 	;
 
 non_mt_cond_list
@@ -227,16 +184,9 @@ relation_variable
 	;
 
 window_type
-	: KW_RANGE 
-		(time_spec ( KW_SLIDE time_spec)?
-		| const_value KW_ON Identifier // XXX 这个语句是什么意思？
-		| KW_UNBOUNDED
-		)
-	| KW_NOW
-	| KW_ROWS Integer ( KW_SLIDE Integer)?
-	| KW_PARTITION KW_BY non_mt_attr_list KW_ROWS	
-		rows=Integer (KW_RANGE time_spec (KW_SLIDE time_spec)? )?
-        -> ^(TOK_PARTITION non_mt_attr_list $rows (KW_RANGE time_spec (KW_SLIDE time_spec)?)?)
+	: KW_RANGE time_spec ( KW_SLIDE time_spec)? (KW_ON arith_expr)?
+	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?
+        -> ^((KW_RANGE time_spec (KW_SLIDE time_spec)?)? (KW_ROW $row (KW_SLIDE $slide)?)?)
 	;
 
 non_mt_attr_list
@@ -301,30 +251,6 @@ func_expr
 
 func_name
 	: Identifier
-	;
-
-idstream_clause
-	: KW_ISTREAM
-	| KW_DSTREAM
-	;
-
-using_clause
-	: KW_DIFFERENCE KW_USING LPAREN usinglist RPAREN
-        -> ^(TOK_USING usinglist)
-	;
-
-usinglist
-	: usingterm (options{greedy=true;}: COMMA usinglist)*
-        -> usingterm+
-	;
-
-usingterm
-	: usingexpr
-	;
-
-usingexpr
-	: attr
-	| const_int
 	;
 
 attr
@@ -457,6 +383,7 @@ KW_MAX: 'MAX';
 KW_MIN: 'MIN';
 KW_INTERSECT: 'INTERSECT';
 KW_RANGE: 'RANGE';
+KW_TIMEOUT: 'TIMEOUT'
 
 // Operators
 // NOTE: if you add a new function/operator, add it to sysFuncNames so that describe function _FUNC_ will work.
