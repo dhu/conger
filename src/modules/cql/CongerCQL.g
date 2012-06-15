@@ -70,7 +70,7 @@ sfw_block
 	(opt_group_by_clause? opt_having_clause?
     | opt_where_clause opt_group_by_clause? opt_having_clause?
 	)
-        -> ^(TOK_SFW select_clause from_clause order_by_clause? 
+        -> ^(TOK_SFW select_clause from_clause  
         opt_where_clause? opt_group_by_clause? opt_having_clause?)
 	;
 	
@@ -186,7 +186,7 @@ relation_variable
 window_type
 	: KW_RANGE time_spec ( KW_SLIDE time_spec)? (KW_ON arith_expr)?
 	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?
-        -> ^((KW_RANGE time_spec (KW_SLIDE time_spec)?)? (KW_ROW $row (KW_SLIDE $slide)?)?)
+        -> ^(TOK_WINDOW (KW_RANGE time_spec (KW_SLIDE time_spec)?)? (KW_ROW $row (KW_SLIDE $slide)?)?)
 	;
 
 non_mt_attr_list
@@ -383,7 +383,7 @@ KW_MAX: 'MAX';
 KW_MIN: 'MIN';
 KW_INTERSECT: 'INTERSECT';
 KW_RANGE: 'RANGE';
-KW_TIMEOUT: 'TIMEOUT'
+KW_TIMEOUT: 'TIMEOUT';
 
 // Operators
 // NOTE: if you add a new function/operator, add it to sysFuncNames so that describe function _FUNC_ will work.
