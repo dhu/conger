@@ -12,19 +12,14 @@ options
 
 tokens
 {
-	TOK_CREATE_VIEW;
 	TOK_QUERY;
 	TOK_BINARY;
 	TOK_SELECT;
 	TOK_ARG_LIST;
-	TOK_IDSTREAM;
-    TOK_RSTREAM;
     TOK_SFW;
     TOK_WHERE;
     TOK_PROJTERM;
     TOK_PROJTERM_LIST;
-    TOK_ORDER_BY;
-    TOK_ORDER_EXPR;
     TOK_HAVING;
     TOK_GROUP_BY;
     TOK_FROM;
@@ -33,17 +28,16 @@ tokens
     TOK_UNARY_COND;
     TOK_BETWEEN;
     TOK_COMPARE;
-    TOK_PARTITION;
     TOK_WINDOW;
     TOK_RELATION_VARIABLE;
     TOK_ATTR_LIST; 
     TOK_AGGR; 
-    TOK_AGGR_DISTINCT;
 	TOK_COND_LIST;
 	TOK_RELATION_LIST;
 	TOK_USING;
 	TOK_FUNC;
 	TOK_ARITH_EXPR;
+	TOK_AGGR_EXPR;
 }
 
 // starting rule
@@ -84,6 +78,7 @@ non_mt_projterm_list
         -> ^(TOK_PROJTERM_LIST projterm+)
 	;
 
+// AS 对于 borealis 来说并没有用处
 projterm
 	: arith_expr (KW_AS alias=Identifier)?
         -> ^(TOK_PROJTERM arith_expr KW_AS? $alias?)
@@ -103,11 +98,12 @@ arith_expr_main
 	: attr
 	| const_value
 	| aggr_expr
-	| aggr_distinct_expr
 	| func_expr
     // 不支持正负, 这个歧义如何消除?
 	// | (PLUS | MINUS) arith_expr
 	| LPAREN arith_expr RPAREN
+		// 这里主要就是把括号不要放到 AST
+		-> arith_expr
 	;
 
 opt_where_clause
@@ -125,6 +121,7 @@ opt_group_by_clause
         -> ^(TOK_GROUP_BY non_mt_attr_list)
 	;
 
+// 在语法的定义上， FROM 后面支持通过 comma 分隔多个relation_variable，但是在实现的时候并不支持这个。
 from_clause
 	: KW_FROM non_mt_relation_list 
 	(KW_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT timeout=Integer)?)? 
@@ -148,6 +145,7 @@ options {backtrack=true;}
 	| LPAREN unary_condition RPAREN
 	;
 
+// 为啥这个叫  unary？根本就不是一元的啊
 unary_condition
 	: arith_expr (between_condition_right | compare_condition_right)
 	;
@@ -184,9 +182,10 @@ relation_variable
 	;
 
 window_type
-	: KW_RANGE time_spec ( KW_SLIDE time_spec)? (KW_ON arith_expr)?
+	: KW_RANGE range=time_spec ( KW_SLIDE slidetime=time_spec)? (KW_ON arith_expr)?
+	    -> ^(TOK_WINDOW KW_RANGE $range (KW_SLIDE $slidetime)?)
 	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?
-        -> ^(TOK_WINDOW (KW_RANGE time_spec (KW_SLIDE time_spec)?)? (KW_ROW $row (KW_SLIDE $slide)?)?)
+        -> ^(TOK_WINDOW KW_ROWS $row (KW_SLIDE $slide)?)
 	;
 
 non_mt_attr_list
@@ -228,20 +227,13 @@ time_unit
 	| KW_NANOSECONDS
 	;
 
-aggr_distinct_expr
-	: aggr_distinct_operator LPAREN KW_DISTINCT arith_expr RPAREN
-        -> ^(TOK_AGGR_DISTINCT aggr_distinct_operator arith_expr)
-	;
-aggr_distinct_operator
-	: KW_COUNT | KW_SUM | KW_AVG | KW_MAX | KW_MIN
-	;
 aggr_expr
-	: KW_COUNT LPAREN ( arith_expr | STAR) RPAREN
-        -> ^(TOK_AGGR KW_COUNT arith_expr? STAR?)
-	| ( (KW_SUM | KW_AVG) LPAREN arith_expr
-		| ( KW_MAX | KW_MIN) LPAREN arith_expr
+	: KW_COUNT LPAREN ( arith_expr_main | STAR) RPAREN
+        -> ^(TOK_AGGR KW_COUNT arith_expr_main? STAR?)
+	| ( (KW_SUM | KW_AVG) LPAREN arith_expr_main
+		| ( KW_MAX | KW_MIN) LPAREN arith_expr_main
 	) RPAREN
-        -> ^(TOK_AGGR KW_SUM? KW_AVG? KW_MAX KW_MIN? arith_expr)
+        -> ^(TOK_AGGR KW_SUM? KW_AVG? KW_MAX? KW_MIN? ^(TOK_AGGR_EXPR arith_expr_main))
 	;
 
 func_expr
@@ -269,11 +261,6 @@ element_time
 const_int
 	: Integer
 	;
-
-rstream
-	: KW_RSTREAM
-	;
-
 
 // Keywords
 
