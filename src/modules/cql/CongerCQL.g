@@ -117,8 +117,8 @@ opt_having_clause
 	;
 
 opt_group_by_clause
-	: KW_GROUP KW_BY non_mt_attr_list
-        -> ^(TOK_GROUP_BY non_mt_attr_list)
+	: KW_GROUP KW_OVER LSQUARE window_type RSQUARE KW_BY non_mt_attr_list
+        -> ^(TOK_GROUP_BY window_type non_mt_attr_list)
 	;
 
 // 在语法的定义上， FROM 后面支持通过 comma 分隔多个relation_variable，但是在实现的时候并不支持这个。
@@ -194,16 +194,10 @@ non_mt_attr_list
 	;
 
 const_value
-	: interval_value
-	| const_string
+	: const_string
 	| KW_NULL
 	| const_int
-	| KW_FLOAT
-	| KW_DOUBLE
-	;
-
-interval_value
-	: KW_INTERVAL const_string (KW_DAY | KW_DAYS) KW_TO (KW_SECOND|KW_SECONDS)
+	| const_float
 	;
 
 time_spec
@@ -260,6 +254,10 @@ element_time
 
 const_int
 	: Integer
+	;
+	
+const_float
+	: Number
 	;
 
 // Keywords
@@ -371,6 +369,7 @@ KW_MIN: 'MIN';
 KW_INTERSECT: 'INTERSECT';
 KW_RANGE: 'RANGE';
 KW_TIMEOUT: 'TIMEOUT';
+KW_OVER	: 'OVER';
 
 // Operators
 // NOTE: if you add a new function/operator, add it to sysFuncNames so that describe function _FUNC_ will work.
