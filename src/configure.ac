@@ -452,7 +452,7 @@ AC_SUBST(BOREALISLIB)
 BOREALISINCLUDE="$NMSTLINCLUDE $XERCESCINCLUDE $ANTLRINCLUDE $ANTLR3INCLUDE"
 AC_SUBST(BOREALISINCLUDE)
 
-AC_OUTPUT(Makefile modules/Makefile external/Makefile external/udb/Makefile external/udb/stub/Makefile external/bdb/Makefile external/bdb/stub/Makefile external/array/Makefile external/array/stub/Makefile src/Makefile modules/rpc/Makefile modules/ha/Makefile modules/availMon/Makefile modules/common/Makefile modules/util/Makefile modules/queryProcessor/Makefile modules/queryProcessor/runtime/Makefile modules/queryProcessor/storageMgr/Makefile modules/queryProcessor/boxes/Makefile modules/queryProcessor/expr/Makefile modules/queryProcessor/statsMgr/Makefile modules/optimizer/Makefile modules/optimizer/nhopt/Makefile modules/optimizer/local/Makefile modules/catalog/Makefile)
+AC_OUTPUT(Makefile modules/Makefile external/Makefile external/udb/Makefile external/udb/stub/Makefile external/bdb/Makefile external/bdb/stub/Makefile external/array/Makefile external/array/stub/Makefile src/Makefile modules/rpc/Makefile modules/cql/Makefile modules/ha/Makefile modules/availMon/Makefile modules/common/Makefile modules/util/Makefile modules/queryProcessor/Makefile modules/queryProcessor/runtime/Makefile modules/queryProcessor/storageMgr/Makefile modules/queryProcessor/boxes/Makefile modules/queryProcessor/expr/Makefile modules/queryProcessor/statsMgr/Makefile modules/optimizer/Makefile modules/optimizer/nhopt/Makefile modules/optimizer/local/Makefile modules/catalog/Makefile)
 
 if test "x$configure_nmstl" = "x1"; then
     cd nmstl

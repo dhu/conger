@@ -2,9 +2,9 @@ grammar CongerCQL;
 
 options
 {
-    //language=C;
-    //ASTLabelType=pANTLR3_BASE_TREE;
-    ASTLabelType=CommonTree;
+    language=C;
+    ASTLabelType=pANTLR3_BASE_TREE;
+    //ASTLabelType=CommonTree;
     output=AST;
     backtrack=false;
     //k=3;

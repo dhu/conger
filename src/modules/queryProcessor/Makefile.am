@@ -10,7 +10,7 @@ INCLUDES= @BOREALISINCLUDE@   @EXTERNALINCLUDE@                            \
           -I../common       -I../util         -I../rpc                     \
           -I../catalog      -I../optimizer/nhopt                           \
           -I./runtime       -I./storageMgr    -I./statsMgr    -I./expr	   \
-          -I./congerDeploy 
+          -I./congerDeploy  -I../cql
 
 lib_LTLIBRARIES = libborealisqp.la 
 
@@ -27,8 +27,6 @@ libborealisqp_la_SOURCES =                                 \
                                     UpdateClient.h         \
                                     UpdateServer.h         \
                                     PendingQuery.h         \
-           CongerCQLLexer.c         CongerCQLLexer.h       \
-           CongerCQLParser.c        CongerCQLParser.h      \
            CongerProcessor.cc				   \
            congerDeploy/DeployParser.cc                    \
            congerDeploy/DeployParser.h         	           \
@@ -41,7 +39,8 @@ LDADD_MODULES = @NMSTLLIB@                                             \
                 -L../modules/optimizer/local        -lborealislopt     \
                 -L../modules/optimizer/nhopt        -lborealisnhopt    \
                 -L../modules/queryProcessor         -lborealisqp       \
-                -L../modules/util                   -lborealisutil   
+                -L../modules/util                   -lborealisutil     \
+                -L../modules/cql	            -lcongercql
    
 
 libborealisqp_la_LIBADD =                                  \
@@ -49,7 +48,7 @@ libborealisqp_la_LIBADD =                                  \
            runtime/libborealisqpruntime.la                 \
            storageMgr/libborealisqpstore.la                \
            statsMgr/libborealisqpstatsMgr.la               \
-           boxes/libborealisqpboxes.la
+           boxes/libborealisqpboxes.la			   
 
 #
 ###########################  end  Makefile.am  ################################

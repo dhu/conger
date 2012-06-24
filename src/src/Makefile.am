@@ -17,7 +17,8 @@ LDADD = -L../modules/queryProcessor        -lborealisqp          \
         -L../modules/optimizer/nhopt       -lborealisnhopt       \
         -L../modules/optimizer/local       -lborealislopt        \
         -L../modules/common                -lborealiscommon      \
-        -L../modules/util                  -lborealisutil        
+        -L../modules/util                  -lborealisutil        \
+        -L../modules/cql		   -lcongercql
 
 INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@               \
            -I../modules/common                                 \
@@ -34,7 +35,8 @@ INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@               \
            -I../modules/queryProcessor/storageMgr              \
            -I../modules/queryProcessor/statsMgr                \
            -I../modules/queryProcessor/expr                    \
-           -I../modules/queryProcessor/boxes
+           -I../modules/queryProcessor/boxes                   \
+           -I../modules/cql
 
 DEPENDENCIES = ../modules/common/libborealiscommon.la
 
@@ -50,6 +52,7 @@ borealis_DEPENDENCIES =                                                     \
                 ../modules/queryProcessor/libborealisqp.la                  \
                 ../external/libborealisexternal.la                          \
                 ../modules/queryProcessor/statsMgr/libborealisqpstatsMgr.la \
+                ../modules/cql/libcongercql.la			            \
                 $(DEPENDENCIES) 
 
 

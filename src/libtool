@@ -46,7 +46,7 @@ macro_revision=1.3017
 build_libtool_libs=yes
 
 # Whether or not to build static libraries.
-build_old_libs=no
+build_old_libs=yes
 
 # What type of objects to build.
 pic_mode=default
@@ -86,7 +86,7 @@ NM="/usr/bin/nm -B"
 LN_S="ln -s"
 
 # What is the maximum length of a command?
-max_cmd_len=805306365
+max_cmd_len=1572864
 
 # Object file suffix (normally "o").
 objext=o
@@ -129,7 +129,7 @@ old_postinstall_cmds="chmod 644 \$oldlib~\$RANLIB \$oldlib"
 old_postuninstall_cmds=""
 
 # A C compiler.
-LTCC="/opt/borealis-tools/nmstl/bin/wtf gcc"
+LTCC="gcc"
 
 # LTCC compiler flags.
 LTCFLAGS="-g -Wall -Werror"
@@ -260,7 +260,7 @@ LD="/usr/bin/ld"
 old_archive_cmds="\$AR \$AR_FLAGS \$oldlib\$oldobjs~\$RANLIB \$oldlib"
 
 # A language specific compiler.
-CC="/opt/borealis-tools/nmstl/bin/wtf gcc"
+CC="gcc"
 
 # Is the compiler the GNU compiler?
 with_gcc=yes
@@ -8922,7 +8922,7 @@ LD="/usr/bin/ld"
 old_archive_cmds="\$AR \$AR_FLAGS \$oldlib\$oldobjs~\$RANLIB \$oldlib"
 
 # A language specific compiler.
-CC="/opt/borealis-tools/nmstl/bin/wtf g++"
+CC="g++"
 
 # Is the compiler the GNU compiler?
 with_gcc=yes

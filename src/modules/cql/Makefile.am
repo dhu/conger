@@ -1,4 +1,3 @@
-SUBDIRS = runtime expr storageMgr boxes statsMgr
 
 ##################################################################
 
@@ -8,39 +7,17 @@ AM_CXXFLAGS = $(MYFLAGS)
 
 INCLUDES= @BOREALISINCLUDE@   @EXTERNALINCLUDE@                            \
           -I../common       -I../util         -I../rpc                     \
-          -I../catalog      -I../optimizer/nhopt                           \
-          -I./runtime       -I./storageMgr    -I./statsMgr    -I./expr
+          -I../catalog      -I../optimizer/nhopt                          
 
-lib_LTLIBRARIES = libcongercql.la 
+lib_LTLIBRARIES = libcongercql.la  
 
 libcongercql_la_SOURCES =                                 \
-           ConsistencyMngr.cc       ConsistencyMngr.h      \
-           DataPath.cc              DataPath.h             \
-           DynamicArray.cc          DynamicArray.h         \
-           IOQueue.cc               IOQueue.h              \
-           QueryProcessor.cc        QueryProcessor.h       \
-                                    QueryState.h           \
-           StreamBuffer.cc          StreamBuffer.h         \
-                                    StreamState.h          \
-           AdminCatalog.cc                                 \
-                                    UpdateClient.h         \
-                                    UpdateServer.h         \
-                                    PendingQuery.h
-#           QueryProcessorWithoutHA.cc
+           CongerCQLLexer.c	CongerCQLLexer.h	\
+           CongerCQLParser.c	CongerCQLParser.h	\	
+           ParseContext.cc	ParseContext.h
+           
 
-LDADD_MODULES = @NMSTLLIB@                                             \
-                -L../modules/catalog                -lborealiscatalog  \
-                -L../modules/optimizer/local        -lborealislopt     \
-                -L../modules/optimizer/nhopt        -lborealisnhopt    \
-                -L../modules/queryProcessor         -lborealisqp       \
-                -L../modules/util                   -lborealisutil
-
-libcongercql_la_LIBADD =                                  \
-           expr/libborealisqpexpr.la                       \
-           runtime/libborealisqpruntime.la                 \
-           storageMgr/libborealisqpstore.la                \
-           statsMgr/libborealisqpstatsMgr.la               \
-           boxes/libborealisqpboxes.la
+LDADD_MODULES = @NMSTLLIB@                             
 
 #
 ###########################  end  Makefile.am  ################################
