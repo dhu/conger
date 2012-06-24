@@ -3,7 +3,7 @@ grammar CongerCQL;
 options
 {
     language=C;
-    ASTLabelType=pANTLR3_BASE_TREE;
+    //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
     backtrack=false;
@@ -130,10 +130,15 @@ from_clause
 	;
 
 non_mt_cond_list
-	: non_mt_cond_list_main (cond_list_operator non_mt_cond_list_main)*
-        -> ^(TOK_COND_LIST ^(TOK_COND cond_list_operator? non_mt_cond_list_main)+)
+	: non_mt_cond_list_main ( non_mt_cond_list_addition)*
+        -> ^(TOK_COND_LIST ^(TOK_COND non_mt_cond_list_main)  non_mt_cond_list_addition*)
 	;
-
+	
+non_mt_cond_list_addition
+	: cond_list_operator non_mt_cond_list_main
+		-> ^(TOK_COND cond_list_operator? non_mt_cond_list_main)
+	;
+	
 cond_list_operator
     : KW_XOR | KW_OR | KW_AND
     ;
