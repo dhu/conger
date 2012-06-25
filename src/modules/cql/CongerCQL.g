@@ -118,15 +118,16 @@ opt_having_clause
 
 opt_group_by_clause
 	: KW_GROUP KW_OVER LSQUARE window_type RSQUARE KW_BY non_mt_attr_list
-        -> ^(TOK_GROUP_BY window_type non_mt_attr_list)
+        -> ^(TOK_GROUP_BY window_type ^(TOK_ATTR_LIST non_mt_attr_list))
 	;
 
 // 在语法的定义上， FROM 后面支持通过 comma 分隔多个relation_variable，但是在实现的时候并不支持这个。
 from_clause
 	: KW_FROM non_mt_relation_list 
-	(KW_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT timeout=Integer)?)? 
+	(KW_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT timeout=Integer unit=time_unit?)?)? 
         -> ^(TOK_FROM non_mt_relation_list 
-            ^(TOK_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT $timeout)?)?)
+            ^(TOK_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT $timeout $unit?)? )?
+            )
 	;
 
 non_mt_cond_list
@@ -187,15 +188,15 @@ relation_variable
 	;
 
 window_type
-	: KW_RANGE range=time_spec ( KW_SLIDE slidetime=time_spec)? (KW_ON arith_expr)?
-	    -> ^(TOK_WINDOW KW_RANGE $range (KW_SLIDE $slidetime)?)
-	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?
-        -> ^(TOK_WINDOW KW_ROWS $row (KW_SLIDE $slide)?)
+	: KW_RANGE range=time_spec ( KW_SLIDE slidetime=time_spec)? (KW_ON arith_expr)? (KW_TIMEOUT timeout=Integer unit=time_unit?)?
+	    -> ^(TOK_WINDOW KW_RANGE $range (KW_SLIDE $slidetime)? (KW_TIMEOUT $timeout $unit?)?)
+	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?  (KW_TIMEOUT timeout=Integer unit=time_unit?)?
+        -> ^(TOK_WINDOW KW_ROWS $row (KW_SLIDE $slide)?  (KW_TIMEOUT $timeout $unit?)?)
 	;
 
 non_mt_attr_list
 	: attr (options{greedy=true;}: COMMA non_mt_attr_list)*
-        -> ^(TOK_ATTR_LIST attr+)
+        ->  attr non_mt_attr_list*
 	;
 
 const_value
