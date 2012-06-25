@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    language=C;
+    //language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -183,7 +183,7 @@ non_mt_relation_list
 
 relation_variable
 	: variableName=Identifier (LSQUARE window_type RSQUARE)? ( KW_AS alias=Identifier)?
-        -> ^(TOK_RELATION_VARIABLE $variableName ^(TOK_WINDOW window_type)? $alias?)
+        -> ^(TOK_RELATION_VARIABLE $variableName window_type? $alias?)
 	;
 
 window_type
