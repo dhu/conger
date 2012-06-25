@@ -195,8 +195,8 @@ window_type
 	;
 
 non_mt_attr_list
-	: attr (options{greedy=true;}: COMMA non_mt_attr_list)*
-        ->  attr non_mt_attr_list*
+	: arith_expr (options{greedy=true;}: COMMA non_mt_attr_list)*
+        ->  arith_expr non_mt_attr_list*
 	;
 
 const_value
