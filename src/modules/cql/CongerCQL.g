@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    language=C;
+    //language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -81,13 +81,11 @@ non_mt_projterm_list
 // AS 对于 borealis 来说并没有用处
 projterm
 	: arith_expr (KW_AS alias=Identifier)?
-        -> ^(TOK_PROJTERM arith_expr KW_AS? $alias?)
+        -> ^(TOK_PROJTERM arith_expr ^(KW_AS $alias)?)
 	;
 	
 arith_expr
-	: arith_expr_main (arith_expr_operator arith_expr_main)?
-        // 这里的抽象树能不能后两个用一个括号括起，再加一个问号
-        -> ^(TOK_ARITH_EXPR arith_expr_main arith_expr_operator? arith_expr_main?)
+	: arith_expr_main (arith_expr_operator^ arith_expr_main)?
 	;
 
 arith_expr_operator
@@ -126,38 +124,35 @@ from_clause
 	: KW_FROM non_mt_relation_list 
 	(KW_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT timeout=Integer unit=time_unit?)?)? 
         -> ^(TOK_FROM non_mt_relation_list 
-            ^(TOK_JOIN relation_variable KW_ON non_mt_cond_list (KW_TIMEOUT $timeout $unit?)? )?
+            ^(TOK_JOIN relation_variable non_mt_cond_list ^(KW_TIMEOUT $timeout $unit?)? )?
             )
 	;
 
 non_mt_cond_list
-	: non_mt_cond_list_main ( non_mt_cond_list_addition)*
-        -> ^(TOK_COND_LIST ^(TOK_COND non_mt_cond_list_main)  non_mt_cond_list_addition*)
+	: non_mt_or_cond
+        -> ^(TOK_COND_LIST non_mt_or_cond)
 	;
 	
-non_mt_cond_list_addition
-	: cond_list_operator non_mt_cond_list_main
-		-> ^(TOK_COND cond_list_operator? non_mt_cond_list_main)
+non_mt_or_cond
+	: non_mt_and_cond ( KW_OR^ non_mt_and_cond)*
 	;
 	
-cond_list_operator
-    : KW_XOR | KW_OR | KW_AND
-    ;
-	
-non_mt_cond_list_main
-options {backtrack=true;}
-	: KW_NOT non_mt_cond_list_main
-	| unary_condition
-	| LPAREN unary_condition RPAREN
+non_mt_and_cond
+	: non_mt_not_cond (KW_AND^ non_mt_not_cond)*
 	;
-
+	
+non_mt_not_cond
+	: (KW_NOT^)* unary_condition
+	;
+	
 // 为啥这个叫  unary？根本就不是一元的啊
 unary_condition
 	: arith_expr (between_condition_right | compare_condition_right)
+		-> ^(TOK_COND arith_expr between_condition_right? compare_condition_right?)
 	;
 	
 between_condition_right
-	: KW_BETWEEN arith_expr KW_AND arith_expr
+	: KW_BETWEEN^ arith_expr KW_AND! arith_expr
 	;
 
 compare_condition_right
@@ -189,9 +184,9 @@ relation_variable
 
 window_type
 	: KW_RANGE range=time_spec ( KW_SLIDE slidetime=time_spec)? (KW_ON arith_expr)? (KW_TIMEOUT timeout=Integer unit=time_unit?)?
-	    -> ^(TOK_WINDOW KW_RANGE $range (KW_SLIDE $slidetime)? (KW_TIMEOUT $timeout $unit?)?)
+	    -> ^(TOK_WINDOW ^(KW_RANGE $range) ^(KW_SLIDE $slidetime)? ^(KW_TIMEOUT $timeout $unit?)?)
 	| KW_ROWS row=Integer ( KW_SLIDE slide=Integer)?  (KW_TIMEOUT timeout=Integer unit=time_unit?)?
-        -> ^(TOK_WINDOW KW_ROWS $row (KW_SLIDE $slide)?  (KW_TIMEOUT $timeout $unit?)?)
+        -> ^(TOK_WINDOW ^(KW_ROWS $row) ^(KW_SLIDE $slide)?  ^(KW_TIMEOUT $timeout $unit?)?)
 	;
 
 non_mt_attr_list
@@ -233,7 +228,7 @@ aggr_expr
 	| ( (KW_SUM | KW_AVG) LPAREN arith_expr_main
 		| ( KW_MAX | KW_MIN) LPAREN arith_expr_main
 	) RPAREN
-        -> ^(TOK_AGGR KW_SUM? KW_AVG? KW_MAX? KW_MIN? ^(TOK_AGGR_EXPR arith_expr_main))
+        -> ^(TOK_AGGR KW_SUM? KW_AVG? KW_MAX? KW_MIN? arith_expr_main)
 	;
 
 func_expr
@@ -246,7 +241,7 @@ func_name
 	;
 
 attr
-	: Identifier ( DOT Identifier | DOT pseudo_column)?
+	: Identifier ( DOT^ Identifier | DOT^ pseudo_column)?
 	| pseudo_column
 	;
 
