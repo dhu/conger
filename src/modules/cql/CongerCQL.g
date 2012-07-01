@@ -147,8 +147,8 @@ non_mt_not_cond
 	
 // 为啥这个叫  unary？根本就不是一元的啊
 unary_condition
-	: arith_expr (between_condition_right | compare_condition_right)
-		-> ^(TOK_COND arith_expr between_condition_right? compare_condition_right?)
+	: arith_expr (unary_condition_operator^ arith_expr |
+		KW_BETWEEN^ arith_expr KW_AND! arith_expr)
 	;
 	
 between_condition_right
