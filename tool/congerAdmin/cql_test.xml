@@ -16,6 +16,13 @@
             <field name="trade_amount" type="int"/>
             <field name="bid_ask" type="string" size="1"/>
         </schema>
+        <schema name="inputpacket1">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+            <field name="trade_volume" type="int"/>
+            <field name="trade_amount" type="int"/>
+            <field name="bid_ask" type="string" size="1"/>
+        </schema>
 
         <!-- 
         <schema name="outputpacket">
@@ -37,7 +44,7 @@
             <out>outputstream</out>
             <cql>
                 <![CDATA[
-                SELECT MAX(price) FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
+                SELECT MAX(price) + 2 FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
                 ]]>
             </cql>
         </query>
