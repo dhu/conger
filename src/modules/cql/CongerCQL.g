@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    language=C;
+    //language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -169,7 +169,7 @@ const_string
 
 non_mt_arg_list
 	: arith_expr (options{greedy=true;}: COMMA non_mt_arg_list)*
-		-> ^(TOK_ARG_LIST arith_expr+)
+		-> arith_expr non_mt_arg_list*
 	;
 	
 non_mt_relation_list
