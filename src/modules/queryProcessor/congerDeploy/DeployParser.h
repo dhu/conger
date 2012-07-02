@@ -10,7 +10,6 @@
 
 #include "DeployDescript.h"
 #include <string>
-#include <xercesc/dom/DOM.hpp>
 
 #include "common.h"
 
@@ -29,12 +28,6 @@ private:
 
 	DeployDescript deploy;
 
-	void parseDeployName(xercesc::DOMNode* deployNameDOM);
-	void parseSchemas(xercesc::DOMNode* schemasDOM);
-	void parseStreams(xercesc::DOMNode* streamsDOM);
-	void parseQuerys(xercesc::DOMNode* querysDOM);
-
-	std::string getChildText(xercesc::DOMNode* node);
 };
 
 BOREALIS_NAMESPACE_END

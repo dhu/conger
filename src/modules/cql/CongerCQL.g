@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    //language=C;
+    language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -85,7 +85,7 @@ projterm
 	;
 	
 arith_expr
-	: arith_expr_main (arith_expr_operator^ arith_expr_main)?
+	: arith_expr_main (arith_expr_operator^ arith_expr_main)*
 	;
 
 arith_expr_operator

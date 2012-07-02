@@ -14,7 +14,8 @@ lib_LTLIBRARIES = libcongercql.la
 libcongercql_la_SOURCES =                                 \
            CongerCQLLexer.c	CongerCQLLexer.h	\
            CongerCQLParser.c	CongerCQLParser.h	\	
-           ParseContext.cc	ParseContext.h
+           ParseContext.cc	ParseContext.h	\
+		   ParseDriver.cc	ParseDriver.h
            
 
 LDADD_MODULES = @NMSTLLIB@                             

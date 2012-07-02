@@ -8,9 +8,8 @@
 #include "CongerDiagram.h"      // 继承自  Diagram
 #include "DeployParser.h"       // 用来解析 conger 的 xml 部署文件
 #include "DeployDescript.h"     // 用来描述部署信息的一个结构体， 该结构体可以由 DeployParser 生成
-#include "antlr3.h"             // antlr3 的 runtime 的头文件 /opt/borealis-tools/antlrs/include
-#include "CongerCQLLexer.h"     // antlr3 自动生成的文件
-#include "CongerCQLParser.h"    // antlr3 自动生成的文件
+#include "ParseDriver.h"
+#include "ParseContext.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -35,10 +34,11 @@ typedef struct CQLContextStruct
 
 } CQLContext;
 
+/*
 CQLContext parse_select(string cql_string);
 
 void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node);
-
+*/
 AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
 {
     INFO << conger_config;
@@ -92,6 +92,7 @@ AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
         add_conger_subscribe(deploy_descript);
 
         _ongoing_dynamic_modification = false;
+
     }
 
     return completion;
@@ -175,9 +176,9 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
         map<string, string> query_parameters = query_iterator->second;
 
         string cql = query_parameters["cql"];
-        CQLContext context = parse_select(cql);
-        DEBUG << "context.cql: " << "\n" << context.cql;
-        DEBUG << "context.输入流: " << context.from_list.front();
+
+        ParseDriver driver;
+        driver.parse(cql);
 
         map<string, string> box_parameters;
         box_parameters["aggregate-function.0"] = "max(price)";
@@ -305,6 +306,7 @@ void QueryProcessor::add_conger_subscribe(DeployDescript deploy_descript)
 
 }
 
+/*
 void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node)
 {
 
@@ -344,7 +346,9 @@ CQLContext parse_select(string cql_string)
     }
 
     CQLContext context;
+    */
     /* 对 TOK_SFW 的子节点进行遍历 */
+/*
     DEBUG << "TOK_SFW 的子节点个数: " << treeNode->getChildCount(treeNode);
     pANTLR3_BASE_TREE sfwNode = treeNode;
     for (uint32 i = 0; i < sfwNode->getChildCount(sfwNode); i++)
@@ -462,5 +466,6 @@ CQLContext parse_select(string cql_string)
     return context;
 
 }
+*/
 
 BOREALIS_NAMESPACE_END
