@@ -85,11 +85,23 @@ projterm
 	;
 	
 arith_expr
-	: arith_expr_main (arith_expr_operator^ arith_expr_main)*
+	: arith_expr_plus_minus
 	;
 
-arith_expr_operator
-    : PLUS | MINUS | STAR | DIVIDE | CONCATENATE
+arith_expr_plus_minus
+	: arith_expr_star_div (PLUS^ arith_expr_star_div)*
+	;
+	
+arith_expr_star_div
+	: arith_expr_main (STAR^ arith_expr_main)*
+	;
+
+arith_expr_operator_star_div
+    : STAR | DIVIDE 
+    ;
+
+arith_expr_operator_plus_minus
+    : PLUS | MINUS
     ;
 
 arith_expr_main
