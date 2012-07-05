@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    //language=C;
+    language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -64,7 +64,7 @@ sfw_block
 	(opt_group_by_clause? opt_having_clause?
     | opt_where_clause opt_group_by_clause? opt_having_clause?
 	)
-        -> ^(TOK_SFW select_clause from_clause  
+        -> ^(TOK_SFW from_clause select_clause   
         opt_where_clause? opt_group_by_clause? opt_having_clause?)
 	;
 	

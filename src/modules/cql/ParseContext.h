@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "antlr3.h"
+#include <string.h>
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -44,6 +45,10 @@ struct WindowDefinition
     TimeUnit slide_time_unit;
     int time_out;
     TimeUnit time_out_time_unit;
+
+    WindowDefinition(): range(0), row(0), slide(0), time_out(0)
+    {
+    }
 };
 
 struct ProjectionTerm
@@ -57,13 +62,8 @@ struct ProjectionTerm
     /* 是不是投影函数 */
     bool is_map;
 
-    /** 这个表达式中出现的流的名称 */
-    vector<string> streams;
-
-    ProjectionTerm()
+    ProjectionTerm(): is_aggregate(false), is_map(false)
     {
-        this->is_map = false;
-        this->is_aggregate = false;
     }
 };
 
@@ -71,6 +71,9 @@ struct StreamVariable
 {
     string stream_name;
     WindowDefinition window;
+    StreamVariable()
+    {
+    }
 };
 
 struct StreamJoin
@@ -79,6 +82,26 @@ struct StreamJoin
     string condition;
     int time_out;
     TimeUnit time_unit;
+
+    StreamJoin(): time_out(0)
+    {
+    }
+};
+
+struct WhereConditoin
+{
+    string condition;
+};
+
+struct StreamGroupBy
+{
+    WindowDefinition window;
+    list<string> attribute_list;
+};
+
+struct HavingCondition
+{
+    string condition;
 };
 
 /**
@@ -90,10 +113,10 @@ public:
     string origin_cql;
     list<ProjectionTerm> select_list;
     StreamVariable from_stream;
-
-    typedef int WhereClause;
-    typedef int GroupByClause;
-    typedef int HavingClause;
+    StreamJoin stream_join;
+    WhereConditoin where;
+    StreamGroupBy group_by;
+    HavingCondition having;
 
     typedef int ProjTerm;
     typedef int ArithExpr;
