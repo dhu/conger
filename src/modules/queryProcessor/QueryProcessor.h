@@ -16,6 +16,7 @@
 #include "UpdateClient.h"
 #include "congerDeploy/DeployDescript.h"
 #include "CongerDiagram.h"
+#include "ParseContext.h"
 
 BOREALIS_NAMESPACE_BEGIN
 
@@ -82,6 +83,30 @@ class QueryProcessor : public BasicComponent
     /// add subscribe to catalog
     ///
     void add_conger_subscribe(DeployDescript deploy_descript);
+
+    /// 将 antlr 解析的结果转化成 boxes
+    ///
+    void transform_cql_to_boxes(ParseContext& context);
+
+    /// 处理 cql 有 join 的情况
+    ///
+    void transform_cql_join(ParseContext& context);
+
+    /// 处理 cql 有 aggregate 的情况
+    ///
+    void transform_cql_aggregate(ParseContext& context);
+
+    /// 处理 cql 有 map 的情况
+    ///
+    void transform_cql_map(ParseContext& context);
+
+    /// 处理 cql 有 filter 的情况
+    ///
+    void transform_cql_filter(ParseContext& context);
+
+    /// 处理 cql 有 union 的情况
+    ///
+    void transform_cql_union(ParseContext& context);
 
     /// 下面的函数都是用来测试的，可以忽略
     ///

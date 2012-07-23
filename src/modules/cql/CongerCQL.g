@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    language=C;
+    //language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -52,7 +52,7 @@ query
 
 binary
 	: view1=Identifier	binary_operator view2=Identifier
-	    -> ^(TOK_BINARY $view1 $view2 binary_operator)
+	    -> ^(TOK_BINARY ^(binary_operator $view1 $view2 ))
 	;
 
 binary_operator

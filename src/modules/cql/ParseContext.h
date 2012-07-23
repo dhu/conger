@@ -14,6 +14,9 @@
 
 BOREALIS_NAMESPACE_BEGIN
 
+namespace CQL
+{
+
 enum WindowType
 {
     TUPLES, ///< 对应 row
@@ -31,20 +34,21 @@ enum TimeUnit
     DAY
 };
 
+}
 /**
  * [range 2 hours slide 4 minutes timeout 8 minutes]
  * [row 100 slide 80 timeout 30]
  */
 struct WindowDefinition
 {
-    WindowType type;
+    CQL::WindowType type;
     int range;
-    TimeUnit range_time_unit;
+    CQL::TimeUnit range_time_unit;
     int row;
     int slide;
-    TimeUnit slide_time_unit;
+    CQL::TimeUnit slide_time_unit;
     int time_out;
-    TimeUnit time_out_time_unit;
+    CQL::TimeUnit time_out_time_unit;
 
     WindowDefinition(): range(0), row(0), slide(0), time_out(0)
     {
@@ -81,7 +85,7 @@ struct StreamJoin
     StreamVariable stream;
     string condition;
     int time_out;
-    TimeUnit time_unit;
+    CQL::TimeUnit time_unit;
 
     StreamJoin(): time_out(0)
     {
@@ -110,6 +114,7 @@ struct HavingCondition
 class ParseContext
 {
 public:
+    string query_name;
     string origin_cql;
     list<ProjectionTerm> select_list;
     StreamVariable from_stream;
@@ -118,13 +123,19 @@ public:
     StreamGroupBy group_by;
     HavingCondition having;
 
-    typedef int ProjTerm;
-    typedef int ArithExpr;
-
+    bool has_join;
+    bool has_aggregate;
+    bool has_group_by;
+    bool has_where;
 
 public:
-    ParseContext();
-    virtual ~ParseContext();
+    ParseContext(): has_join(false), has_aggregate(false)
+    {
+    }
+    virtual ~ParseContext()
+    {
+
+    }
 };
 
 

@@ -16,6 +16,7 @@ LDADD = -L@BOREALISROOT@/modules/catalog               -lborealiscatalog  \
         -L../../utility/client/region                  -lborealisregion   \
         -L@BOREALISROOT@/modules/common                -lborealiscommon   \
         -L@BOREALISROOT@/modules/util                  -lborealisutil     \
+        -L@BOREALISROOT@/modules/cql                   -lcongercql        \
         $(LDADD_EXTRAS)
 
 INCLUDES = @XERCESCINCLUDE@  @NMSTLINCLUDE@                            \

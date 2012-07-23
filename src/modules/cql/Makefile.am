@@ -13,7 +13,7 @@ lib_LTLIBRARIES = libcongercql.la
 
 libcongercql_la_SOURCES =                                 \
            CongerCQLLexer.c	CongerCQLLexer.h	\
-           CongerCQLParser.c	CongerCQLParser.h	\	
+           CongerCQLParser.c	CongerCQLParser.h	\
            ParseContext.cc	ParseContext.h	\
 		   ParseDriver.cc	ParseDriver.h
            

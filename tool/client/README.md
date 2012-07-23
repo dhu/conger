@@ -38,7 +38,7 @@ dequeue
 ### union
 ```
 ./dequeueFilter
-./enqueueUnion
+./enqueueUnion union
 ```
 
 ### join

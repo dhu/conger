@@ -6,6 +6,7 @@ INCLUDES = @BOREALISINCLUDE@   @EXTERNALINCLUDE@                           \
            -I../common                                                     \
            -I../util                                                       \
            -I../rpc                                                        \
+           -I../cql                                                        \
            -I../queryProcessor                                             \
            -I../queryProcessor/expr                                        \
            -I../queryProcessor/boxes                                       \

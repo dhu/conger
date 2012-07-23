@@ -31,7 +31,8 @@ libborealisqp_la_SOURCES =                                 \
            congerDeploy/DeployParser.cc                    \
            congerDeploy/DeployParser.h         	           \
            congerDeploy/DeployDescript.h                   \
-           TryBoxProcessor.cc 
+           TryBoxProcessor.cc 				   \
+           CQLProcessor.cc
 #           QueryProcessorWithoutHA.cc
 
 LDADD_MODULES = @NMSTLLIB@                                             \

@@ -13,32 +13,7 @@
 
 BOREALIS_NAMESPACE_BEGIN
 
-typedef struct CQLWindowStruct
-{
-    int range;
-    int slide;
-} CQLWindow;
 
-typedef struct CQLSelectStruct
-{
-    string function;
-    string field;
-} CQLSelect;
-
-typedef struct CQLContextStruct
-{
-    string cql;
-    list<CQLSelect> select_list;
-    list<string> from_list;
-    CQLWindow window;
-
-} CQLContext;
-
-/*
-CQLContext parse_select(string cql_string);
-
-void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node);
-*/
 AsyncRPC<void> QueryProcessor::add_conger_string(string conger_config)
 {
     INFO << conger_config;
@@ -178,8 +153,10 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
         string cql = query_parameters["cql"];
 
         ParseDriver driver;
-        driver.parse(cql);
+        ParseContext context = driver.parse(query_name, cql);
+        this->transform_cql_to_boxes(context);
 
+        /* 下面的代码是用来直接测试 box 用的
         map<string, string> box_parameters;
         box_parameters["aggregate-function.0"] = "max(price)";
         box_parameters["aggregate-function-output-name.0"] = "price";
@@ -191,6 +168,7 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
 
         add_conger_box("cql_test", "aggregate", "inputstream",
                 "outputstream", box_parameters);
+        */
     }
 }
 
@@ -305,167 +283,5 @@ void QueryProcessor::add_conger_subscribe(DeployDescript deploy_descript)
     local_subscribe_streams(completion, subs);
 
 }
-
-/*
-void parse_tree_node(CQLContext &context, pANTLR3_BASE_TREE node)
-{
-
-}
-
-CQLContext parse_select(string cql_string)
-{
-    pANTLR3_INPUT_STREAM input;
-    pCongerCQLLexer lxr;
-    pANTLR3_COMMON_TOKEN_STREAM tstream;
-    pCongerCQLParser psr;
-
-    const char * inputString = cql_string.c_str();
-
-    input = antlr3StringStreamNew((uint8_t *) inputString, ANTLR3_ENC_UTF8,
-            strlen(inputString), (uint8_t *) "test_statement");
-    lxr = CongerCQLLexerNew(input);
-    tstream = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT,
-            TOKENSOURCE(lxr));
-    psr = CongerCQLParserNew(tstream);
-
-    CongerCQLParser_statement_return statementAST = psr->statement(psr);
-
-    pANTLR3_BASE_TREE root = statementAST.tree;
-    pANTLR3_BASE_TREE treeNode;
-
-    treeNode = (pANTLR3_BASE_TREE) root->getChild(root, 0);
-
-    ANTLR3_UINT32 treeType = treeNode->getType(treeNode);
-    if (treeType == TOK_SFW)
-    {
-        DEBUG << "this is a SFW token";
-    }
-    else
-    {
-        DEBUG << "this is not SFW token. it is " << treeType;
-    }
-
-    CQLContext context;
-    */
-    /* 对 TOK_SFW 的子节点进行遍历 */
-/*
-    DEBUG << "TOK_SFW 的子节点个数: " << treeNode->getChildCount(treeNode);
-    pANTLR3_BASE_TREE sfwNode = treeNode;
-    for (uint32 i = 0; i < sfwNode->getChildCount(sfwNode); i++)
-    {
-        pANTLR3_BASE_TREE currentNode;
-        pANTLR3_BASE_TREE parentNode;
-        currentNode = (pANTLR3_BASE_TREE) sfwNode->getChild(sfwNode, i);
-        treeType = currentNode->getType(currentNode);
-
-        DEBUG << "tree node type: " << treeType;
-
-        ANTLR3_UINT32 currentType;
-        CQLSelect cql_select;
-        CQLWindow window;
-        string from_field;
-        context.cql = cql_string;
-        switch (treeType)
-        {
-        case TOK_SELECT:
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_PROJTERM_LIST)
-            {
-                DEBUG << "unexpected token, we expect TOK_PROJTERM_LIST";
-            }
-            DEBUG << "we met TOK_PROJTERM_LIST";
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_PROJTERM)
-            {
-                DEBUG << "unexpected token, we expect TOK_PROJTERM";
-            }
-            DEBUG << "we met TOK_PROJTERM";
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_ARITH_EXPR)
-            {
-                DEBUG << "unexpected token, we expect TOK_ARITH_EXPR";
-            }
-            DEBUG << "we met TOK_ARITH_EXPR";
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_AGGR)
-            {
-                DEBUG << "unexpected token, we expect TOK_AGGR";
-            }
-            DEBUG << "we met TOK_AGGR";
-            parentNode = currentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != KW_MAX)
-            {
-                DEBUG << "unexpected token, we expect KW_MAX";
-            }
-            DEBUG << "we met KW_MAX";
-            cql_select.function = "max";
-            *currentNode = *parentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_ARITH_EXPR)
-            {
-                DEBUG << "unexpected token, we expect TOK_ARITH_EXPR";
-            }
-            DEBUG << "we met TOK_ARITH_EXPR";
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            cql_select.field = (char*)currentNode->getText(currentNode)->chars;
-            context.select_list.push_back(cql_select);
-            break;
-        case TOK_FROM:
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_RELATION_LIST)
-            {
-                DEBUG << "unexpected token, we expect TOK_RELATION_LIST";
-            }
-            DEBUG << "we met TOK_RELATION_LIST";
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            currentType = currentNode->getType(currentNode);
-            if (currentType != TOK_RELATION_VARIABLE)
-            {
-                DEBUG << "unexpected token, we expect TOK_RELATION_VARIABLE";
-            }
-            DEBUG << "we met TOK_RELATION_VARIABLE";
-            parentNode = currentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 0);
-            from_field = string((char*)currentNode->getText(currentNode)->chars);
-            context.from_list.push_back(from_field);
-
-            currentNode = parentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
-            if (currentType != TOK_WINDOW)
-            {
-                DEBUG << "unexpected token, we expect TOK_WINDOW";
-            }
-            DEBUG << "we met TOK_WINDOW";
-            parentNode = currentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 1);
-            DEBUG << "before atoi";
-            window.range = atoi((char*)currentNode->getText(currentNode)->chars);
-            currentNode = parentNode;
-            currentNode = (pANTLR3_BASE_TREE) currentNode->getChild(currentNode, 4);
-            window.slide = atoi((char*)currentNode->getText(currentNode)->chars);
-            context.window = window;
-            break;
-        default:
-            DEBUG << "unhandled tree type";
-            break;
-        }
-    }
-
-    input->close(input);
-    lxr->free(lxr);
-    tstream->free(tstream);
-    psr->free(psr);
-    return context;
-
-}
-*/
 
 BOREALIS_NAMESPACE_END

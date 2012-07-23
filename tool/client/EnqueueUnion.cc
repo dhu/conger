@@ -192,7 +192,7 @@ int main(int argc, char** argv)
         cout << "It is join" << endl;
         client->add_conger_string("join");
     }
-    else
+    else if (argc >= 2 && string(argv[1]) == "union")
     {
         cout << "It is union" << endl;
         client->add_conger_string("union");

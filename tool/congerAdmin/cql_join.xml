@@ -34,7 +34,8 @@
     </schemas>
 
     <streams>
-        <stream name="inputstream" type="input" schema="inputpacket" />            
+        <stream name="inputstream000" type="input" schema="inputpacket" />     
+        <stream name="inputstream529" type="input" schema="inputpacket" />         
         <stream name="outputstream" type="output" schema="outputpacket"/>
     </streams>
 
@@ -45,7 +46,12 @@
             <out>outputstream</out>
             <cql>
                 <![CDATA[
-                SELECT MAX(price) FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
+                SELECT inputstream000.time AS time, inputstream000.stock AS stock0, 
+                        inputstream000.price AS price0, inputstream529.stock AS stock1, 
+                        inputstream529.price AS price1 
+                FROM inputstream000[RANGE 100 MINUTES SLIDE 10 SECONDS] 
+                JOIN inputstream529[RANGE 100 MINUTES SLIDE 10 SECONDS] 
+                        ON inputstream000.time = inputstream529.time
                 ]]>
             </cql>
         </query>

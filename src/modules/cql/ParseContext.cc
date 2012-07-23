@@ -9,13 +9,6 @@
 
 BOREALIS_NAMESPACE_BEGIN
 
-ParseContext::ParseContext()
-{
-}
-
-ParseContext::~ParseContext()
-{
-}
 
 
 BOREALIS_NAMESPACE_END
