@@ -155,20 +155,6 @@ void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
         ParseDriver driver;
         ParseContext context = driver.parse(query_name, cql);
         this->transform_cql_to_boxes(context);
-
-        /* 下面的代码是用来直接测试 box 用的
-        map<string, string> box_parameters;
-        box_parameters["aggregate-function.0"] = "max(price)";
-        box_parameters["aggregate-function-output-name.0"] = "price";
-        box_parameters["window-size-by"] = "VALUES";
-        box_parameters["window-size"] = "600";
-        box_parameters["advance"] = "10";
-        box_parameters["order-by"] = "FIELD";
-        box_parameters["order-on-field"] = "time";
-
-        add_conger_box("cql_test", "aggregate", "inputstream",
-                "outputstream", box_parameters);
-        */
     }
 }
 

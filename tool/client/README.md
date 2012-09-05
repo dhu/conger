@@ -59,3 +59,11 @@ dequeue
 ./enqueue aggregate_join
 ```
 
+## 测试多个 box 连在一起的
+
+### 先 filter 再 map 
+```
+./congerAdmin cql_filter_map.xml
+./dequeueFilterMap
+./enqueue
+```
