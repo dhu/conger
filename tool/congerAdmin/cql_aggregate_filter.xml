@@ -45,7 +45,7 @@
             <out>outputstream</out>
             <cql>
                 <![CDATA[
-                SELECT MAX(price) FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
+                SELECT MAX(price) FROM inputstream GROUP OVER [RANGE 10 MINUTES SLIDE 10 SECONDS] BY time HAVING price > 10
                 ]]>
             </cql>
         </query>
