@@ -108,6 +108,8 @@ class QueryProcessor : public BasicComponent
     ///
     void transform_cql_union(ParseContext& context);
 
+    void transform_cql_multi_boxes(ParseContext& context);
+
     /// 下面的函数都是用来测试的，可以忽略
     ///
     void try_map();

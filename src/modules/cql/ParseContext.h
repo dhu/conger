@@ -55,10 +55,31 @@ struct WindowDefinition
     }
 };
 
+/**
+ * 举个栗子：
+ * expression = SUM(price) + 23
+ * aggregate_expression = SUM(price)
+ * alias = SUM_price_23
+ * map_expression = SUM_price_ + 23
+ * aggregate_output_field_name = SUM_price_
+ *
+ */
 struct ProjectionTerm
 {
     string expression;
     string alias;
+
+    string aggregate_expression;
+    string map_expression;
+    string aggregate_output_field_name;
+    string join_expression;
+    string join_output_field_name;
+
+    /* 表明此时正在解析 join 这个只在解析的时候用到 */
+    bool parsing_join;
+
+    /* 表明此时正在解析 aggregate 这个只在解析的时候用到 */
+    bool parsing_aggregate;
 
     /* 是不是聚集函数 */
     bool is_aggregate;
@@ -66,7 +87,11 @@ struct ProjectionTerm
     /* 是不是投影函数 */
     bool is_map;
 
-    ProjectionTerm(): is_aggregate(false), is_map(false)
+    /* 是不是 join */
+    bool is_join;
+
+    ProjectionTerm(): parsing_join(false), parsing_aggregate(false), is_aggregate(false),
+            is_map(false), is_join(false)
     {
     }
 };
@@ -127,9 +152,15 @@ public:
     bool has_aggregate;
     bool has_group_by;
     bool has_where;
+    bool has_map;
+    bool has_having;
+    bool is_select_all; ///< 是不是选择所有，就是说是不是 select *
+    bool is_aggregate_and_map; ///< 先 aggregate 再 map 的情况
 
 public:
-    ParseContext(): has_join(false), has_aggregate(false)
+    ParseContext(): has_join(false), has_aggregate(false), has_group_by(false),
+            has_where(false), has_map(false), has_having(false), is_select_all(false),
+            is_aggregate_and_map(false)
     {
     }
     virtual ~ParseContext()

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<conger xmlns="http://dhu.github.com/conger/cql"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://dhu.github.com/conger/cql ../../schema/conger.xsd">
+    
+    <deploy>
+        <deploy-name>conger cql test</deploy-name>
+    </deploy>
+
+    <schemas>
+        <schema name="inputpacket">
+            <field name="stock" type="string" size="6"/>
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+            <field name="trade_volume" type="int"/>
+            <field name="trade_amount" type="int"/>
+            <field name="bid_ask" type="string" size="1"/>
+        </schema>
+        <schema name="inputpacket1">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+            <field name="trade_volume" type="int"/>
+            <field name="trade_amount" type="int"/>
+            <field name="bid_ask" type="string" size="1"/>
+        </schema>
+
+        <!-- 
+        <schema name="outputpacket">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+        </schema>
+        -->
+    </schemas>
+
+    <streams>
+        <stream name="inputstream000" type="input" schema="inputpacket" />     
+        <stream name="inputstream529" type="input" schema="inputpacket" />         
+        <stream name="outputstream" type="output" schema="outputpacket"/>
+    </streams>
+
+    <querys>
+
+        <query name="MaxPrice">
+            <in>inputstream</in>            
+            <out>outputstream</out>
+            <cql>
+                <![CDATA[
+                SELECT inputstream000.time AS time, inputstream000.stock AS stock0, 
+                        inputstream000.price AS price0, inputstream529.stock AS stock1, 
+                        inputstream529.price AS price1 
+                FROM inputstream000[RANGE 100 MINUTES SLIDE 10 SECONDS] 
+                JOIN inputstream529[RANGE 100 MINUTES SLIDE 10 SECONDS] 
+                        ON inputstream000.time = inputstream529.time
+                GROUP OVER [ ROWS 100 SLIDE 10 ] BY inputstream000.time
+                ]]>
+            </cql>
+        </query>
+
+    </querys>
+
+</conger>
+
+

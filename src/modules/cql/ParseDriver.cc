@@ -143,11 +143,21 @@ void ParseDriver::handle_parse_proj_term(ParseContext& context, pANTLR3_BASE_TRE
     string node_text = string((char*)proj_term_node->getText(proj_term_node)->chars);
     DEBUG << "node " << node_text << " has type " << node_type;
     DEBUG << "start parse proj_term";
+
+    /* 判断这里是不是 * （就是判断是不是 select * ） */
+    using boost::algorithm::trim;
+    trim(node_text);
+    if (node_text == "*")
+    {
+        context.is_select_all = true;
+    }
+
     ProjectionTerm term;
     context.select_list.push_back(term);
     int child_count = proj_term_node->getChildCount(proj_term_node);
     pANTLR3_BASE_TREE child_node = (pANTLR3_BASE_TREE) proj_term_node->getChild(proj_term_node, 0);
     this->handle_parse_proj_term_in_order(context, child_node);
+    /* 下面 alias 是可选的 */
     if (child_count > 1)
     {
         pANTLR3_BASE_TREE child_node = (pANTLR3_BASE_TREE) proj_term_node->getChild(proj_term_node, 1);
@@ -157,6 +167,11 @@ void ParseDriver::handle_parse_proj_term(ParseContext& context, pANTLR3_BASE_TRE
             string alias = string((char*)alias_node->getText(alias_node)->chars);
             context.select_list.back().alias = alias;
         }
+    }
+    /* 如果这个 term 既是 aggregate 也是 map，设置 is_aggregate_and_map 为 true */
+    if (context.select_list.back().is_aggregate and context.select_list.back().is_map)
+    {
+        context.is_aggregate_and_map = true;
     }
 }
 
@@ -177,69 +192,113 @@ void ParseDriver::handle_parse_proj_term_in_order(ParseContext& context, pANTLR3
     case MINUS:
     case STAR:
     case DIV:
+        context.has_map = true;
+        context.select_list.back().is_map = true;
+
         context.select_list.back().expression.append("(");
+        context.select_list.back().map_expression.append("(");
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
         this->handle_parse_proj_term_in_order(context, s_node);
 
         s_text = string((char*)node->getText(node)->chars);
         context.select_list.back().expression.append(s_text);
+        context.select_list.back().map_expression.append(s_text);
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
         this->handle_parse_proj_term_in_order(context, s_node);
         context.select_list.back().expression.append(")");
+        context.select_list.back().map_expression.append(")");
         break;
     case DOT:
         /* 处理 stream.field 的形式 */
 
-        /* 根据 stream 出现的先后顺序把 stream 替换成 left 和 right
+        /* 先是处理流的名称
+         * 根据 stream 出现的先后顺序把 stream 替换成 left 和 right
          * 判断一下是否是有 join， 如果有就进行替换，如果没有就把 stream name 和 dot 给删了
          */
         if (context.has_join)
         {
+            context.select_list.back().parsing_join = true;
             ss_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
             s_text = string((char*)ss_node->getText(ss_node)->chars);
 
             if (context.from_stream.stream_name == s_text)
             {
-                context.select_list.back().expression.append("left");
+                context.select_list.back().expression.append("left_");
+                context.select_list.back().map_expression.append("left_");
+                context.select_list.back().alias.append("left_");
+                context.select_list.back().join_expression.append("left.");
+                context.select_list.back().join_output_field_name.append("left_");
             }
             else if (context.stream_join.stream.stream_name == s_text)
             {
-                context.select_list.back().expression.append("right");
+                context.select_list.back().expression.append("right_");
+                context.select_list.back().map_expression.append("right_");
+                context.select_list.back().alias.append("right_");
+                context.select_list.back().join_expression.append("right.");
+                context.select_list.back().join_output_field_name.append("right_");
             }
             s_text = string((char*)node->getText(node)->chars);
-            context.select_list.back().expression.append(s_text);
+            context.select_list.back().alias.append(s_text);
         }
 
+        /* 只取第二个，第一个 node（也就是 stream name） 直接忽略 */
         ss_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
         this->handle_parse_proj_term_in_order(context, ss_node);
+        context.select_list.back().parsing_join = false;
         break;
     case Integer:
     case Number:
     case Identifier:
         s_text = string((char*)node->getText(node)->chars);
         context.select_list.back().expression.append(s_text);
+        if (context.select_list.back().parsing_aggregate)
+        {
+            context.select_list.back().aggregate_expression.append(s_text);
+            context.select_list.back().map_expression.append(s_text + "_");
+            context.select_list.back().aggregate_output_field_name.append(s_text + "_");
+        }
+        else if (context.select_list.back().parsing_join)
+        {
+            context.select_list.back().map_expression.append(s_text);
+            context.select_list.back().join_output_field_name.append(s_text);
+            context.select_list.back().join_expression.append(s_text);
+        }
+        else
+        {
+            context.select_list.back().map_expression.append(s_text);
+        }
+        /* 把所有的 identifer 连在一起作为 alias */
+        context.select_list.back().alias.append(s_text + "_");
         break;
     case TOK_AGGR:
 
         context.has_aggregate = true;
 
         context.select_list.back().is_aggregate = true;
+        context.select_list.back().parsing_aggregate = true;
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
         this->handle_parse_proj_term_in_order(context, s_node);
         context.select_list.back().expression.append("(");
+        context.select_list.back().aggregate_expression.append("(");
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
         this->handle_parse_proj_term_in_order(context, s_node);
         context.select_list.back().expression.append(")");
+        context.select_list.back().aggregate_expression.append(")");
+
+        context.select_list.back().parsing_aggregate = false;
+
         break;
     case TOK_FUNC:
+        context.has_map = true;
         context.select_list.back().is_map = true;
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
         this->handle_parse_proj_term_in_order(context, s_node);
         context.select_list.back().expression.append("(");
+        context.select_list.back().map_expression.append("(");
         s_count = node->getChildCount(node);
         for (int i = 1; i < s_count; i++)
         {
@@ -248,9 +307,11 @@ void ParseDriver::handle_parse_proj_term_in_order(ParseContext& context, pANTLR3
             if (i != s_count - 1)
             {
                 context.select_list.back().expression.append(",");
+                context.select_list.back().map_expression.append(",");
             }
         }
         context.select_list.back().expression.append(")");
+        context.select_list.back().map_expression.append(")");
 
         break;
     case KW_MAX:
@@ -260,6 +321,10 @@ void ParseDriver::handle_parse_proj_term_in_order(ParseContext& context, pANTLR3
     case KW_SUM:
         s_text = string((char*)node->getText(node)->chars);
         context.select_list.back().expression.append(s_text);
+        context.select_list.back().aggregate_expression.append(s_text);
+        context.select_list.back().map_expression.append(s_text + "_");
+        context.select_list.back().aggregate_output_field_name.append(s_text + "_");
+        context.select_list.back().alias.append(s_text + "_");
         break;
     default:
         DEBUG << "unexpected operator, node type: " << node_type;
@@ -529,6 +594,9 @@ void ParseDriver::handle_parse_having(ParseContext& context, pANTLR3_BASE_TREE h
     {
         return;
     }
+
+    context.has_having = true;
+
     DEBUG << "start parse having clause";
     pANTLR3_BASE_TREE child_node = (pANTLR3_BASE_TREE) having_node->getChild(having_node, 0);
     child_node = (pANTLR3_BASE_TREE) child_node->getChild(child_node, 0);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<conger xmlns="http://dhu.github.com/conger/cql"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://dhu.github.com/conger/cql ../../schema/conger.xsd">
+    
+    <deploy>
+        <deploy-name>conger cql test</deploy-name>
+    </deploy>
+
+    <schemas>
+        <schema name="inputpacket">
+            <field name="stock" type="string" size="6"/>
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+            <field name="trade_volume" type="int"/>
+            <field name="trade_amount" type="int"/>
+            <field name="bid_ask" type="string" size="1"/>
+        </schema>
+        <schema name="inputpacket1">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+            <field name="trade_volume" type="int"/>
+            <field name="trade_amount" type="int"/>
+            <field name="bid_ask" type="string" size="1"/>
+        </schema>
+
+        <!-- 
+        <schema name="outputpacket">
+            <field name="time" type="int"/>
+            <field name="price" type="double"/>
+        </schema>
+        -->
+    </schemas>
+
+    <streams>
+        <stream name="inputstream" type="input" schema="inputpacket" />            
+        <stream name="outputstream" type="output" schema="outputpacket"/>
+    </streams>
+
+    <querys>
+
+        <query name="MaxPrice">
+            <in>inputstream</in>            
+            <out>outputstream</out>
+            <cql>
+                <![CDATA[
+                SELECT MAX(price) FROM inputstream[RANGE 10 MINUTES SLIDE 10 SECONDS]
+                ]]>
+            </cql>
+        </query>
+
+    </querys>
+
+</conger>
+
+
