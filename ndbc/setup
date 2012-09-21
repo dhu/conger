@@ -1,0 +1,30 @@
+#! /bin/sh -e
+#
+# This script should only be needed by developers who checked the
+# package out of the CVS repository.
+
+if test ! -f configure.ac; then
+    echo Setup must be run from the source directory >&2
+    exit 1
+fi
+
+rm   -f  configure
+rm   -f  config.status
+
+rm  -rf  config
+mkdir    config
+
+set -x
+chmod +x setup
+aclocal
+libtoolize
+autoheader
+touch NEWS README AUTHORS ChangeLog
+automake --add-missing
+autoconf
+set +x
+
+if test -f config.status; then
+    set -x
+    sh config.status
+fi
