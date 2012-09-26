@@ -569,8 +569,7 @@ void ParseDriver::handle_parse_group_by(ParseContext& context, pANTLR3_BASE_TREE
         return;
         break;
     case TOK_ATTR_LIST:
-        this->handle_parse_group_by(context, group_by_node);
-        return;
+
         break;
     case Identifier:
         context.group_by.attribute_list.push_back(string((char*) group_by_node->getText(group_by_node)->chars));
