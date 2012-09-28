@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<conger xmlns="http://dhu.github.com/conger/cql"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://dhu.github.com/conger/cql ../../schema/conger.xsd">
+    
+    <deploy>
+        <deploy-name>ndbc demo</deploy-name>
+    </deploy>
+
+    <schemas>
+        <schema name="positionreportpacket">
+            <field name="time" type="int"/>
+            <field name="car_id" type="int"/>
+            <field name="speed" type="int"/>
+            <field name="way" type="int"/>
+            <field name="lane" type="int"/>
+            <field name="dir" type="int"/>
+            <field name="seg" type="int"/>
+            <field name="pos" type="int"/>
+        </schema>
+                
+        <schema name="statisticspacket">
+            <field name="time" type="int"/>
+            <field name="volume" type="int"/>
+            <field name="min_speed" type="int"/>
+            <field name="max_speed" type="int"/>
+            <field name="avg_speed" type="int"/>
+        </schema>        
+        
+        <schema name="segementtollpacket">
+            <field name="time" type="int"/>
+            <field name="way" type="int"/>
+            <field name="dir" type="int"/>
+            <field name="seg" type="int"/>
+            <field name="toll" type="int"/>
+        </schema>
+    </schemas>
+
+    <streams>
+        <stream name="positionreport" type="input" schema="positionreportpacket" />     
+        <stream name="statistics" type="output" schema="statisticspacket" />         
+        <stream name="segementtoll" type="output" schema="segementtollpacket"/>
+    </streams>
+
+    <querys>
+
+        <query name="statistics">
+            <in>positionreport</in>            
+            <out>statistics</out>
+            <cql>
+                <![CDATA[
+                SELECT time, COUNT(car_id) AS volume, MIN(speed) AS min_speed, 
+                        MAX(speed) AS max_speed, AVG(speed) AS avg_speed
+                FROM positionreport [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                ]]>
+            </cql>
+        </query>
+        
+        <query name="segvol">
+            <in>positionreport</in>            
+            <out>segvol</out>
+            <cql>
+                <![CDATA[
+                SELECT time, way, dir, seg, COUNT(car_id) AS volume
+                FROM positionreport [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                GROUP OVER [RANGE 30 SECONDS SLIDE 3 SECONDS] BY way, dir, seg
+                ]]>
+            </cql>
+        </query>
+
+        <query name="segavgspeed">
+            <in>positionreport</in>            
+            <out>segavgspeed</out>
+            <cql>
+                <![CDATA[
+                SELECT time, way, dir, seg, AVG(speed) AS avg_speed
+                FROM positionreport [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                GROUP OVER [RANGE 30 SECONDS SLIDE 3 SECONDS] BY way, dir, seg
+                ]]>
+            </cql>
+        </query>
+        
+        <query name="segmenttoll">
+            <in>segvol</in>   
+            <in>segavgspeed</in>            
+            <out>segementtoll</out>
+            <cql>
+                <![CDATA[
+                SELECT segvol.way, segvol.dir, segvol.seg, 
+                        15 * (segvol.volume - 150) * (segvol.volume - 150)
+                FROM segvol [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                JOIN segavgspeed [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                ON segvol.way = segavgspeed.way 
+                        AND segvol.dir = segavgspeed.dir 
+                        AND segvol.seg = segavgspeed.seg
+                WHERE segavgspeed.avg_speed > 40
+                ]]>
+            </cql>
+        </query>
+
+    </querys>
+
+</conger>
+
+

@@ -178,6 +178,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
             box_parameters["order-by"] = "FIELD";
+            box_parameters["order-on-field"] = "time";
         }
         else
         {
@@ -192,15 +193,11 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
             for (list<string>::iterator iter = attr_list.begin();
                     iter != attr_list.end(); iter++)
             {
-                box_parameters["order-on-field"] += *iter;
-                box_parameters["order-on-field"] += ",";
+                box_parameters["group-by"] += *iter;
+                box_parameters["group-by"] += ",";
             }
-            box_parameters["order-on-field"] = box_parameters["order-on-field"].
-            substr(0, box_parameters["order-on-field"].size() - 1);
-        }
-        else
-        {
-            box_parameters["order-on-field"] = "time";
+            box_parameters["group-by"] = box_parameters["group-by"].
+            substr(0, box_parameters["group-by"].size() - 1);
         }
     }
     else
@@ -213,6 +210,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
             box_parameters["order-by"] = "FIELD";
+            box_parameters["order-on-field"] = "time";
         }
         else
         {
@@ -227,15 +225,11 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
             for (list<string>::iterator iter = attr_list.begin();
                     iter != attr_list.end(); iter++)
             {
-                box_parameters["order-on-field"] += *iter;
-                box_parameters["order-on-field"] += ",";
+                box_parameters["group-by"] += *iter;
+                box_parameters["group-by"] += ",";
             }
-            box_parameters["order-on-field"] = box_parameters["order-on-field"].
-            substr(0, box_parameters["order-on-field"].size() - 1);
-        }
-        else
-        {
-            box_parameters["order-on-field"] = "time";
+            box_parameters["group-by"] = box_parameters["group-by"].
+            substr(0, box_parameters["group-by"].size() - 1);
         }
     }
 
@@ -313,6 +307,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -327,15 +322,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
         else
@@ -348,6 +339,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -362,15 +354,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
 
@@ -430,6 +418,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -444,15 +433,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
         else
@@ -465,6 +450,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -479,15 +465,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
 
@@ -742,6 +724,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -756,15 +739,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
         else
@@ -777,6 +756,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -791,15 +771,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
 
@@ -855,6 +831,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -869,15 +846,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
         else
@@ -890,6 +863,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "FIELD";
+                box_parameters["order-on-field"] = "time";
             }
             else
             {
@@ -904,15 +878,11 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 for (list<string>::iterator iter = attr_list.begin();
                         iter != attr_list.end(); iter++)
                 {
-                    box_parameters["order-on-field"] += *iter;
-                    box_parameters["order-on-field"] += ",";
+                    box_parameters["group-by"] += *iter;
+                    box_parameters["group-by"] += ",";
                 }
-                box_parameters["order-on-field"] = box_parameters["order-on-field"].
-                substr(0, box_parameters["order-on-field"].size() - 1);
-            }
-            else
-            {
-                box_parameters["order-on-field"] = "time";
+                box_parameters["group-by"] = box_parameters["group-by"].
+                substr(0, box_parameters["group-by"].size() - 1);
             }
         }
 
