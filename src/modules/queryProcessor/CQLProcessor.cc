@@ -58,7 +58,7 @@ void QueryProcessor::transform_cql_map(ParseContext& context)
     }
 
     add_conger_box(context.query_name, "map", context.from_stream.stream_name,
-           "outputstream", box_parameters);
+           context.output_stream, box_parameters);
 }
 
 void QueryProcessor::transform_cql_filter(ParseContext& context)
@@ -68,7 +68,7 @@ void QueryProcessor::transform_cql_filter(ParseContext& context)
     box_parameters["pass-on-false-port"] = "0";
 
     add_conger_box(context.query_name, "filter", context.from_stream.stream_name,
-            "outputstream", box_parameters);
+            context.output_stream, box_parameters);
 }
 
 void QueryProcessor::transform_cql_union(ParseContext& context)
@@ -136,7 +136,7 @@ void QueryProcessor::transform_cql_join(ParseContext& context)
 
     string inputstreams = context.from_stream.stream_name + ":"
             + context.stream_join.stream.stream_name;
-    add_conger_box(context.query_name, "join", inputstreams, "outputstream", box_parameters);
+    add_conger_box(context.query_name, "join", inputstreams, context.output_stream, box_parameters);
 }
 
 void QueryProcessor::transform_cql_aggregate(ParseContext& context)
@@ -150,20 +150,23 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
     int index(0);
     for (; select_iter != select_list.end(); select_iter++)
     {
-        string function_index = "aggregate-function." + lexical_cast<string>(index);
-        string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
-        using boost::algorithm::to_lower;
-        to_lower(select_iter->expression);
-        box_parameters[function_index] = select_iter->expression;
-        if (select_iter->alias.empty())
+        if (select_iter->is_aggregate)
         {
-            box_parameters[function_output] = "aggregate-outpt-" + lexical_cast<string>(index);
+            string function_index = "aggregate-function." + lexical_cast<string>(index);
+            string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
+            using boost::algorithm::to_lower;
+            to_lower(select_iter->aggregate_expression);
+            box_parameters[function_index] = select_iter->aggregate_expression;
+            if (select_iter->alias.empty())
+            {
+                box_parameters[function_output] = select_iter->aggregate_output_field_name;
+            }
+            else
+            {
+                box_parameters[function_output] = select_iter->alias;
+            }
+            index++;
         }
-        else
-        {
-            box_parameters[function_output] = select_iter->alias;
-        }
-        index++;
     }
 
     /* 判断一下有没有 group by 语句
@@ -234,7 +237,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
     }
 
     add_conger_box(context.query_name, "aggregate", context.from_stream.stream_name,
-            "outputstream", box_parameters);
+            context.output_stream, box_parameters);
 }
 
 void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
@@ -263,7 +266,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         }
 
         add_conger_box(context.query_name + "_map", "map", context.query_name + "intermediate_outputstream",
-               "outputstream", box_parameters);
+               context.output_stream, box_parameters);
     }
     else if (context.has_aggregate and context.is_aggregate_and_map)
     {
@@ -280,20 +283,23 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         int index(0);
         for (; select_iter != select_list.end(); select_iter++)
         {
-            string function_index = "aggregate-function." + lexical_cast<string>(index);
-            string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
-            using boost::algorithm::to_lower;
-            to_lower(select_iter->aggregate_expression);
-            box_parameters[function_index] = select_iter->aggregate_expression;
-            if (select_iter->alias.empty())
+            if (select_iter->is_aggregate)
             {
-                box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                string function_index = "aggregate-function." + lexical_cast<string>(index);
+                string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
+                using boost::algorithm::to_lower;
+                to_lower(select_iter->aggregate_expression);
+                box_parameters[function_index] = select_iter->aggregate_expression;
+                if (select_iter->alias.empty())
+                {
+                    box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                }
+                else
+                {
+                    box_parameters[function_output] = select_iter->aggregate_output_field_name;
+                }
+                index++;
             }
-            else
-            {
-                box_parameters[function_output] = select_iter->aggregate_output_field_name;
-            }
-            index++;
         }
 
         /* 判断一下有没有 group by 语句 */
@@ -377,7 +383,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         }
 
         add_conger_box(context.query_name + "_map", "map", context.query_name + "intermediate_outputstream",
-                "outputstream", box_parameters);
+                context.output_stream, box_parameters);
     }
     else if (context.has_aggregate and context.has_having and not context.has_join and not context.has_map)
     {
@@ -391,20 +397,23 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         int index(0);
         for (; select_iter != select_list.end(); select_iter++)
         {
-            string function_index = "aggregate-function." + lexical_cast<string>(index);
-            string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
-            using boost::algorithm::to_lower;
-            to_lower(select_iter->aggregate_expression);
-            box_parameters[function_index] = select_iter->aggregate_expression;
-            if (select_iter->alias.empty())
+            if (select_iter->is_aggregate)
             {
-                box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                string function_index = "aggregate-function." + lexical_cast<string>(index);
+                string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
+                using boost::algorithm::to_lower;
+                to_lower(select_iter->aggregate_expression);
+                box_parameters[function_index] = select_iter->aggregate_expression;
+                if (select_iter->alias.empty())
+                {
+                    box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                }
+                else
+                {
+                    box_parameters[function_output] = select_iter->aggregate_output_field_name;
+                }
+                index++;
             }
-            else
-            {
-                box_parameters[function_output] = select_iter->aggregate_output_field_name;
-            }
-            index++;
         }
 
         /* 判断一下有没有 group by 语句 */
@@ -482,7 +491,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         box_parameters["pass-on-false-port"] = "0";
 
         add_conger_box(context.query_name + "_filter", "filter",
-                context.query_name + "intermediate_outputstream", "outputstream", box_parameters);
+                context.query_name + "intermediate_outputstream", context.output_stream, box_parameters);
 
     }
     else if (context.has_join and context.has_where and not context.has_map)
@@ -556,7 +565,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         box_parameters["pass-on-false-port"] = "0";
 
         add_conger_box(context.query_name + "_filter", "filter",
-                context.query_name + "intermediate_outputstream", "outputstream", box_parameters);
+                context.query_name + "intermediate_outputstream", context.output_stream, box_parameters);
 
     }
     else if (context.has_join and context.has_map and not context.has_where and not context.has_aggregate)
@@ -629,7 +638,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         }
 
         add_conger_box(context.query_name + "_map", "map", context.query_name + "intermediate_outputstream",
-                "outputstream", box_parameters);
+                context.output_stream, box_parameters);
     }
     else if (context.has_join and context.has_aggregate and not context.has_map and not context.has_where)
     {
@@ -697,20 +706,23 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         index = 0;
         for (; select_iter != select_list.end(); select_iter++)
         {
-            string function_index = "aggregate-function." + lexical_cast<string>(index);
-            string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
-            using boost::algorithm::to_lower;
-            to_lower(select_iter->aggregate_expression);
-            box_parameters[function_index] = select_iter->aggregate_expression;
-            if (select_iter->alias.empty())
+            if (select_iter->is_aggregate)
             {
-                box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                string function_index = "aggregate-function." + lexical_cast<string>(index);
+                string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
+                using boost::algorithm::to_lower;
+                to_lower(select_iter->aggregate_expression);
+                box_parameters[function_index] = select_iter->aggregate_expression;
+                if (select_iter->alias.empty())
+                {
+                    box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                }
+                else
+                {
+                    box_parameters[function_output] = select_iter->aggregate_output_field_name;
+                }
+                index++;
             }
-            else
-            {
-                box_parameters[function_output] = select_iter->aggregate_output_field_name;
-            }
-            index++;
         }
 
         /* 判断一下有没有 group by 语句 */
@@ -780,7 +792,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         }
 
         add_conger_box(context.query_name + "_aggregate", "aggregate",
-                context.query_name + "intermediate_outputstream", "outputstream", box_parameters);
+                context.query_name + "intermediate_outputstream", context.output_stream, box_parameters);
 
     }
     else if (context.has_aggregate and context.has_where and not context.has_map and not context.has_having)
@@ -804,20 +816,23 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         int index(0);
         for (; select_iter != select_list.end(); select_iter++)
         {
-            string function_index = "aggregate-function." + lexical_cast<string>(index);
-            string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
-            using boost::algorithm::to_lower;
-            to_lower(select_iter->aggregate_expression);
-            box_parameters[function_index] = select_iter->aggregate_expression;
-            if (select_iter->alias.empty())
+            if (select_iter->is_aggregate)
             {
-                box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                string function_index = "aggregate-function." + lexical_cast<string>(index);
+                string function_output = "aggregate-function-output-name." + lexical_cast<string>(index);
+                using boost::algorithm::to_lower;
+                to_lower(select_iter->aggregate_expression);
+                box_parameters[function_index] = select_iter->aggregate_expression;
+                if (select_iter->alias.empty())
+                {
+                    box_parameters[function_output] = "aggregate-output-" + lexical_cast<string>(index);
+                }
+                else
+                {
+                    box_parameters[function_output] = select_iter->aggregate_output_field_name;
+                }
+                index++;
             }
-            else
-            {
-                box_parameters[function_output] = select_iter->aggregate_output_field_name;
-            }
-            index++;
         }
 
         /* 判断一下有没有 group by 语句 */
@@ -887,7 +902,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         }
 
         add_conger_box(context.query_name + "_aggregate", "aggregate",
-                context.query_name + "intermediate_outputstream", "outputstream", box_parameters);
+                context.query_name + "intermediate_outputstream", context.output_stream, box_parameters);
     }
 
 }

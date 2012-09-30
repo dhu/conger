@@ -20,7 +20,7 @@ private:
 public:
     ParseDriver();
     virtual ~ParseDriver();
-    ParseContext parse(string query_name, string cql);
+    ParseContext parse(string query_name, string cql, string output_stream);
 
 private:
     pANTLR3_BASE_TREE get_root(ParseContext& context);
@@ -38,7 +38,7 @@ private:
 
     CQL::TimeUnit infer_time_unit(ANTLR3_UINT32 node_type);
 
-    void handle_parse_contidtion(ParseContext& context, string& condition, pANTLR3_BASE_TREE node);
+    void handle_parse_contidtion(ParseContext& context, string& condition, pANTLR3_BASE_TREE node, string type);
     void handle_parse_window(WindowDefinition& window, pANTLR3_BASE_TREE window_node);
 };
 

@@ -129,4 +129,8 @@ tool/statsView/src/classjava.stamp
 src/modules/queryProcessor/libantlr3c.so
 
 
+# lr 数据文件
+ndbc/lrdata/cardatapoints.out
+
+ndbc/lrdata/main
 

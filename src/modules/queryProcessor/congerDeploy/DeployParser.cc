@@ -120,7 +120,8 @@ DeployDescript DeployParser::parse(string conger_string)
                 }
                 DEBUG << vv.second.get_value<string>();
             }
-            this->deploy.querys[query_name] = parameters;
+            pair<string, map<string, string> > query(query_name, parameters);
+            this->deploy.querys.push_back(query);
         }
     }
 

@@ -142,18 +142,20 @@ void QueryProcessor::add_conger_input(DeployDescript deploy_descript)
 
 void QueryProcessor::add_conger_query(DeployDescript deploy_descript)
 {
-    map<string, map<string, string> >::iterator query_iterator;
+    list<pair<string, map<string, string> > >::iterator query_iterator;
     for (query_iterator = deploy_descript.querys.begin();
             query_iterator != deploy_descript.querys.end();
             query_iterator++)
     {
-        string query_name = query_iterator->first;
-        map<string, string> query_parameters = query_iterator->second;
+        pair<string, map<string, string> > query = *query_iterator;
+        string query_name = query.first;
+        map<string, string> query_parameters = query.second;
 
         string cql = query_parameters["cql"];
+        string output_stream = query_parameters["out"];
 
         ParseDriver driver;
-        ParseContext context = driver.parse(query_name, cql);
+        ParseContext context = driver.parse(query_name, cql, output_stream);
         this->transform_cql_to_boxes(context);
     }
 }

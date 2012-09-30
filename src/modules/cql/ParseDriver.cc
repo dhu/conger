@@ -52,13 +52,14 @@ pANTLR3_BASE_TREE ParseDriver::get_root(ParseContext& context)
  * @param cql 要解析的 CQL 语句
  * @return 返回解析结果 ParseContext
  */
-ParseContext ParseDriver::parse(string query_name, string cql)
+ParseContext ParseDriver::parse(string query_name, string cql, string output_stream)
 {
     using boost::algorithm::trim;
     ParseContext context;
     context.query_name = query_name;
     trim(cql);
     context.origin_cql = cql;
+    context.output_stream = output_stream;
 
     pANTLR3_BASE_TREE root = this->get_root(context);
     this->parse_node(context, root);
@@ -279,15 +280,25 @@ void ParseDriver::handle_parse_proj_term_in_order(ParseContext& context, pANTLR3
         context.select_list.back().parsing_aggregate = true;
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
-        this->handle_parse_proj_term_in_order(context, s_node);
-        context.select_list.back().expression.append("(");
-        context.select_list.back().aggregate_expression.append("(");
 
-        s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
-        this->handle_parse_proj_term_in_order(context, s_node);
-        context.select_list.back().expression.append(")");
-        context.select_list.back().aggregate_expression.append(")");
+        /* 判断是不是 COUNT，要对 COUNT 进行特殊处理 */
+        node_type = s_node->getType(s_node);
+        if (node_type == KW_COUNT)
+        {
+            context.select_list.back().expression.append("COUNT");
+            context.select_list.back().aggregate_expression.append("COUNT()");
+        }
+        else
+        {
+            this->handle_parse_proj_term_in_order(context, s_node);
+            context.select_list.back().expression.append("(");
+            context.select_list.back().aggregate_expression.append("(");
 
+            s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
+            this->handle_parse_proj_term_in_order(context, s_node);
+            context.select_list.back().expression.append(")");
+            context.select_list.back().aggregate_expression.append(")");
+        }
         context.select_list.back().parsing_aggregate = false;
 
         break;
@@ -385,7 +396,7 @@ void ParseDriver::handle_parse_join(ParseContext& context, pANTLR3_BASE_TREE joi
         break;
     case TOK_COND_LIST:
         this->handle_parse_contidtion(context, context.stream_join.condition,
-                (pANTLR3_BASE_TREE) join_node->getChild(join_node, 0));
+                (pANTLR3_BASE_TREE) join_node->getChild(join_node, 0), string("join"));
         return;
         break;
     case TOK_RELATION_VARIABLE:
@@ -540,7 +551,7 @@ void ParseDriver::handle_parse_where(ParseContext& context, pANTLR3_BASE_TREE wh
         break;
     case TOK_COND_LIST:
         this->handle_parse_contidtion(context, context.where.condition,
-                (pANTLR3_BASE_TREE) where_node->getChild(where_node, 0));
+                (pANTLR3_BASE_TREE) where_node->getChild(where_node, 0), "where");
         return;
         break;
     default:
@@ -599,13 +610,14 @@ void ParseDriver::handle_parse_having(ParseContext& context, pANTLR3_BASE_TREE h
     DEBUG << "start parse having clause";
     pANTLR3_BASE_TREE child_node = (pANTLR3_BASE_TREE) having_node->getChild(having_node, 0);
     child_node = (pANTLR3_BASE_TREE) child_node->getChild(child_node, 0);
-    this->handle_parse_contidtion(context, context.having.condition, child_node);
+    this->handle_parse_contidtion(context, context.having.condition, child_node, "where");
 }
 
 /**
  * 这是中序遍历
  */
-void ParseDriver::handle_parse_contidtion(ParseContext& context, string& condition, pANTLR3_BASE_TREE node)
+void ParseDriver::handle_parse_contidtion(ParseContext& context, string& condition,
+        pANTLR3_BASE_TREE node, string type)
 {
     ANTLR3_UINT32 node_type = node->getType(node);
     pANTLR3_BASE_TREE s_node;
@@ -626,15 +638,15 @@ void ParseDriver::handle_parse_contidtion(ParseContext& context, string& conditi
     case DIV:
         condition.append("(");
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
-        this->handle_parse_contidtion(context, condition, s_node);
+        this->handle_parse_contidtion(context, condition, s_node, type);
         condition.append(" " + string((char*) node->getText(node)->chars) + " ");
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
-        this->handle_parse_contidtion(context, condition, s_node);
+        this->handle_parse_contidtion(context, condition, s_node, type);
         condition.append(")");
         break;
     case DOT:
-        if (context.has_join)
+        if (type.compare("join") == 0)
         {
             s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
             s_text = string((char*)s_node->getText(s_node)->chars);
@@ -652,7 +664,7 @@ void ParseDriver::handle_parse_contidtion(ParseContext& context, string& conditi
         }
 
         s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
-        this->handle_parse_contidtion(context, condition, s_node);
+        this->handle_parse_contidtion(context, condition, s_node, type);
         break;
     case Number:
     case Integer:

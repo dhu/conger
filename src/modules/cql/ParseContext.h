@@ -147,6 +147,7 @@ public:
     WhereConditoin where;
     StreamGroupBy group_by;
     HavingCondition having;
+    string output_stream;
 
     bool has_join;
     bool has_aggregate;
