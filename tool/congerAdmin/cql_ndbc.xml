@@ -84,10 +84,11 @@
         <query name="segementtoll_intermediate">
             <in>segvol</in>
             <in>segavgspeed</in>
-            <out>segementtoll_intermediate</out>
+            <out>segementtoll_filter</out>
             <cql>
                 <![CDATA[
-                SELECT segvol.way, segvol.dir, segvol.seg, segvol.volume
+                SELECT segvol.way AS way, segvol.dir AS dir, segvol.seg AS seg, 
+                        segvol.volume AS volume, segavgspeed.avg_speed AS avg_speed
                 FROM segvol [RANGE 30 SECONDS SLIDE 3 SECONDS]
                 JOIN segavgspeed [RANGE 30 SECONDS SLIDE 3 SECONDS]
                 ON segvol.way = segavgspeed.way 
@@ -99,13 +100,13 @@
         </query>
         
         <query name="segementtoll">
-            <in>segementtoll_intermediate</in>   
+            <in>segementtoll_filter</in>   
             <out>segementtoll</out>
             <cql>
                 <![CDATA[
-                SELECT segvol.way, segvol.dir, segvol.seg, 
-                        15 * (segvol.volume - 150) * (segvol.volume - 150)
-                FROM segementtoll_intermediate
+                SELECT way, dir, seg, 
+                        15 * (volume - 150) * (volume - 150) AS toll
+                FROM segementtoll_filter
                 ]]>
             </cql>
         </query>

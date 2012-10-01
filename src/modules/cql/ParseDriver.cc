@@ -622,6 +622,7 @@ void ParseDriver::handle_parse_contidtion(ParseContext& context, string& conditi
     ANTLR3_UINT32 node_type = node->getType(node);
     pANTLR3_BASE_TREE s_node;
     string s_text;
+    string con;
     switch (node_type)
     {
     case KW_OR:
@@ -661,10 +662,45 @@ void ParseDriver::handle_parse_contidtion(ParseContext& context, string& conditi
             }
             s_text = string((char*)node->getText(node)->chars);
             condition.append(s_text);
+            s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
+            condition.append(string((char*) s_node->getText(s_node)->chars));
         }
+        else
+        {
+            /* 在 where 字句中，如果这个语句是既有 join 又有 where 的，要特殊处理 */
+            if (context.has_join and context.has_where)
+            {
+                s_node = (pANTLR3_BASE_TREE) node->getChild(node, 0);
+                s_text = string((char*)s_node->getText(s_node)->chars);
 
-        s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
-        this->handle_parse_contidtion(context, condition, s_node, type);
+                if (context.from_stream.stream_name == s_text)
+                {
+                    con.append("left");
+                }
+                else if (context.stream_join.stream.stream_name == s_text)
+                {
+                    con.append("right");
+                }
+                s_text = string((char*)node->getText(node)->chars);
+                con.append(s_text);
+                s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
+                con.append(string((char*) s_node->getText(s_node)->chars));
+
+                list<ProjectionTerm>::iterator iter = context.select_list.begin();
+                for ( ; iter != context.select_list.end(); iter++)
+                {
+                    if (iter->join_expression.compare(con) == 0)
+                    {
+                        condition.append(iter->alias);
+                    }
+                }
+            }
+            else
+            {
+                s_node = (pANTLR3_BASE_TREE) node->getChild(node, 1);
+                condition.append(string((char*) s_node->getText(s_node)->chars));
+            }
+        }
         break;
     case Number:
     case Integer:

@@ -518,7 +518,9 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             }
             else
             {
-                box_parameters[output_name_key] = select_iter->join_output_field_name;
+                // box_parameters[output_name_key] = select_iter->join_output_field_name;
+                // 对于先 join 再 filter 来说，join 的输出的 field 的名称应该直接用 alias
+                box_parameters[output_name_key] = select_iter->alias;
             }
             index++;
         }

@@ -260,11 +260,16 @@ void QueryProcessor::add_conger_box(string box_name, string type, string in_stre
 void QueryProcessor::add_conger_subscribe(DeployDescript deploy_descript)
 {
 
-    CatalogSubscription subscriber;
-    subscriber = _local_catalog.add_conger_subsribe("outputstream", "127.0.0.1:25000", "");
-
     vector<CatalogSubscription>  subs;
-    subs.push_back(subscriber);
+    map<string, string>::iterator iter = deploy_descript.outputStreams.begin();
+    for ( ; iter != deploy_descript.outputStreams.end(); iter++)
+    {
+        CatalogSubscription subscriber;
+        subscriber = _local_catalog.add_conger_subsribe(iter->first, "127.0.0.1:25000", "");
+
+        subs.push_back(subscriber);
+    }
+
 
     AsyncRPC<void> completion;
     completion.post(true);
