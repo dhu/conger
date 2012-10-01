@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    //language=C;
+    language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -89,7 +89,7 @@ arith_expr
 	;
 
 arith_expr_plus_minus
-	: arith_expr_star_div (PLUS^ arith_expr_star_div)*
+	: arith_expr_star_div (arith_expr_operator_plus_minus^ arith_expr_star_div)*
 	;
 	
 arith_expr_star_div
