@@ -1,1 +1,1 @@
-SUBDIRS = lrdata
+SUBDIRS = lrdata client

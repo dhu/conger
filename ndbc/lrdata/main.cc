@@ -21,10 +21,15 @@ void send_packet()
     while (!tuples.empty())
     {
         eventPacket.reset();
-        eventPacket = ptr<StreamEvent>(new StreamEvent("inputstream"));
+        eventPacket = ptr<StreamEvent>(new StreamEvent("positionreport"));
         eventPacket->_inject = true;
         TrafficTuple tuple = tuples.front();
         tuples.pop_front();
+        /* XXX 对于速度是 -1 的元祖，我们直接丢失 */
+        if (tuple.m_iSpeed == -1)
+        {
+            continue;
+        }
 
         PositionReportTuple position_report;
         position_report.m_iTime = tuple.m_iTime;

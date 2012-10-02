@@ -29,7 +29,7 @@
         </schema>        
         
         <schema name="segementtollpacket">
-            <field name="time" type="int"/>
+            <!-- <field name="time" type="int"/> -->
             <field name="way" type="int"/>
             <field name="dir" type="int"/>
             <field name="seg" type="int"/>
