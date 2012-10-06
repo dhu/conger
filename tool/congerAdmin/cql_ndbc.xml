@@ -139,8 +139,8 @@
                 <![CDATA[
                 SELECT time AS time, car_id AS car_id, COUNT(car_id) AS car_count
                 FROM positionreport 
-                GROUP OVER [RANGE 30 SECONDS SLIDE 5 SECONDS] BY car_id
-                ]]>   
+                GROUP OVER [RANGE 6 SECONDS SLIDE 1 SECONDS] BY car_id
+                ]]>
             </cql>
         </query>
 
@@ -180,7 +180,7 @@
                 SELECT newcarentryseg.car_id AS car_id, segementtoll.toll AS toll, 
                         segementtoll.way AS way, segementtoll.dir AS dir,
                         segementtoll.seg AS seg
-                FROM newcarentryseg [RANGE 30 SECONDS SLIDE 5 SECONDS] 
+                FROM newcarentryseg [ROWS 1  SLIDE 1] 
                 JOIN segementtoll [RANGE 30 SECONDS SLIDE 5 SECONDS] 
                 ON newcarentryseg.way = segementtoll.way 
                         AND newcarentryseg.dir = segementtoll.dir 

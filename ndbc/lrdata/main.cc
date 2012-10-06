@@ -56,7 +56,7 @@ void send_packet()
 
 }
 
-void enqueue()
+void enqueue(string filename)
 {
     medusaClient = new MedusaClient(InetAddress());
     Status status = medusaClient->set_data_path(676110,
@@ -68,15 +68,28 @@ void enqueue()
     }
     DEBUG << "set_data_path status: " << status;
 
-    provider = new DataProvider("./cardatapoints.out");
+    if (filename.empty())
+    {
+        provider = new DataProvider("./cardatapoints.out");
+    }
+    else
+    {
+        provider = new DataProvider(filename);
+    }
+
     send_packet();
 
     medusaClient->run();
     INFO << "data sent...";
 }
 
-int main(char ** args)
+int main(int argc, char** argv)
 {
-    enqueue();
+    string filename;
+    if (argc == 2)
+    {
+        filename = string(argv[1]);
+    }
+    enqueue(filename);
     return 0;
 }

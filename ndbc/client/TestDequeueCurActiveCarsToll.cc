@@ -17,7 +17,7 @@ BOREALIS_NAMESPACE_BEGIN
 void pretty_print(CurActiveCarsTuple tuple)
 {
     INFO << "car id: " << tuple.car_id << ", time: " << tuple.time
-            << ", count: " << tuple.car_count;
+            << ", count: " << tuple.car_count << ", seg: " << tuple.seg;
 }
 
 Status handleOutput(ptr<StreamEvent> event)

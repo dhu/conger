@@ -71,13 +71,24 @@ void DataProvider::fetch()
                 char line[500];
                 this->stream->getline(line, 500, '\n');
                 string one_line(line);
-                TrafficTuple tuple = this->parse(string(one_line));
-                this->buffer.push_back(tuple);
+                try
+                {
+                    TrafficTuple tuple = this->parse(string(one_line));
+                    this->buffer.push_back(tuple);
+                }
+                catch (exception& e)
+                {
+                    NOTICE << "can not parse line: " << one_line;
+                }
             }
             else
             {
                 break;
             }
+        }
+        if (not this->stream->good())
+        {
+            break;
         }
     }
 }

@@ -922,10 +922,15 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
 
 void QueryProcessor::dump_box_parameters(string box_name, map<string, string> box_parameters)
 {
-    fstream filestr;
+    ofstream filestr;
 
-    filestr.open ("/home/jj/box_parameters.txt", fstream::in | fstream::out | fstream::app);
+    INFO << "I am in dump box parameters, can you see me";
+    filestr.open("/home/jj/box_parameters.txt", fstream::out | fstream::app);
 
+    if (!filestr.good())
+    {
+        INFO << "can not open file";
+    }
     filestr << box_name << endl;
     map<string, string>::iterator iter = box_parameters.begin();
     for ( ; iter != box_parameters.end(); iter++)
@@ -934,7 +939,7 @@ void QueryProcessor::dump_box_parameters(string box_name, map<string, string> bo
     }
 
     filestr << endl << endl << endl;
-
+    filestr.flush();
     filestr.close();
 }
 

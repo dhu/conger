@@ -44,8 +44,11 @@ struct CarTollTuple: public TupleHeader
 
 struct CurActiveCarsTuple: public TupleHeader
 {
-    int time;
     int car_id;
+    int way;
+    int dir;
+    int seg;
+    int time;
     int car_count;
 }__attribute__((__packed__));
 
