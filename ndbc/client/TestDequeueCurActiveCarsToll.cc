@@ -1,7 +1,7 @@
 /*
  * DequeueMap.cpp
  *
- *  Created on: May 16, 2011
+ *  Created on: Oct 5, 2012
  *      Author: hellojinjie
  */
 
@@ -12,19 +12,17 @@
 #include "TrafficOutputTuple.h"
 #include <time.h>
 
-
 BOREALIS_NAMESPACE_BEGIN
 
-void pretty_print(StatisticsTuple tuple)
+void pretty_print(CurActiveCarsTuple tuple)
 {
-    INFO << "time: " << tuple.time << ", volume: " << tuple.volume
-            << ", min_speed: " << tuple.min_speed << ", max_speed: "
-            << tuple.max_speed << ", avg_speed: " << tuple.avg_speed;
+    INFO << "car id: " << tuple.car_id << ", time: " << tuple.time
+            << ", count: " << tuple.car_count;
 }
 
 Status handleOutput(ptr<StreamEvent> event)
 {
-    if (event->_stream == Name("statistics"))
+    if (event->_stream == Name("curactivecars"))
     {
         uint32 offset = 0;
         int32 index;
@@ -36,9 +34,9 @@ Status handleOutput(ptr<StreamEvent> event)
         for (index = 0; index < event->_inserted_count; index++)
         {
             //offset += HEADER_SIZE;
-            StatisticsTuple *tuple =
-                    (StatisticsTuple *) &event->_bin_tuples[offset];
-            offset += sizeof(StatisticsTuple);
+            CurActiveCarsTuple *tuple =
+                    (CurActiveCarsTuple *) &event->_bin_tuples[offset];
+            offset += sizeof(CurActiveCarsTuple);
             pretty_print(*tuple);
         }
 
@@ -50,10 +48,10 @@ Status handleOutput(ptr<StreamEvent> event)
     return Status(true);
 }
 
-class TestDequeueStatistics
+class TestDequeueCurActiveCars
 {
 public:
-    TestDequeueStatistics()
+    TestDequeueCurActiveCars()
     {
 
     }
@@ -75,7 +73,7 @@ public:
         medusaClient->run();
     }
 
-    ~TestDequeueStatistics()
+    ~TestDequeueCurActiveCars()
     {
 
     }
@@ -85,6 +83,6 @@ BOREALIS_NAMESPACE_END
 
 int main()
 {
-    Borealis::TestDequeueStatistics dequeue;
+    Borealis::TestDequeueCurActiveCars dequeue;
     dequeue.start();
 }

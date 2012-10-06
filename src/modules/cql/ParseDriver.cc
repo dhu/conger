@@ -467,7 +467,7 @@ void ParseDriver::handle_parse_window(WindowDefinition& window, pANTLR3_BASE_TRE
         }
         return;
         break;
-    case KW_ROW:
+    case KW_ROWS:
         window.type = CQL::TUPLES;
         s_child_node = (pANTLR3_BASE_TREE) window_node->getChild(window_node, 0);
         window.row = atoi((char*) s_child_node->getText(s_child_node)->chars);
@@ -574,6 +574,7 @@ void ParseDriver::handle_parse_group_by(ParseContext& context, pANTLR3_BASE_TREE
     {
     case TOK_GROUP_BY:
         context.has_aggregate = true;
+        context.has_group_by = true;
         break;
     case TOK_WINDOW:
         this->handle_parse_window(context.group_by.window, group_by_node);

@@ -12,13 +12,14 @@
 #include "TrafficOutputTuple.h"
 #include <time.h>
 
-
 BOREALIS_NAMESPACE_BEGIN
 
 void pretty_print(SegementTollTuple tuple)
 {
     INFO << "way: " << tuple.way << ", dir: " << tuple.dir
-            << ", seg: " << tuple.seg << ", toll: " << tuple.toll;
+            << ", seg: " << tuple.seg << ", toll: " << tuple.toll <<
+            ", vol time: " << tuple.vol_time << ", avg speed time: "
+            << tuple.avgspeed_time;
 }
 
 Status handleOutput(ptr<StreamEvent> event)
@@ -44,15 +45,15 @@ Status handleOutput(ptr<StreamEvent> event)
     }
     else
     {
-        (DEBUG << (event->_stream.as_string()));
+        //(DEBUG << (event->_stream.as_string()));
     }
     return Status(true);
 }
 
-class TestDequeueStatistics
+class TestDequeueSegementToll
 {
 public:
-    TestDequeueStatistics()
+    TestDequeueSegementToll()
     {
 
     }
@@ -74,7 +75,7 @@ public:
         medusaClient->run();
     }
 
-    ~TestDequeueStatistics()
+    ~TestDequeueSegementToll()
     {
 
     }
@@ -84,6 +85,6 @@ BOREALIS_NAMESPACE_END
 
 int main()
 {
-    Borealis::TestDequeueStatistics dequeue;
+    Borealis::TestDequeueSegementToll dequeue;
     dequeue.start();
 }

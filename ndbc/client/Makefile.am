@@ -2,7 +2,8 @@ MYFLAGS =
 AM_CFLAGS = @CFLAGS@ $(MYFLAGS)
 AM_CXXFLAGS = @CXXFLAGS@ $(MYFLAGS)
 
-MAIN = test_dequeue_statistics test_dequeue_segementtoll
+MAIN = test_dequeue_statistics test_dequeue_segementtoll test_dequeue_cartoll \
+	test_dequeue_curactivecars
 
 bin_PROGRAMS = $(MAIN)
 
@@ -33,3 +34,10 @@ test_dequeue_statistics_SOURCES = TestDequeueStatistics.cc \
 
 test_dequeue_segementtoll_SOURCES = TestDequeueSegementToll.cc \
  	TrafficOutputTuple.h
+
+test_dequeue_cartoll_SOURCES = TestDequeueCarToll.cc \
+	TrafficOutputTuple.h
+	
+test_dequeue_curactivecars_SOURCES = TestDequeueCurActiveCarsToll.cc \
+	TrafficOutputTuple.h
+

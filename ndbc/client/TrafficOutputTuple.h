@@ -24,10 +24,29 @@ struct StatisticsTuple: public TupleHeader
 
 struct SegementTollTuple: public TupleHeader
 {
+    int time;
     int way;
     int dir;
     int seg;
+    int vol_time;
+    int avgspeed_time;
     int toll;
+}__attribute__((__packed__));
+
+struct CarTollTuple: public TupleHeader
+{
+    int car_id;
+    int toll;
+    int way;
+    int dir;
+    int seg;
+}__attribute__((__packed__));
+
+struct CurActiveCarsTuple: public TupleHeader
+{
+    int time;
+    int car_id;
+    int car_count;
 }__attribute__((__packed__));
 
 #endif /* TRAFFIC_OUTPUT_TUPLE_H_ */

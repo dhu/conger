@@ -110,6 +110,10 @@ class QueryProcessor : public BasicComponent
 
     void transform_cql_multi_boxes(ParseContext& context);
 
+    /// 往一个文件里 dump box_parameters 主要用来测试
+    ///
+    void dump_box_parameters(string box_name, map<string, string> box_parameters);
+
     /// 下面的函数都是用来测试的，可以忽略
     ///
     void try_map();

@@ -29,11 +29,27 @@
         </schema>        
         
         <schema name="segementtollpacket">
-            <!-- <field name="time" type="int"/> -->
+            <field name="time" type="int"/>
             <field name="way" type="int"/>
             <field name="dir" type="int"/>
             <field name="seg" type="int"/>
+            <field name="vol_time" type="int"/>
+            <field name="avgspeed_time" type="int"/>
             <field name="toll" type="int"/>
+        </schema>
+        
+        <schema name="cartollpacket">
+            <field name="car_id" type="int"/>
+            <field name="toll" type="int"/>
+            <field name="way" type="int"/>
+            <field name="dir" type="int"/>
+            <field name="seg" type="int"/>
+        </schema>
+        
+        <schema name="curactivecarspacket">
+            <field name="time" type="int"/>
+            <field name="car_id" type="int"/>
+            <field name="car_count" type="int"/>
         </schema>
     </schemas>
 
@@ -41,6 +57,8 @@
         <stream name="positionreport" type="input" schema="positionreportpacket" />     
         <stream name="statistics" type="output" schema="statisticspacket" />         
         <stream name="segementtoll" type="output" schema="segementtollpacket"/>
+        <stream name="cartoll" type="output" schema="cartollpacket" />
+        <stream name="curactivecars" type="output" schema="curactivecarspacket" />
     </streams>
 
     <querys>
@@ -75,7 +93,7 @@
             <cql>
                 <![CDATA[
                 SELECT time, way, dir, seg, AVG(speed) AS avg_speed
-                FROM positionreport [RANGE 30 SECONDS SLIDE 3 SECONDS]
+                FROM positionreport 
                 GROUP OVER [RANGE 30 SECONDS SLIDE 3 SECONDS] BY way, dir, seg
                 ]]>
             </cql>
@@ -88,7 +106,9 @@
             <cql>
                 <![CDATA[
                 SELECT segvol.way AS way, segvol.dir AS dir, segvol.seg AS seg, 
-                        segvol.volume AS volume, segavgspeed.avg_speed AS avg_speed
+                        segvol.volume AS volume, segvol.time AS vol_time, 
+                        segavgspeed.time AS avgspeed_time, 
+                        segavgspeed.avg_speed AS avg_speed
                 FROM segvol [RANGE 30 SECONDS SLIDE 3 SECONDS]
                 JOIN segavgspeed [RANGE 30 SECONDS SLIDE 3 SECONDS]
                 ON segvol.way = segavgspeed.way 
@@ -104,13 +124,70 @@
             <out>segementtoll</out>
             <cql>
                 <![CDATA[
-                SELECT way, dir, seg, 
+                SELECT vol_time AS time, way AS way, dir AS dir, seg AS seg, 
+                        vol_time AS vol_time, avgspeed_time AS avgspeed_time,
                         15 * (volume - 150) * (volume - 150) AS toll
                 FROM segementtoll_filter
                 ]]>
             </cql>
         </query>
+        
+        <query name="curactivecars">
+            <in>positionreport</in>
+            <out>curactivecars</out>
+            <cql>
+                <![CDATA[
+                SELECT time AS time, car_id AS car_id, COUNT(car_id) AS car_count
+                FROM positionreport 
+                GROUP OVER [RANGE 30 SECONDS SLIDE 5 SECONDS] BY car_id
+                ]]>   
+            </cql>
+        </query>
 
+        <query name="newcarentry">
+            <in>curactivecars</in>      
+            <out>newcarentry</out>
+            <cql>
+                <![CDATA[
+                SELECT time AS time, car_id AS car_id
+                FROM curactivecars 
+                WHERE car_count = 1
+                ]]>   
+            </cql>
+        </query>
+        
+        <query name="newcarentryseg">
+            <in>positionreport</in>       
+            <in>newcarentry</in>  
+            <out>newcarentryseg</out>
+            <cql>
+                <![CDATA[
+                SELECT positionreport.time AS time, positionreport.car_id AS car_id, 
+                        positionreport.way AS way, 
+                        positionreport.dir AS dir, positionreport.seg AS seg
+                FROM positionreport [RANGE 30 SECONDS SLIDE 5 SECONDS] 
+                JOIN newcarentry [RANGE 30 SECONDS SLIDE 5 SECONDS] 
+                ON newcarentry.car_id = positionreport.car_id 
+                ]]>   
+            </cql>
+        </query>
+        <query name="cartoll">
+            <in>newcarentryseg</in>   
+            <in>segementtoll</in>
+            <out>cartoll</out>
+            <cql>
+                <![CDATA[
+                SELECT newcarentryseg.car_id AS car_id, segementtoll.toll AS toll, 
+                        segementtoll.way AS way, segementtoll.dir AS dir,
+                        segementtoll.seg AS seg
+                FROM newcarentryseg [RANGE 30 SECONDS SLIDE 5 SECONDS] 
+                JOIN segementtoll [RANGE 30 SECONDS SLIDE 5 SECONDS] 
+                ON newcarentryseg.way = segementtoll.way 
+                        AND newcarentryseg.dir = segementtoll.dir 
+                        AND newcarentryseg.seg = segementtoll.seg
+                ]]>   
+            </cql>
+        </query>
     </querys>
 
 </conger>
