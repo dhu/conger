@@ -76,13 +76,13 @@
         </query>
         
         <query name="segvol">
-            <in>positionreport</in>            
+            <in>positionreport</in>
             <out>segvol</out>
             <cql>
                 <![CDATA[
                 SELECT time, way, dir, seg, COUNT(car_id) AS volume
-                FROM positionreport [RANGE 30 SECONDS SLIDE 3 SECONDS]
-                GROUP OVER [RANGE 30 SECONDS SLIDE 3 SECONDS] BY way, dir, seg
+                FROM positionreport
+                GROUP OVER [RANGE 30 SECONDS SLIDE 30 SECONDS] BY way, dir, seg
                 ]]>
             </cql>
         </query>
@@ -94,7 +94,7 @@
                 <![CDATA[
                 SELECT time, way, dir, seg, AVG(speed) AS avg_speed
                 FROM positionreport 
-                GROUP OVER [RANGE 30 SECONDS SLIDE 3 SECONDS] BY way, dir, seg
+                GROUP OVER [RANGE 30 SECONDS SLIDE 30 SECONDS] BY way, dir, seg
                 ]]>
             </cql>
         </query>
@@ -137,9 +137,10 @@
             <out>curactivecars</out>
             <cql>
                 <![CDATA[
-                SELECT time AS time, car_id AS car_id, COUNT(car_id) AS car_count
+                SELECT car_id AS car_id, way AS way, dir AS dir, seg AS seg, 
+                        time AS time, COUNT(car_id) AS car_count
                 FROM positionreport 
-                GROUP OVER [RANGE 6 SECONDS SLIDE 1 SECONDS] BY car_id
+                GROUP OVER [RANGE 60 SECONDS SLIDE 30 SECONDS] BY car_id, way, dir, seg
                 ]]>
             </cql>
         </query>
@@ -149,42 +150,28 @@
             <out>newcarentry</out>
             <cql>
                 <![CDATA[
-                SELECT time AS time, car_id AS car_id
+                SELECT car_id AS car_id, way AS way, dir AS dir, seg AS seg, 
+                        time AS time, car_count AS car_count
                 FROM curactivecars 
                 WHERE car_count = 1
                 ]]>   
             </cql>
         </query>
         
-        <query name="newcarentryseg">
-            <in>positionreport</in>       
-            <in>newcarentry</in>  
-            <out>newcarentryseg</out>
-            <cql>
-                <![CDATA[
-                SELECT positionreport.time AS time, positionreport.car_id AS car_id, 
-                        positionreport.way AS way, 
-                        positionreport.dir AS dir, positionreport.seg AS seg
-                FROM positionreport [RANGE 30 SECONDS SLIDE 5 SECONDS] 
-                JOIN newcarentry [RANGE 30 SECONDS SLIDE 5 SECONDS] 
-                ON newcarentry.car_id = positionreport.car_id 
-                ]]>   
-            </cql>
-        </query>
         <query name="cartoll">
-            <in>newcarentryseg</in>   
+            <in>newcarentry</in>   
             <in>segementtoll</in>
             <out>cartoll</out>
             <cql>
                 <![CDATA[
-                SELECT newcarentryseg.car_id AS car_id, segementtoll.toll AS toll, 
+                SELECT newcarentry.car_id AS car_id, segementtoll.toll AS toll, 
                         segementtoll.way AS way, segementtoll.dir AS dir,
                         segementtoll.seg AS seg
-                FROM newcarentryseg [ROWS 1  SLIDE 1] 
+                FROM newcarentry [ROWS 1 SLIDE 1] 
                 JOIN segementtoll [RANGE 30 SECONDS SLIDE 5 SECONDS] 
-                ON newcarentryseg.way = segementtoll.way 
-                        AND newcarentryseg.dir = segementtoll.dir 
-                        AND newcarentryseg.seg = segementtoll.seg
+                ON newcarentry.way = segementtoll.way 
+                        AND newcarentry.dir = segementtoll.dir 
+                        AND newcarentry.seg = segementtoll.seg
                 ]]>   
             </cql>
         </query>
