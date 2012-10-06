@@ -51,6 +51,20 @@
             <field name="car_id" type="int"/>
             <field name="car_count" type="int"/>
         </schema>
+        <schema name="segvolpacket">
+            <field name="time" type="int"/>
+            <field name="way" type="int"/>
+            <field name="dir" type="int"/>
+            <field name="seg" type="int"/>
+            <field name="volume" type="int"/>
+        </schema>
+        <schema name="segavgspeedpacket">
+            <field name="time" type="int"/>
+            <field name="way" type="int"/>
+            <field name="dir" type="int"/>
+            <field name="seg" type="int"/>
+            <field name="avg_speed" type="int"/>
+        </schema>
     </schemas>
 
     <streams>
@@ -59,6 +73,8 @@
         <stream name="segementtoll" type="output" schema="segementtollpacket"/>
         <stream name="cartoll" type="output" schema="cartollpacket" />
         <stream name="curactivecars" type="output" schema="curactivecarspacket" />
+        <stream name="segvol" type="output" schema="segvolpacket" />
+        <stream name="segavgspeed" type="output" schema="segavgspeedpacket" />
     </streams>
 
     <querys>
@@ -114,6 +130,7 @@
                 ON segvol.way = segavgspeed.way 
                         AND segvol.dir = segavgspeed.dir 
                         AND segvol.seg = segavgspeed.seg
+                        AND segvol.time = segavgspeed.time
                 WHERE segavgspeed.avg_speed > 40
                 ]]>
             </cql>
