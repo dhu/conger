@@ -165,6 +165,8 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         }
     }
 
+    box_parameters["slack"] = "0";
+
     /* 判断一下有没有 group by 语句
      * XXX 如何判断一个结构体有没有初始化? */
     if (context.has_group_by)
@@ -173,7 +175,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         if (window.type == CQL::VALUES)
         {
             box_parameters["window-size-by"] = "VALUES";
-            box_parameters["timeout"] = lexical_cast<string>(window.range);
+            // box_parameters["timeout"] = lexical_cast<string>(window.range);
             /* XXX 时间单位的换算有问题 */
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -206,7 +208,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         if (window.type == CQL::VALUES)
         {
             box_parameters["window-size-by"] = "VALUES";
-            box_parameters["timeout"] = lexical_cast<string>(window.range);
+            // box_parameters["timeout"] = lexical_cast<string>(window.range);
             /* XXX 时间单位的换算有问题 */
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -304,6 +306,8 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             }
         }
 
+        box_parameters["slack"] = "0";
+
         /* 判断一下有没有 group by 语句 */
         if (context.has_group_by)
         {
@@ -311,7 +315,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -344,7 +348,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -422,7 +426,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             }
         }
 
-
+        box_parameters["slack"] = "0";
 
         /* 判断一下有没有 group by 语句 */
         if (context.has_group_by)
@@ -431,7 +435,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -464,7 +468,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -742,6 +746,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
                 index++;
             }
         }
+        box_parameters["slack"] = "0";
 
         /* 判断一下有没有 group by 语句 */
         if (context.has_group_by)
@@ -750,7 +755,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -783,7 +788,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -857,6 +862,8 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             }
         }
 
+        box_parameters["slack"] = "0";
+
         /* 判断一下有没有 group by 语句 */
         if (context.has_group_by)
         {
@@ -864,7 +871,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -897,7 +904,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                box_parameters["timeout"] = lexical_cast<string>(window.range);
+                // box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
