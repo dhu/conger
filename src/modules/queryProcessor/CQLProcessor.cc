@@ -165,7 +165,6 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         }
     }
 
-    box_parameters["slack"] = "0";
 
     /* 判断一下有没有 group by 语句
      * XXX 如何判断一个结构体有没有初始化? */
@@ -175,7 +174,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         if (window.type == CQL::VALUES)
         {
             box_parameters["window-size-by"] = "VALUES";
-            // box_parameters["timeout"] = lexical_cast<string>(window.range);
+            box_parameters["timeout"] = lexical_cast<string>(window.range);
             /* XXX 时间单位的换算有问题 */
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -185,7 +184,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         else
         {
             box_parameters["window-size-by"] = "TUPLES";
-            box_parameters["window-size"] = lexical_cast<string>(window.range);
+            box_parameters["window-size"] = lexical_cast<string>(window.row);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
             box_parameters["order-by"] = "TUPLENUM";
         }
@@ -208,7 +207,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         if (window.type == CQL::VALUES)
         {
             box_parameters["window-size-by"] = "VALUES";
-            // box_parameters["timeout"] = lexical_cast<string>(window.range);
+            box_parameters["timeout"] = lexical_cast<string>(window.range);
             /* XXX 时间单位的换算有问题 */
             box_parameters["window-size"] = lexical_cast<string>(window.range);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -218,7 +217,7 @@ void QueryProcessor::transform_cql_aggregate(ParseContext& context)
         else
         {
             box_parameters["window-size-by"] = "TUPLES";
-            box_parameters["window-size"] = lexical_cast<string>(window.range);
+            box_parameters["window-size"] = lexical_cast<string>(window.row);
             box_parameters["advance"] = lexical_cast<string>(window.slide);
             box_parameters["order-by"] = "TUPLENUM";
         }
@@ -315,7 +314,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -325,7 +324,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -348,7 +347,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -358,7 +357,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -435,7 +434,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -445,7 +444,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -468,7 +467,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -478,7 +477,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -552,7 +551,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         else
         {
             box_parameters["left-order-by"] = "TUPLES";
-            box_parameters["left-buffer-size"] = lexical_cast<string>(left_window.range);
+            box_parameters["left-buffer-size"] = lexical_cast<string>(left_window.row);
         }
 
         WindowDefinition right_window = context.stream_join.stream.window;
@@ -565,7 +564,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         else
         {
             box_parameters["right-order-by"] = "TUPLES";
-            box_parameters["right-buffer-size"] = lexical_cast<string>(right_window.range);
+            box_parameters["right-buffer-size"] = lexical_cast<string>(right_window.row);
         }
 
         /* on, predicate */
@@ -694,7 +693,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         else
         {
             box_parameters["left-order-by"] = "TUPLES";
-            box_parameters["left-buffer-size"] = lexical_cast<string>(left_window.range);
+            box_parameters["left-buffer-size"] = lexical_cast<string>(left_window.row);
         }
 
         WindowDefinition right_window = context.stream_join.stream.window;
@@ -707,7 +706,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
         else
         {
             box_parameters["right-order-by"] = "TUPLES";
-            box_parameters["right-buffer-size"] = lexical_cast<string>(right_window.range);
+            box_parameters["right-buffer-size"] = lexical_cast<string>(right_window.row);
         }
 
         /* on, predicate */
@@ -755,7 +754,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -765,7 +764,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -788,7 +787,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -798,7 +797,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -871,7 +870,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -881,7 +880,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
@@ -904,7 +903,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             if (window.type == CQL::VALUES)
             {
                 box_parameters["window-size-by"] = "VALUES";
-                // box_parameters["timeout"] = lexical_cast<string>(window.range);
+                box_parameters["timeout"] = lexical_cast<string>(window.range);
                 /* XXX 时间单位的换算有问题 */
                 box_parameters["window-size"] = lexical_cast<string>(window.range);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
@@ -914,7 +913,7 @@ void QueryProcessor::transform_cql_multi_boxes(ParseContext& context)
             else
             {
                 box_parameters["window-size-by"] = "TUPLES";
-                box_parameters["window-size"] = lexical_cast<string>(window.range);
+                box_parameters["window-size"] = lexical_cast<string>(window.row);
                 box_parameters["advance"] = lexical_cast<string>(window.slide);
                 box_parameters["order-by"] = "TUPLENUM";
             }
