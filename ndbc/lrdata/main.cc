@@ -43,11 +43,12 @@ void send_packet()
 
         string stringData(reinterpret_cast<const char *>(&position_report),
                 sizeof(PositionReportTuple));
-        DEBUG << "data size:" << stringData.size();
+        //DEBUG << "data size:" << stringData.size();
         eventPacket->insert_bin(stringData);
         medusaClient->fast_post_event(eventPacket);
-        DEBUG << "sending " << "time： " << position_report.m_iTime << " vid："
-                << position_report.m_iVid;
+        DEBUG << "位置信息 " << "时间: " << position_report.m_iTime << ", 车辆: "
+                << position_report.m_iVid << ", 速度: " << position_report.m_iSpeed << ", 公路: "
+                << position_report.m_iXway << ", 方向: " << position_report.m_iDir << ", 路段: " << position_report.m_iSeg;
     }
 
     (new CallbackTimer(medusaClient->get_loop(),

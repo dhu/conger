@@ -2,7 +2,7 @@ grammar CongerCQL;
 
 options
 {
-    language=C;
+    //language=C;
     //ASTLabelType=pANTLR3_BASE_TREE;
     //ASTLabelType=CommonTree;
     output=AST;
@@ -29,11 +29,11 @@ tokens
     TOK_BETWEEN;
     TOK_COMPARE;
     TOK_WINDOW;
-    TOK_RELATION_VARIABLE;
+    TOK_STREAM_VARIABLE;
     TOK_ATTR_LIST; 
     TOK_AGGR; 
 	TOK_COND_LIST;
-	TOK_RELATION_LIST;
+	TOK_STREAM_LIST;
 	TOK_USING;
 	TOK_FUNC;
 	TOK_ARITH_EXPR;
@@ -186,12 +186,12 @@ non_mt_arg_list
 	
 non_mt_relation_list
 	: relation_variable (options{greedy=true;}: COMMA non_mt_relation_list)*
-        -> ^(TOK_RELATION_LIST relation_variable+)
+        -> ^(TOK_STREAM_LIST relation_variable+)
 	;
 
 relation_variable
 	: variableName=Identifier (LSQUARE window_type RSQUARE)? ( KW_AS alias=Identifier)?
-        -> ^(TOK_RELATION_VARIABLE $variableName window_type? $alias?)
+        -> ^(TOK_STREAM_VARIABLE $variableName window_type? $alias?)
 	;
 
 window_type

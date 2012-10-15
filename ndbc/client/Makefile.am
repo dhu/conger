@@ -36,7 +36,7 @@ test_dequeue_statistics_SOURCES = TestDequeueStatistics.cc \
 test_dequeue_segementtoll_SOURCES = TestDequeueSegementToll.cc \
  	TrafficOutputTuple.h
 
-test_dequeue_cartoll_SOURCES = TestDequeueCarToll.cc \
+test_dequeue_cartoll_SOURCES = CarToll.cc \
 	TrafficOutputTuple.h
 	
 test_dequeue_curactivecars_SOURCES = TestDequeueCurActiveCarsToll.cc \
