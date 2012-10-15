@@ -91,7 +91,7 @@
             </cql>
         </query>
         
-        <query name="segvol">
+        <query name="segvol">    <!-- 统计高速公路每一段的流量 -->
             <in>positionreport</in>
             <out>segvol</out>
             <cql>
@@ -136,7 +136,7 @@
             </cql>
         </query>
         
-        <query name="segementtoll">
+        <query name="segementtoll"> 
             <in>segementtoll_filter</in>   
             <out>segementtoll</out>
             <cql>
