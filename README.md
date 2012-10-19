@@ -9,6 +9,7 @@ to be filled...
 
 
 # NDBC 2012 Demo
+Conger 数据流管理系统：当CQL遇见奥罗拉, National Database Conference of China, 2012.10.13
 ![Demo poster](https://raw.github.com/dhu/conger/master/ndbc/NDBC-poster.jpg)
 
 
