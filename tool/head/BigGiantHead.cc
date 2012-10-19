@@ -280,7 +280,6 @@ int main(int argc, const char *argv[])
               << " : " << status;
     }
 
-    diagram.deploy_conger("hi, this is from conger;");
     return  result;
 }
 

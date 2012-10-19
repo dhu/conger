@@ -22,6 +22,7 @@ LDADD = -L$(BOREALIS_SRC)/modules/common          -lborealiscommon     \
         -L$(BOREALIS_SRC)/modules/ha              -lborealisha         \
         -L$(BOREALIS_SRC)/modules/queryProcessor  -lborealisqp         \
         -L$(BOREALIS_SRC)/external                -lborealisexternal   \
+        -L$(BOREALIS_SRC)/modules/cql                   -lcongercql        \
         $(LDADD_EXTRAS)
 
 INCLUDES = @XERCESCINCLUDE@   @NMSTLINCLUDE@                   \
@@ -30,6 +31,7 @@ INCLUDES = @XERCESCINCLUDE@   @NMSTLINCLUDE@                   \
            -I $(BOREALIS_SRC)/modules/rpc                      \
            -I $(BOREALIS_SRC)/modules/catalog                  \
            -I $(BOREALIS_SRC)/modules/queryProcessor           \
+           -I$(BOREALIS_SRC)/modules/cql                       \
            -I $(BOREALIS_SRC)/modules/queryProcessor/statsMgr  \
 		   -I ../../tool/head                                  \
 		   -I ../../utility/client/rpc
