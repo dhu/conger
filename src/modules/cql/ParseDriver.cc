@@ -354,10 +354,10 @@ void ParseDriver::handle_parse_from(ParseContext& context, pANTLR3_BASE_TREE fro
     case TOK_FROM:
         DEBUG << "start parse from clause";
         break;
-    case TOK_RELATION_LIST:
+    case TOK_STREAM_LIST:
         /* 空，什么也不做 */
         break;
-    case TOK_RELATION_VARIABLE:
+    case TOK_STREAM_VARIABLE:
         s_node = (pANTLR3_BASE_TREE) from_node->getChild(from_node, 0);
         context.from_stream.stream_name = string((char*)s_node->getText(s_node)->chars);
         s_child_count = from_node->getChildCount(from_node);
@@ -399,7 +399,7 @@ void ParseDriver::handle_parse_join(ParseContext& context, pANTLR3_BASE_TREE joi
                 (pANTLR3_BASE_TREE) join_node->getChild(join_node, 0), string("join"));
         return;
         break;
-    case TOK_RELATION_VARIABLE:
+    case TOK_STREAM_VARIABLE:
         s_node = (pANTLR3_BASE_TREE) join_node->getChild(join_node, 0);
         context.stream_join.stream.stream_name = string((char*)s_node->getText(s_node)->chars);
         s_child_count = join_node->getChildCount(join_node);
